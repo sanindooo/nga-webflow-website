@@ -1,0 +1,26 @@
+node_modules/
+test-results/
+playwright-report/
+playwright/.cache/
+.env
+.env.local
+*.tsbuildinfo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Exported Figma assets (local storage, not committed)
+assets/
+
+# Client copy documents (confidential)
+docs/examples/
+
+# Claude Code local settings (user-specific)
+.claude/settings.local.json

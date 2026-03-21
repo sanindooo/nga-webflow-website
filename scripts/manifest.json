@@ -1,0 +1,16 @@
+{
+  "version": "v0.1.0",
+  "jsdelivr": {
+    "user": "sanindooo",
+    "repo": "webflow-mcp-test"
+  },
+  "global": [
+    {
+      "name": "animations",
+      "path": "scripts/global/animations.js",
+      "description": "Shared scroll-reveal and fade-in animations using GSAP ScrollTrigger",
+      "integrity": "sha384-80GbXUtXfmxcb1fpof2Dxj1fIEE7fPiX+zd4YzUQLPlMPyisRGI9sAGNVY7oGIvA"
+    }
+  ],
+  "components": {}
+}
