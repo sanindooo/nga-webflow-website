@@ -1,5 +1,5 @@
 {
-  "version": "v0.1.0",
+  "version": "v0.2.0",
   "jsdelivr": {
     "user": "sanindooo",
     "repo": "nga-webflow-website"
@@ -7,9 +7,9 @@
   "global": [
     {
       "name": "animations",
-      "path": "scripts/global/animations.js",
+      "path": "scripts/dist/global/animations.js",
       "description": "Shared scroll-reveal and fade-in animations using GSAP ScrollTrigger",
-      "integrity": "sha384-80GbXUtXfmxcb1fpof2Dxj1fIEE7fPiX+zd4YzUQLPlMPyisRGI9sAGNVY7oGIvA"
+      "integrity": "sha384-zDSRA+Zhbg5P4OVeo0+VIoNNUoVhsropywzqiHYceoxAg4YOvL94HNQBbRz4rrYO"
     }
   ],
   "components": {}

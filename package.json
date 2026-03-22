@@ -8,6 +8,8 @@
     "test:regression": "npx playwright test --grep 'regression'",
     "test:update-baseline": "npx playwright test --update-snapshots",
     "setup": "npx playwright install chromium",
+    "build": "node scripts/build.mjs",
+    "typecheck": "tsc --noEmit",
     "dev": "npx http-server scripts/ -p 3000 --cors -c-1 -a 127.0.0.1",
     "export-assets": "node scripts/api/figma/export-assets.js",
     "upload-assets": "node scripts/api/webflow/upload-assets.js",
@@ -16,7 +18,14 @@
     "update-seo": "node scripts/api/webflow/update-seo.js",
     "parse-copy": "node scripts/api/webflow/parse-copy.js"
   },
-  "keywords": ["webflow", "figma", "mcp", "claude-code", "automation", "playwright"],
+  "keywords": [
+    "webflow",
+    "figma",
+    "mcp",
+    "claude-code",
+    "automation",
+    "playwright"
+  ],
   "license": "MIT",
   "dependencies": {
     "mammoth": "^1.8.0",
@@ -24,6 +33,8 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.58.2",
-    "http-server": "^14.1.1"
+    "esbuild": "^0.27.4",
+    "http-server": "^14.1.1",
+    "typescript": "^5.9.3"
   }
 }

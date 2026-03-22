@@ -23,9 +23,28 @@ allowed-tools:
 
 # Custom Code Management
 
-You manage custom JavaScript delivery for Webflow sites. All scripts live in
-`scripts/`, are served via jsDelivr CDN from GitHub release tags, and are
-injected into Webflow pages using `data_scripts_tool`.
+You manage custom TypeScript/JavaScript delivery for Webflow sites. Source files
+live in `scripts/src/` (TypeScript), compiled output goes to `scripts/dist/`
+(JS), served via jsDelivr CDN from GitHub release tags, and injected into
+Webflow pages using `data_scripts_tool`.
+
+## Project Structure
+
+```
+scripts/
+├── src/                          ← TypeScript source (edit here)
+│   ├── global/{name}.ts          ← site-wide scripts
+│   └── components/{name}.ts      ← per-component scripts
+├── dist/                         ← compiled JS output (jsDelivr serves from here)
+│   ├── global/{name}.js
+│   └── components/{name}.js
+├── build.mjs                     ← esbuild config
+└── manifest.json                 ← script registry (paths point to dist/)
+```
+
+**Build commands:**
+- `pnpm run build` — compiles `.ts` → minified `.js` IIFE
+- `pnpm run typecheck` — validates types without emitting
 
 ## CRITICAL: How data_scripts_tool Works
 
@@ -90,22 +109,30 @@ Read `jsdelivr.user`, `jsdelivr.repo`, and `version` from `scripts/manifest.json
 ### 2. Create New Script
 
 1. **Determine scope:**
-   - Unique to one component → `scripts/components/{name}.js`
-   - Shared across multiple components → `scripts/global/{name}.js`
+   - Unique to one component → `scripts/src/components/{name}.ts`
+   - Shared across multiple components → `scripts/src/global/{name}.ts`
 
-2. **Write the script file** using this template:
+2. **Write the TypeScript source file** using this template:
 
-   ```javascript
+   ```typescript
    /**
     * Script Name
     *
     * What this script does.
     * Dependencies: GSAP (via Webflow CDN toggle)
     */
+
+   declare const gsap: {
+     registerPlugin: (plugin: unknown) => void
+     from: (target: Element, vars: Record<string, unknown>) => void
+     to: (target: Element, vars: Record<string, unknown>) => void
+   }
+   declare const ScrollTrigger: unknown
+
    ;(function () {
      'use strict'
 
-     document.addEventListener('DOMContentLoaded', function () {
+     document.addEventListener('DOMContentLoaded', () => {
        // Logic here. GSAP is available globally: gsap.to(), gsap.from(), etc.
      })
    })()
@@ -113,17 +140,23 @@ Read `jsdelivr.user`, `jsdelivr.repo`, and `version` from `scripts/manifest.json
 
    Rules: IIFE wrapper, `'use strict'`, no `eval()`/`document.write()`, no secrets.
 
-3. **Generate SRI hash:**
+3. **Build the script:**
    ```bash
-   openssl dgst -sha384 -binary scripts/{path}.js | openssl base64 -A
+   pnpm run build
+   ```
+   This compiles `scripts/src/**/*.ts` → `scripts/dist/**/*.js` (minified IIFE).
+
+4. **Generate SRI hash** (from the built output):
+   ```bash
+   openssl dgst -sha384 -binary scripts/dist/{scope}/{name}.js | openssl base64 -A
    ```
 
-4. **Update `scripts/manifest.json`** — add entry with `path`, `description`, and `integrity`:
+5. **Update `scripts/manifest.json`** — add entry with `path` (pointing to dist), `description`, and `integrity`:
    ```json
    {
-     "path": "scripts/components/example.js",
+     "path": "scripts/dist/components/example.js",
      "description": "What it does",
-     "integrity": "sha384-{hash from step 3}"
+     "integrity": "sha384-{hash from step 4}"
    }
    ```
 
@@ -150,7 +183,7 @@ Read `jsdelivr.user`, `jsdelivr.repo`, and `version` from `scripts/manifest.json
    ```
 5. **Register the loader** via `data_scripts_tool` → `add_inline_site_script`:
    - `sourceCode`: the loader stub from step 4
-   - `displayName`: script name (e.g., "animations-loader") — becomes the script `id`
+   - `displayName`: script name in camelCase (e.g., "animationsLoader") — becomes the script `id`. **Must be alphanumeric only — no hyphens or underscores.**
    - `version`: manifest version
    - `location`: "footer"
 6. **Read existing page scripts** via `get_page_script` (404 = empty, not an error)
@@ -161,9 +194,10 @@ Read `jsdelivr.user`, `jsdelivr.repo`, and `version` from `scripts/manifest.json
 
 ## Script Conventions
 
-- **Global:** `scripts/global/{name}.js` — loaded site-wide
-- **Component:** `scripts/components/{component-name}.js` — loaded per-page
+- **Global source:** `scripts/src/global/{name}.ts` → builds to `scripts/dist/global/{name}.js` — loaded site-wide
+- **Component source:** `scripts/src/components/{name}.ts` → builds to `scripts/dist/components/{name}.js` — loaded per-page
 - Component script filenames must match the component name in manifest.json
+- Manifest `path` fields always point to `scripts/dist/` (the built output)
 - GSAP is globally available (Webflow CDN toggle) — use `gsap.*` directly
 - All scripts use `defer` — executes after DOM parsing, in document order
 - Loading order: GSAP (head) → global scripts (project-level) → component scripts (page-level)

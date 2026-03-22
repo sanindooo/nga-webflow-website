@@ -5,10 +5,17 @@
  * Loaded site-wide. Targets elements with [data-animation-general].
  * GSAP is loaded via Webflow's built-in CDN toggle — available globally.
  */
+
+declare const gsap: {
+  registerPlugin: (plugin: unknown) => void
+  from: (target: Element, vars: Record<string, unknown>) => void
+}
+declare const ScrollTrigger: unknown
+
 ;(function () {
   'use strict'
 
-  document.addEventListener('DOMContentLoaded', function () {
+  document.addEventListener('DOMContentLoaded', () => {
     if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
       console.warn('[animations] GSAP or ScrollTrigger not loaded — ensure Webflow GSAP toggle is enabled')
       return
@@ -16,10 +23,9 @@
 
     gsap.registerPlugin(ScrollTrigger)
 
-    // Fade-in on scroll for elements with data-animation-general
-    const elements = document.querySelectorAll('[data-animation-general]')
+    const elements = document.querySelectorAll<HTMLElement>('[data-animation-general]')
 
-    elements.forEach(function (el) {
+    elements.forEach((el) => {
       gsap.from(el, {
         opacity: 0,
         y: 30,
@@ -28,8 +34,8 @@
         scrollTrigger: {
           trigger: el,
           start: 'top 85%',
-          toggleActions: 'play none none none'
-        }
+          toggleActions: 'play none none none',
+        },
       })
     })
   })

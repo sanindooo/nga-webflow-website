@@ -93,7 +93,25 @@ Images, icons, and logos are exported from Figma and uploaded to Webflow via RES
 
 ## Custom Code Delivery
 
-All custom JS lives in `scripts/` (global + per-component), served via **jsDelivr CDN** from GitHub release tags, injected into Webflow via `/custom-code-management` skill. See `.claude/skills/custom-code-management/SKILL.md` for full workflow. Registry: `scripts/manifest.json`. Local dev: `pnpm dev` (port 3000).
+All custom code is written in **TypeScript** with a `src/` → `dist/` build pattern:
+
+```
+scripts/
+├── src/                          ← TypeScript source (edit here)
+│   ├── global/{name}.ts          ← site-wide scripts
+│   └── components/{name}.ts      ← per-component scripts
+├── dist/                         ← compiled JS output (jsDelivr serves from here)
+│   ├── global/{name}.js
+│   └── components/{name}.js
+├── build.mjs                     ← esbuild config
+└── manifest.json                 ← script registry (paths point to dist/)
+```
+
+- `pnpm run build` — compiles TypeScript to minified IIFE JS
+- `pnpm run typecheck` — validates types without emitting
+- Served via **jsDelivr CDN** from GitHub release tags
+- Injected into Webflow via `/custom-code-management` skill
+- See `.claude/skills/custom-code-management/SKILL.md` for full workflow
 
 ## Automation Boundary
 

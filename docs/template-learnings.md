@@ -19,3 +19,9 @@ Observations from first real-world use of the Webflow automation project templat
 **Issue:** The Figma MCP server enforces tool call limits based on seat type/plan. After a few calls (screenshot + design_context attempt), it returned a rate limit error.
 **Impact:** Can't complete a full component extraction in one session if on a free/basic plan.
 **Fix for template:** Document the MCP plan requirement. Consider adding a fallback mode that uses REST API + local screenshots when MCP is unavailable.
+
+## L4: Webflow script displayName must be alphanumeric (no hyphens)
+
+**Issue:** `add_inline_site_script` rejects `displayName` values with hyphens (e.g., `"animations-loader"`). The error says "must be between 1 and 50 alphanumeric characters".
+**Impact:** The skill doc example uses `"animations-loader"` which fails. Wasted a tool call.
+**Fix for template:** Update the custom-code-management SKILL.md examples to use camelCase (`animationsLoader`) instead of kebab-case. Add a note that hyphens/underscores are not allowed.
