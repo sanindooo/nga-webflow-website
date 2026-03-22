@@ -111,6 +111,7 @@ scripts/
 - `pnpm run typecheck` — validates types without emitting
 - Served via **jsDelivr CDN** from GitHub release tags
 - Injected into Webflow via `/custom-code-management` skill
+- **After pushing a new git tag**, the Webflow loader scripts must also be updated to reference the new version — jsDelivr picks up the tag automatically, but Webflow continues serving the old loader until re-registered via `data_scripts_tool`
 - See `.claude/skills/custom-code-management/SKILL.md` for full workflow
 
 ## Automation Boundary

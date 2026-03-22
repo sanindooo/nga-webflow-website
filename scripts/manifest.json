@@ -1,5 +1,5 @@
 {
-  "version": "v0.2.0",
+  "version": "v0.3.0",
   "jsdelivr": {
     "user": "sanindooo",
     "repo": "nga-webflow-website"
@@ -10,6 +10,42 @@
       "path": "scripts/dist/global/animations.js",
       "description": "Shared scroll-reveal and fade-in animations using GSAP ScrollTrigger",
       "integrity": "sha384-zDSRA+Zhbg5P4OVeo0+VIoNNUoVhsropywzqiHYceoxAg4YOvL94HNQBbRz4rrYO"
+    },
+    {
+      "name": "gsapBasicAnimations",
+      "path": "scripts/dist/global/gsapBasicAnimations.js",
+      "description": "Basic GSAP animations (fades, slides, scales)",
+      "integrity": "sha384-1fqlRbwv2H28r1WmUV8Ftm9tWybONFn3t3v09EYC+EWUvSAcntvIAeYdrJXGc9VZ"
+    },
+    {
+      "name": "gsapSmoothScroll",
+      "path": "scripts/dist/global/gsapSmoothScroll.js",
+      "description": "Lenis smooth scrolling with GSAP ScrollTrigger integration",
+      "integrity": "sha384-KWMXgQF5dLjHwPvyH3mdgzLujKU88e2He4rA1JC4r6tUUiI5gHvyTzIViS7FAAyN"
+    },
+    {
+      "name": "splitText",
+      "path": "scripts/dist/global/splitText.js",
+      "description": "GSAP SplitText animations for headings and text elements",
+      "integrity": "sha384-IOCcxtAgNzteotC2QFbx3NOeec/rW7lz7DXy/fmjd9nci5syEbUpPlBhv4LgcOYk"
+    },
+    {
+      "name": "accordion",
+      "path": "scripts/dist/global/accordion.js",
+      "description": "Accordion/FAQ toggle interactions",
+      "integrity": "sha384-JwMvhAMAvdNA9bBz8mn0l9o7WFY6l71MF7sF4MKDbLhcHoE4MynnaL8+nVfSU7zk"
+    },
+    {
+      "name": "modals",
+      "path": "scripts/dist/global/modals.js",
+      "description": "Modal/popup open and close interactions",
+      "integrity": "sha384-TVOwU53aejBEN9o98t7E8m8kjZIyxdZuXknkqLr7/NlHalbk4PsAx4JtGij6gErf"
+    },
+    {
+      "name": "swiperSliders",
+      "path": "scripts/dist/global/swiperSliders.js",
+      "description": "Swiper.js slider initialisation and configuration",
+      "integrity": "sha384-4efYFUmZw++i+PHyPFNkdaoDn090jPm7o5V+F1E59Ybj6PgOz5zxkqR7HN38detr"
     }
   ],
   "components": {}

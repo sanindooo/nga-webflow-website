@@ -215,3 +215,4 @@ Visit or `curl` this URL to force-refresh.
 - **jsDelivr requires a public GitHub repo.** Verify the repo is public before testing URLs.
 - **Propagation delay:** After pushing a new tag, jsDelivr may take a few minutes. Always verify the URL returns 200 before injecting into Webflow.
 - **SRI is mandatory.** Every script tag must include `integrity` and `crossorigin="anonymous"`. Generate the hash at release time and store in the manifest.
+- **Webflow loaders must be updated after every new tag.** Pushing a new git tag makes files available on jsDelivr, but Webflow still serves the old version until the registered loader script is updated. After tagging, always update the loader's `displayName` version and `sourceCode` URL to reference the new tag, then re-register and re-apply via `data_scripts_tool`. Forgetting this step means the live site continues loading the old version.

@@ -31,3 +31,9 @@ Observations from first real-world use of the Webflow automation project templat
 **Issue:** `add_inline_site_script` rejects duplicate `displayName` + `version` combos. `delete_all_site_scripts` only removes the *applied* references — the *registered* scripts persist. So you can't re-register after deleting.
 **Impact:** When updating a loader (e.g., changing the CDN path), you must bump the version even if the underlying script hasn't changed. Old registrations accumulate.
 **Fix for template:** The skill doc should instruct: always bump the patch version when re-registering a loader, even for path-only changes. Add a note that `delete_all_site_scripts` does NOT clear registrations. Consider adding a cleanup step that lists registered scripts and warns about orphans.
+
+## L6: Pushing a new git tag does NOT update Webflow — loader must be re-registered
+
+**Issue:** After pushing a new git tag (e.g., `v0.3.0`), jsDelivr picks up the new files automatically, but Webflow continues serving the old loader script that references the previous tag version. The live site doesn't update until the loader is re-registered via `data_scripts_tool`.
+**Impact:** Scripts appear broken on the live site after deploying new code. Easy to miss because jsDelivr URLs resolve correctly — the problem is that Webflow's registered inline loader still points to the old tag.
+**Fix for template:** Add an explicit step in the custom-code-management skill (Operation 2, after tagging) that re-registers the loader with the new version. The SKILL.md "Important Notes" section should call this out prominently. Consider adding a post-tag checklist or automation that verifies the Webflow loader version matches the latest git tag.
