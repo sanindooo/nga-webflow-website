@@ -25,3 +25,9 @@ Observations from first real-world use of the Webflow automation project templat
 **Issue:** `add_inline_site_script` rejects `displayName` values with hyphens (e.g., `"animations-loader"`). The error says "must be between 1 and 50 alphanumeric characters".
 **Impact:** The skill doc example uses `"animations-loader"` which fails. Wasted a tool call.
 **Fix for template:** Update the custom-code-management SKILL.md examples to use camelCase (`animationsLoader`) instead of kebab-case. Add a note that hyphens/underscores are not allowed.
+
+## L5: Re-registering a script with same displayName+version fails; delete_all only clears applied refs
+
+**Issue:** `add_inline_site_script` rejects duplicate `displayName` + `version` combos. `delete_all_site_scripts` only removes the *applied* references — the *registered* scripts persist. So you can't re-register after deleting.
+**Impact:** When updating a loader (e.g., changing the CDN path), you must bump the version even if the underlying script hasn't changed. Old registrations accumulate.
+**Fix for template:** The skill doc should instruct: always bump the patch version when re-registering a loader, even for path-only changes. Add a note that `delete_all_site_scripts` does NOT clear registrations. Consider adding a cleanup step that lists registered scripts and warns about orphans.

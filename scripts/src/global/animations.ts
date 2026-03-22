@@ -6,12 +6,6 @@
  * GSAP is loaded via Webflow's built-in CDN toggle — available globally.
  */
 
-declare const gsap: {
-  registerPlugin: (plugin: unknown) => void
-  from: (target: Element, vars: Record<string, unknown>) => void
-}
-declare const ScrollTrigger: unknown
-
 ;(function () {
   'use strict'
 

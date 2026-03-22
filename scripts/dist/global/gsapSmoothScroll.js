@@ -1,0 +1,1 @@
+"use strict";(()=>{(function(){"use strict";const t=new Lenis({prevent:e=>e.getAttribute("data-prevent-lenis")==="true"});t.on("scroll",ScrollTrigger.update),gsap.ticker.add(e=>{t.raf(e*1e3)}),gsap.ticker.lagSmoothing(0),window.stopSmoothScroll=()=>t.stop(),window.startSmoothScroll=()=>t.start()})();})();
