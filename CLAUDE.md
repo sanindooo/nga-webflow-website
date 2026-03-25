@@ -52,10 +52,12 @@ Managed via Webflow's `variable_tool`. The Relume starter template ships with it
 ### Semantic HTML (mandatory)
 - `<section>` for page sections
 - `<article>` for component wrappers (NOT divs)
-- `<figure>` for images
-- `<header>` for heading areas
-- `<footer>` for CTA areas
+- `<figure>` for images — **every image MUST be inside a figure/wrapper div**
+- `<header>` for heading areas — **every heading MUST be inside a header wrapper div**
+- `<footer>` for CTA areas — **every CTA button MUST be inside a footer wrapper div**
 - Proper heading hierarchy (`<h1>`, `<h2>`, etc.)
+
+**CRITICAL: See `docs/reference/component-patterns.md` for mandatory wrapper rules.** Never place naked headings, images, or buttons as direct children of layout containers. Every element needs its semantic wrapper for spacing, sizing, and responsive control.
 
 ### Accessibility
 - `aria-label` on headings and text elements with full readable text

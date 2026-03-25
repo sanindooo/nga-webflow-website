@@ -46,6 +46,12 @@
       "path": "scripts/dist/global/swiperSliders.js",
       "description": "Swiper.js slider initialisation and configuration",
       "integrity": "sha384-4efYFUmZw++i+PHyPFNkdaoDn090jPm7o5V+F1E59Ybj6PgOz5zxkqR7HN38detr"
+    },
+    {
+      "name": "navToggle",
+      "path": "scripts/dist/components/navToggle.js",
+      "description": "Custom nav menu open/close with fade animation",
+      "integrity": "sha384-JC6r28Gi/HiqzjEPR6YbuAwFc5wkLT3cfQI3bloPpYJMlxrfBm47S4M7ULji6cxi"
     }
   ],
   "components": {}

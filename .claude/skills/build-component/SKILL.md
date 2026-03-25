@@ -56,7 +56,49 @@ into an automated loop that builds, verifies, publishes, compares, and iterates.
 - `docs/reference/component-patterns.md` — semantic HTML, Client-First naming, element_builder schemas
 - `docs/reference/breakpoints.md` — responsive building rules, spacing/typography scales
 - `docs/reference/style-guide.md` — default typography, colour, spacing, and button tokens
+- `docs/reference/style-inventory.md` — existing styles and components (check before creating new ones)
 - `CLAUDE.md` — full project conventions
+
+## Phase 0: Pre-Build Audit (MANDATORY)
+
+**Before creating ANY styles or elements**, audit what already exists in the Webflow project.
+
+### Step 0.1: Query Existing Styles
+```
+style_tool → get_styles(query: "all", skip_properties: false)
+```
+Context: "Querying full style inventory to identify reusable styles and avoid creating duplicates."
+
+Cross-reference the results against `docs/reference/style-inventory.md`. Categorise into:
+- **Typography:** Custom heading/text styles beyond Relume defaults (e.g., `section-title_large`)
+- **Layout:** Dividers, wrappers, grid patterns that can be reused
+- **Utilities:** Aspect ratios, overlays, decorative elements
+
+### Step 0.2: Query Existing Components
+```
+de_component_tool → get_all_components
+```
+Context: "Checking existing component library to reuse components instead of rebuilding from scratch."
+
+Check if any existing component matches a section in the Figma design. If a match exists (e.g., `Button Icon`, `Large Text Hero Section`), **insert a component instance** instead of building from scratch.
+
+### Step 0.3: Map Figma Design to Existing Styles
+
+For each text element in the Figma design:
+1. Extract the font-size, weight, and line-height from Figma
+2. Find the closest match in the existing style inventory
+3. Use the existing style — only create a new combo class if overrides are needed
+
+For each layout pattern:
+1. Check if a similar section structure already exists (e.g., card grid, publication list)
+2. Reuse the existing component family's class names if the pattern matches
+3. Only create new styles for truly unique layouts
+
+**Key principle:** Check existing → reuse → only then create new. Creating a duplicate style when one already exists causes inconsistency and bloat.
+
+### Step 0.4: Update Inventory
+
+After the build is complete, update `docs/reference/style-inventory.md` with any new styles or components created during this session.
 
 ## Phase 1: Input Gathering
 
@@ -507,6 +549,15 @@ DivBlock (tag: section) .section_[layout-name]     ← Call 1: section > padding
 - Images must have `aspect-ratio` or percentage sizing — never fixed rem dimensions that stretch
 - Avoid fixed widths on content elements — use percentages, flex-grow, or auto
 
+**MANDATORY wrapper rules (see `docs/reference/component-patterns.md` for full details):**
+- **Header wrappers:** EVERY heading MUST be inside a `[component]_header` DivBlock. Never place a naked heading as a direct child of a layout container. The header wrapper absorbs spacing, max-width, and padding without combo classes on the heading.
+- **Figure/image wrappers:** EVERY image MUST be inside a `[component]_figure` or `[component]_images-wrap` DivBlock. Never place an Image element as a direct child of a flex/grid container.
+- **Section wrappers:** When a section has repeating subsections (e.g., team categories), each subsection MUST be wrapped in a `[component]_section` DivBlock that groups its header + content + divider together.
+- **Footer wrappers:** CTA buttons (SHOW MORE, READ MORE) MUST be inside a `[component]_footer` DivBlock, not placed as naked buttons.
+- **Column wrappers in rows:** Each data cell in a list/table row MUST have its own `[component]_column` wrapper DivBlock.
+- **Dividers inside sections:** Divider elements belong INSIDE `_section` wrappers as the last child, not floating between sections.
+- **Use Button Icon component** for all CTA links — not plain Button or TextLink elements.
+
 **Building in element_builder (3-level limit):**
 - Call 1: DivBlock(section) > DivBlock(padding-global + padding-section-large) > DivBlock(container-large)
 - Call 2: Use container as parent → DivBlock(article/component) > child elements
@@ -565,13 +616,19 @@ Before publishing, run a structural review to catch convention drift from sub-ag
 **Checklist:**
 1. **4-layer structure** — Every section has: section wrapper > padding-global > container-large > _component
 2. **No native Section/Container types** — All elements should be Block/DivBlock
-3. **Heading styles** — All headings use `heading-style-h1` through `h6`, not custom heading styles
-4. **Text styles** — All body text uses `text-size-large/medium/small`, not custom paragraph styles
-5. **Class naming** — Section names describe layout pattern, not content
-6. **No fixed widths** — Content elements use %, flex, or auto sizing
-7. **Images** — All have aspect-ratio or percentage sizing, not fixed rem dimensions
-8. **Vertical alignment** — Default is center, not flex-end
-9. **Copy accuracy** — Compare every text node against the component map (docs/component-maps/)
+3. **Header wrappers** — EVERY heading is inside a `_header` DivBlock. NO naked headings as direct children of layout containers. This is the most common miss — check every single heading.
+4. **Figure/image wrappers** — EVERY image is inside a `_figure` or `_images-wrap` DivBlock. NO naked images in flex/grid containers.
+5. **Section wrappers** — Repeating subsections are each wrapped in a `_section` DivBlock grouping header + content + divider.
+6. **Footer wrappers** — CTA buttons (SHOW MORE, READ MORE) are inside `_footer` DivBlocks.
+7. **Dividers inside sections** — Dividers are the last child of `_section` wrappers, not floating siblings.
+8. **Column wrappers in rows** — Each data cell in list rows has its own `_column` wrapper.
+9. **Heading styles** — All headings use `heading-style-h1` through `h6`, not custom heading styles. Heading LEVEL (H1-H6) is for document hierarchy; heading STYLE is for visual size — these are independent.
+10. **Text styles** — All body text uses `text-size-large/medium/small` or `heading-style-h5/h6` for smaller items, not custom paragraph styles.
+11. **Class naming** — Section names describe layout pattern, not content
+12. **No fixed widths** — Content elements use %, flex, or auto sizing
+13. **Images** — All have aspect-ratio or percentage sizing, not fixed rem dimensions
+14. **Copy accuracy** — Compare every text node against the component map (docs/component-maps/)
+15. **Button components** — All CTAs use the Button Icon component, not plain Button or TextLink
 
 If any checks fail, fix before proceeding to Phase 5.
 
