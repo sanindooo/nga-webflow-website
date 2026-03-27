@@ -10,7 +10,18 @@
       );
       if (!heroText) return;
       const split = new SplitText(heroText, { types: "words, lines" });
-      console.log(split);
+      gsap.set(split.lines, { overflow: "hidden" });
+      gsap.fromTo(
+        split.words,
+        { y: "110%" },
+        {
+          y: "0%",
+          // opacity: 1,
+          duration: 1,
+          ease: "power4.out",
+          stagger: 0.05
+        }
+      );
     });
   })();
 })();
