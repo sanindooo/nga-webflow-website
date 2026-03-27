@@ -19,19 +19,31 @@ if (entryPoints.length === 0) {
   process.exit(0)
 }
 
-await esbuild.build({
+const watch = process.argv.includes('--watch')
+
+const config = {
   entryPoints,
   outdir: 'scripts/dist',
   outbase: 'scripts/src',
   bundle: false,
   format: 'iife',
   target: 'es2020',
-  minify: true,
-  sourcemap: false,
-})
+  minify: !watch,
+}
 
-console.log(`Built ${entryPoints.length} script(s):`)
-entryPoints.forEach(e => {
-  const out = e.replace('src/', 'dist/').replace('.ts', '.js')
-  console.log(`  ${e} → ${out}`)
-})
+if (watch) {
+  const ctx = await esbuild.context(config)
+  await ctx.watch()
+  console.log(`Watching ${entryPoints.length} script(s):`)
+  entryPoints.forEach(e => {
+    const out = e.replace('src/', 'dist/').replace('.ts', '.js')
+    console.log(`  ${e} → ${out}`)
+  })
+} else {
+  await esbuild.build(config)
+  console.log(`Built ${entryPoints.length} script(s):`)
+  entryPoints.forEach(e => {
+    const out = e.replace('src/', 'dist/').replace('.ts', '.js')
+    console.log(`  ${e} → ${out}`)
+  })
+}
