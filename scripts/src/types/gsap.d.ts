@@ -83,10 +83,14 @@ declare const Lenis: LenisConstructor;
 
 interface SplitTypeInstance {
   words: HTMLElement[] | null;
+  lines: HTMLElement[] | null;
 }
 
 interface SplitTypeConstructor {
-  new (target: HTMLElement, options: { types: string }): SplitTypeInstance;
+  new (
+    target: HTMLElement | Element,
+    options: { types: string },
+  ): SplitTypeInstance;
 }
 
 declare const SplitText: SplitTypeConstructor;
