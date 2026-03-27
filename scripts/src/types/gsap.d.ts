@@ -9,93 +9,105 @@
 // -- GSAP --
 
 interface GsapTimeline {
-  to: (target: unknown, vars: Record<string, unknown>, position?: number | string) => GsapTimeline
-  set: (target: unknown, vars: Record<string, unknown>, position?: number | string) => GsapTimeline
+  to: (
+    target: unknown,
+    vars: Record<string, unknown>,
+    position?: number | string,
+  ) => GsapTimeline;
+  set: (
+    target: unknown,
+    vars: Record<string, unknown>,
+    position?: number | string,
+  ) => GsapTimeline;
 }
 
 interface GsapMatchMediaContext {
-  conditions: Record<string, boolean>
+  conditions: Record<string, boolean>;
 }
 
 interface GsapMatchMedia {
   add: (
     conditions: Record<string, string>,
     callback: (context: GsapMatchMediaContext) => void,
-  ) => void
+  ) => void;
 }
 
 interface GsapInstance {
-  registerPlugin: (plugin: unknown) => void
-  from: (target: Element | string, vars: Record<string, unknown>) => void
-  to: (target: unknown, vars: Record<string, unknown>, position?: number | string) => void
-  set: (target: unknown, vars: Record<string, unknown>) => void
-  timeline: () => GsapTimeline
-  matchMedia: () => GsapMatchMedia
+  registerPlugin: (plugin: unknown) => void;
+  from: (target: Element | string, vars: Record<string, unknown>) => void;
+  to: (
+    target: unknown,
+    vars: Record<string, unknown>,
+    position?: number | string,
+  ) => void;
+  set: (target: unknown, vars: Record<string, unknown>) => void;
+  timeline: () => GsapTimeline;
+  matchMedia: () => GsapMatchMedia;
   ticker: {
-    add: (fn: (time: number) => void) => void
-    lagSmoothing: (threshold: number) => void
-  }
+    add: (fn: (time: number) => void) => void;
+    lagSmoothing: (threshold: number) => void;
+  };
 }
 
 interface ScrollTriggerStatic {
-  update: () => void
-  refresh: () => void
-  batch: (target: string, vars: Record<string, unknown>) => void
-  create: (vars: Record<string, unknown>) => void
+  update: () => void;
+  refresh: () => void;
+  batch: (target: string, vars: Record<string, unknown>) => void;
+  create: (vars: Record<string, unknown>) => void;
 }
 
-declare const gsap: GsapInstance
-declare const ScrollTrigger: ScrollTriggerStatic
+declare const gsap: GsapInstance;
+declare const ScrollTrigger: ScrollTriggerStatic;
 
 // -- Lenis --
 
 interface LenisInstance {
-  on: (event: string, callback: () => void) => void
-  raf: (time: number) => void
-  stop: () => void
-  start: () => void
+  on: (event: string, callback: () => void) => void;
+  raf: (time: number) => void;
+  stop: () => void;
+  start: () => void;
 }
 
 interface LenisConstructor {
-  new (options: Record<string, unknown>): LenisInstance
+  new (options: Record<string, unknown>): LenisInstance;
 }
 
-declare const Lenis: LenisConstructor
+declare const Lenis: LenisConstructor;
 
 // -- SplitType --
 
 interface SplitTypeInstance {
-  words: HTMLElement[] | null
+  words: HTMLElement[] | null;
 }
 
 interface SplitTypeConstructor {
-  new (target: HTMLElement, options: { types: string }): SplitTypeInstance
+  new (target: HTMLElement, options: { types: string }): SplitTypeInstance;
 }
 
-declare const SplitType: SplitTypeConstructor
+declare const SplitText: SplitTypeConstructor;
 
 // -- Swiper --
 
 interface SwiperSlide extends HTMLElement {}
 
 interface SwiperInstance {
-  slides: SwiperSlide[]
+  slides: SwiperSlide[];
 }
 
 interface SwiperConstructor {
-  new (el: HTMLElement, options: Record<string, unknown>): SwiperInstance
+  new (el: HTMLElement, options: Record<string, unknown>): SwiperInstance;
 }
 
 interface SwiperNavigationModule {}
 interface SwiperPaginationModule {}
 
-declare const Swiper: SwiperConstructor
-declare const SwiperNavigation: SwiperNavigationModule
-declare const SwiperPagination: SwiperPaginationModule
+declare const Swiper: SwiperConstructor;
+declare const SwiperNavigation: SwiperNavigationModule;
+declare const SwiperPagination: SwiperPaginationModule;
 
 // -- Window extensions --
 
 interface Window {
-  stopSmoothScroll?: () => void
-  startSmoothScroll?: () => void
+  stopSmoothScroll?: () => void;
+  startSmoothScroll?: () => void;
 }
