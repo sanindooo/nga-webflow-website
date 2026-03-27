@@ -1,1 +1,16 @@
-"use strict";(()=>{const n=()=>{const e=document.querySelector('[data-nav="open"]'),t=document.querySelector(".header");!e||!t||e.addEventListener("click",()=>{t.classList.toggle("is-nav-open")})};document.readyState==="loading"?document.addEventListener("DOMContentLoaded",n):n();})();
+"use strict";
+(() => {
+  const initNavToggle = () => {
+    const toggle = document.querySelector('[data-nav="open"]');
+    const header = document.querySelector(".header");
+    if (!toggle || !header) return;
+    toggle.addEventListener("click", () => {
+      header.classList.toggle("is-nav-open");
+    });
+  };
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initNavToggle);
+  } else {
+    initNavToggle();
+  }
+})();
