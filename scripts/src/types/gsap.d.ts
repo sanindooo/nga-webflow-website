@@ -35,6 +35,11 @@ interface GsapMatchMedia {
 interface GsapInstance {
   registerPlugin: (plugin: unknown) => void;
   from: (target: Element | string, vars: Record<string, unknown>) => void;
+  fromTo: (
+    target: unknown,
+    fromVars: Record<string, unknown>,
+    toVars: Record<string, unknown>,
+  ) => void;
   to: (
     target: unknown,
     vars: Record<string, unknown>,
