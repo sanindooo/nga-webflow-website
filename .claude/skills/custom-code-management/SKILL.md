@@ -216,3 +216,35 @@ Visit or `curl` this URL to force-refresh.
 - **Propagation delay:** After pushing a new tag, jsDelivr may take a few minutes. Always verify the URL returns 200 before injecting into Webflow.
 - **SRI is mandatory.** Every script tag must include `integrity` and `crossorigin="anonymous"`. Generate the hash at release time and store in the manifest.
 - **Webflow loaders must be updated after every new tag.** Pushing a new git tag makes files available on jsDelivr, but Webflow still serves the old version until the registered loader script is updated. After tagging, always update the loader's `displayName` version and `sourceCode` URL to reference the new tag, then re-register and re-apply via `data_scripts_tool`. Forgetting this step means the live site continues loading the old version.
+
+## MCP Scripts API Limitations
+
+### No site-level apply action
+The MCP `data_scripts_tool` can **register** scripts site-wide (`add_inline_site_script`) and **delete** site-level scripts (`delete_all_site_scripts`), but it CANNOT apply scripts at the site level. There is no `upsert_site_script` action.
+
+**Workaround:** Apply scripts per-page using `upsert_page_script`. This means:
+1. List all pages via `data_pages_tool > list_pages`
+2. Apply the full script set to each page individually
+3. Skip utility pages (401, 404, style-guide) unless they need scripts
+
+### NEVER delete site scripts without a plan to re-apply
+`delete_all_site_scripts` removes all site-level applied scripts instantly. Since there's no site-level apply action, recovery requires per-page application to every page. Always apply page-level scripts BEFORE deleting site-level ones if migrating.
+
+### MCP app must be authorized for the target site
+The MCP `data_scripts_tool` uses an OAuth app token, NOT the `.env` site token. If `list_sites` doesn't show the target site, the MCP app needs re-authorization:
+1. User runs `/mcp` in Claude Code to reauthenticate
+2. User checks Webflow Dashboard > Site Settings > Apps & Integrations
+3. Once authorized, `list_sites` should show the site
+
+The `.env` `WEBFLOW_API_TOKEN` is a legacy site token for CMS/assets only — it CANNOT access the custom code endpoints.
+
+### Full update workflow (tag + register + apply)
+When updating scripts after a code change:
+1. `pnpm run build` — compile TypeScript
+2. Generate new SRI hashes
+3. Update `scripts/manifest.json` with new version + hashes
+4. Commit, tag, and push: `git tag vX.Y.Z && git push && git push --tags`
+5. Verify jsDelivr serves 200: `curl -s -o /dev/null -w "%{http_code}" "{jsdelivr_url}"`
+6. Register new loaders: `add_inline_site_script` for each script at new version
+7. Apply to ALL pages: `upsert_page_script` per page with the full script set
+8. Publish the site for changes to go live
