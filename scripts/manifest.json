@@ -1,5 +1,5 @@
 {
-  "version": "v0.3.0",
+  "version": "v0.5.0",
   "jsdelivr": {
     "user": "sanindooo",
     "repo": "nga-webflow-website"
@@ -51,7 +51,7 @@
       "name": "navToggle",
       "path": "scripts/dist/components/navToggle.js",
       "description": "Custom nav menu open/close with fade animation",
-      "integrity": "sha384-JC6r28Gi/HiqzjEPR6YbuAwFc5wkLT3cfQI3bloPpYJMlxrfBm47S4M7ULji6cxi"
+      "integrity": "sha384-+X+6v7AmT316+SrXcmQNXjK/frBA6ZItsxP7JsxlOjXS6/CSMsBEJOAr9IfC+saS"
     }
   ],
   "components": {}
