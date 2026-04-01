@@ -486,6 +486,21 @@ Style Guide Sync Complete:
 
 **Important:** The component map is the source of truth for copy. During Phase 4, all text content MUST come from the component map — never fabricated or assumed. After building, Phase 4.5 verifies every text node against this map.
 
+### Phase 3 Consent Gate (MANDATORY)
+
+**DO NOT write the component map file or proceed to Phase 4 until the user explicitly approves.**
+
+After extracting the Figma design, present the proposed structure to the user as a summary:
+1. The element tree (sections, layout pattern, key wrappers)
+2. Key decisions (CMS field mapping, what's automatable vs manual, which existing styles/components to reuse)
+3. Any ambiguities or trade-offs
+
+Then STOP and ask: "Does this structure look right, or do you want changes before I write the map and start building?"
+
+Only proceed after the user says "go ahead", "looks good", "approved", or similar explicit confirmation. If the user requests changes, revise the proposed structure and present again.
+
+**Why:** Building from an incorrect map wastes significant time — styles, elements, and CMS bindings all flow from the map. Getting it right first is faster than rebuilding.
+
 ## Phase 4: Build (Webflow MCP)
 
 Follow the patterns in `docs/reference/component-patterns.md` exactly.

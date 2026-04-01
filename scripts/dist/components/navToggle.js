@@ -1,16 +1,1 @@
-"use strict";
-(() => {
-  const initNavToggle = () => {
-    const toggle = document.querySelector('[data-nav="open"]');
-    const header = document.querySelector(".header");
-    if (!toggle || !header) return;
-    toggle.addEventListener("click", () => {
-      header.classList.toggle("is-nav-open");
-    });
-  };
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initNavToggle);
-  } else {
-    initNavToggle();
-  }
-})();
+"use strict";(()=>{const s=()=>{const e=document.querySelector('[data-nav="open"]'),t=document.querySelector(".header"),i=document.querySelector('[data-nav="menu"]'),r=document.querySelectorAll(".nav-custom_menu-link");if(!e||!t)return;e.setAttribute("role","button"),e.setAttribute("aria-label","Open navigation menu"),e.setAttribute("aria-expanded","false"),i&&e.setAttribute("aria-controls",i.id||"nav-menu");const c=()=>{t.classList.add("is-nav-open"),e.setAttribute("aria-expanded","true"),e.setAttribute("aria-label","Close navigation menu")},n=()=>{t.classList.remove("is-nav-open"),e.setAttribute("aria-expanded","false"),e.setAttribute("aria-label","Open navigation menu")},o=()=>t.classList.contains("is-nav-open");e.addEventListener("click",()=>o()?n():c()),document.addEventListener("keydown",a=>{a.key==="Escape"&&o()&&n()}),r.forEach(a=>a.addEventListener("click",n))};document.readyState==="loading"?document.addEventListener("DOMContentLoaded",s):s();})();
