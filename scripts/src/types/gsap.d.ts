@@ -14,6 +14,12 @@ interface GsapTimeline {
     vars: Record<string, unknown>,
     position?: number | string,
   ) => GsapTimeline;
+  fromTo: (
+    target: unknown,
+    fromVars: Record<string, unknown>,
+    toVars: Record<string, unknown>,
+    position?: number | string,
+  ) => GsapTimeline;
   set: (
     target: unknown,
     vars: Record<string, unknown>,
