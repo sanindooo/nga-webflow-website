@@ -117,6 +117,7 @@ scripts/
   if (__s['scriptName']) return; __s['scriptName'] = true;
   ```
   Place this inside the IIFE, right after `'use strict'`. The key must match the script's name in `manifest.json`.
+- **Clean code naming (mandatory):** Never use abbreviated or single-letter variable names in source TypeScript. Every variable, parameter, and function must use full, descriptive, semantic names that are immediately understandable at a scan (e.g., `listWrapper` not `l`, `savedView` not `s`, `filterElement` not `el`). Minification handles compression — source code must prioritize readability.
 - Served via **jsDelivr CDN** from GitHub release tags
 - Injected into Webflow via `/custom-code-management` skill
 - **After pushing a new git tag**, the Webflow loader scripts must also be updated to reference the new version — jsDelivr picks up the tag automatically, but Webflow continues serving the old loader until re-registered via `data_scripts_tool`
