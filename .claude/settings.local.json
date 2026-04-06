@@ -99,7 +99,10 @@
       "Bash(md5 -q assets/publications/greeting-card-3.png)",
       "Bash(node -e \":*)",
       "Bash(curl -s -X PUT \"https://api.webflow.com/v2/assets/$WEBFLOW_SITE_ID/69c2a8759d84e7f06708de5c\" -H \"Authorization: Bearer $WEBFLOW_API_TOKEN\" -H \"Content-Type: application/json\" -d '{\"\"\"\"altText\"\"\"\": \"\"\"\"Panoramic view of Beirut cityscape with densely packed buildings and surrounding hills.\"\"\"\", \"\"\"\"displayName\"\"\"\": \"\"\"\"beirut-office-skyline\"\"\"\"}')",
-      "Bash(curl -s -X POST \"https://api.webflow.com/v2/sites/$WEBFLOW_SITE_ID/custom_code\" -H \"Authorization: Bearer $WEBFLOW_API_TOKEN\" -H \"Content-Type: application/json\" -d '{:*)"
+      "Bash(curl -s -X POST \"https://api.webflow.com/v2/sites/$WEBFLOW_SITE_ID/custom_code\" -H \"Authorization: Bearer $WEBFLOW_API_TOKEN\" -H \"Content-Type: application/json\" -d '{:*)",
+      "Bash(git rm:*)",
+      "Bash(git rebase:*)",
+      "Bash(GIT_EDITOR=true git rebase:*)"
     ]
   }
 }
