@@ -1,5 +1,5 @@
 {
-  "version": "v0.5.0",
+  "version": "v0.6.1",
   "jsdelivr": {
     "user": "sanindooo",
     "repo": "nga-webflow-website"
@@ -54,5 +54,12 @@
       "integrity": "sha384-+X+6v7AmT316+SrXcmQNXjK/frBA6ZItsxP7JsxlOjXS6/CSMsBEJOAr9IfC+saS"
     }
   ],
-  "components": {}
+  "components": {
+    "viewSwitcher": {
+      "name": "viewSwitcher",
+      "path": "scripts/dist/components/viewSwitcher.js",
+      "description": "Grid/list view switcher with localStorage persistence",
+      "integrity": "sha384-cda+GMKYLHqH57sqcn6/6ZMEC1ctRjDL/g9d5ErdpDaTOnt92H5boUaAS18Iatmm"
+    }
+  }
 }
