@@ -75,6 +75,7 @@ declare const ScrollTrigger: ScrollTriggerStatic;
 interface LenisInstance {
   on: (event: string, callback: () => void) => void;
   raf: (time: number) => void;
+  resize: () => void;
   stop: () => void;
   start: () => void;
 }

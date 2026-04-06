@@ -26,4 +26,38 @@
 
   window.stopSmoothScroll = () => lenis.stop()
   window.startSmoothScroll = () => lenis.start()
+
+  // Recalculate Lenis scroll height when sections with lazy-loaded images
+  // enter the viewport. Add data-lenis-resize to any section whose content
+  // causes layout shifts (e.g., CMS images with intrinsic aspect ratios).
+  document.querySelectorAll<HTMLElement>('[data-lenis-resize]').forEach((section) => {
+    ScrollTrigger.create({
+      trigger: section,
+      start: 'top bottom',
+      once: true,
+      onEnter: () => {
+        const images = section.querySelectorAll<HTMLImageElement>('img')
+        let imagesLoaded = 0
+
+        images.forEach((image) => {
+          if (image.complete) {
+            imagesLoaded++
+          } else {
+            image.addEventListener('load', () => {
+              imagesLoaded++
+              if (imagesLoaded === images.length) {
+                lenis.resize()
+                ScrollTrigger.refresh()
+              }
+            }, { once: true })
+          }
+        })
+
+        if (imagesLoaded === images.length) {
+          lenis.resize()
+          ScrollTrigger.refresh()
+        }
+      },
+    })
+  })
 })()

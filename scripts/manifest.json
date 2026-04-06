@@ -1,5 +1,5 @@
 {
-  "version": "v0.7.0",
+  "version": "v0.7.2",
   "jsdelivr": {
     "user": "sanindooo",
     "repo": "nga-webflow-website"
@@ -15,7 +15,7 @@
       "name": "gsapSmoothScroll",
       "path": "scripts/dist/global/gsapSmoothScroll.js",
       "description": "Lenis smooth scrolling with GSAP ScrollTrigger integration",
-      "integrity": "sha384-i4EoENrHFmV02/hkf66BcvMFnOq00Lv+cbmsPW3C+pMSx14etIGyrgtEJ22InGFr"
+      "integrity": "sha384-XflXC6K9anBWpHItFjdpnyp5yOcsXaHbOeW8SxFyRcHvM9ml0V7fQaBVPoQHDPyF"
     },
     {
       "name": "splitText",
@@ -45,7 +45,7 @@
       "name": "navToggle",
       "path": "scripts/dist/components/navToggle.js",
       "description": "Custom nav menu open/close with fade animation",
-      "integrity": "sha384-o87v1EZ7JGnOVrpFCQ7K7gztdNRheuytDuq9t//w6GknDuDn3rpPH5RJBWhcFqsj"
+      "integrity": "sha384-whYeKqI7LdoZPzA1cHUcNyJdc+PSSRKFNg/GePjltmVr0dhiezuBeCZWx8MTFLdq"
     },
     {
       "name": "stickyFilter",
@@ -72,12 +72,6 @@
       "path": "scripts/dist/components/viewSwitcher.js",
       "description": "Grid/list view switcher with localStorage persistence",
       "integrity": "sha384-jq73ALy6hhHflqiFbtm8HFm7eb3Apm9mkQ5eYg4pYDUMRnn6z9Wlf5H1gw/WumCf"
-    },
-    "galleryLayout": {
-      "name": "galleryLayout",
-      "path": "scripts/dist/components/galleryLayout.js",
-      "description": "Dynamic gallery layout from CMS layout/alignment option fields",
-      "integrity": "sha384-xh1uTmU/VQdg/v9Lc7R9Q4TKiVBwB6dMhPcxgNPH2OPpl4U7povjITM9FLJCVPZM"
     }
   }
 }
