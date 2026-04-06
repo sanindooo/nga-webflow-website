@@ -65,7 +65,6 @@
             opacity: 1,
             y: 0,
             duration: 0.35,
-            // stagger: 0.06,
             ease: "power2.out",
           },
         );
@@ -78,16 +77,7 @@
       toggle.setAttribute("aria-expanded", "false");
       toggle.setAttribute("aria-label", "Open navigation menu");
 
-      // Calculate how far each list needs to travel to reach viewport center
       const centerX = window.innerWidth / 2;
-      // const navTarget = navList
-      //   ? centerX -
-      //     (navList.getBoundingClientRect().left + navList.offsetWidth / 2)
-      //   : 0;
-      // const socialTarget = socialList
-      //   ? centerX -
-      //     (socialList.getBoundingClientRect().left + socialList.offsetWidth / 2)
-      //   : 0;
 
       const timeline = gsap.timeline({
         onComplete: () => {

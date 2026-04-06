@@ -52,7 +52,7 @@ interface GsapInstance {
     position?: number | string,
   ) => void;
   set: (target: unknown, vars: Record<string, unknown>) => void;
-  timeline: () => GsapTimeline;
+  timeline: (vars?: Record<string, unknown>) => GsapTimeline;
   matchMedia: () => GsapMatchMedia;
   ticker: {
     add: (fn: (time: number) => void) => void;
@@ -101,6 +101,7 @@ interface SplitTypeConstructor {
 }
 
 declare const SplitText: SplitTypeConstructor;
+declare const SplitType: SplitTypeConstructor;
 
 // -- Swiper --
 
@@ -114,16 +115,12 @@ interface SwiperConstructor {
   new (el: HTMLElement, options: Record<string, unknown>): SwiperInstance;
 }
 
-interface SwiperNavigationModule {}
-interface SwiperPaginationModule {}
-
 declare const Swiper: SwiperConstructor;
-declare const SwiperNavigation: SwiperNavigationModule;
-declare const SwiperPagination: SwiperPaginationModule;
 
 // -- Window extensions --
 
 interface Window {
+  __loadedScripts?: Record<string, boolean>;
   stopSmoothScroll?: () => void;
   startSmoothScroll?: () => void;
 }

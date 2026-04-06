@@ -111,12 +111,36 @@ scripts/
 
 - `pnpm run build` — compiles TypeScript to minified IIFE JS
 - `pnpm run typecheck` — validates types without emitting
-- **Dedup guard (mandatory):** Every script must register itself on `window.__loadedScripts` and skip if already present. This prevents double-initialization when the same script loads from both CDN and a local dev proxy (e.g., ngrok). Pattern:
+- **Standard script boilerplate (mandatory):** Every script must follow this structure:
   ```ts
-  const __s = ((window as any).__loadedScripts ??= {});
-  if (__s['scriptName']) return; __s['scriptName'] = true;
+  ;(function () {
+    'use strict'
+
+    // 1. CDN dependency guard — silent exit if ad blocker or CDN outage
+    if (typeof gsap === 'undefined') return
+
+    // 2. Dedup guard — prevents double-init via ngrok + CDN
+    const __s = ((window as any).__loadedScripts ??= {});
+    if (__s['scriptName']) return; __s['scriptName'] = true;
+
+    // 3. Init function — all DOM queries and logic
+    function init() {
+      // script logic...
+    }
+
+    // 4. DOM-ready gate — handles async CDN load timing
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init)
+    } else {
+      init()
+    }
+  })()
   ```
-  Place this inside the IIFE, right after `'use strict'`. The key must match the script's name in `manifest.json`.
+  - **CDN dependency guard:** Check `typeof` for every external global (gsap, ScrollTrigger, Lenis, SplitText, Swiper) before using it. Place before the dedup guard.
+  - **Dedup guard:** Register on `window.__loadedScripts` and skip if present. Key must match `manifest.json` name.
+  - **DOM-ready gate:** Never use bare `DOMContentLoaded` — the event fires once and CDN scripts may load after it. The `readyState` check handles both early and late loading.
+- **Lenis + ScrollTrigger rule:** Never call `ScrollTrigger.refresh()` when Lenis smooth scroll is active. Use `lenis.resize()` debounced via `requestAnimationFrame` instead. For lazy-loaded images, use `data-lenis-resize` attribute on the section.
+- **SplitText lifecycle:** Always call `.revert()` before re-splitting an element. Track instances in a `Map` to prevent DOM bloat from accumulated wrapper spans.
 - **Clean code naming (mandatory):** Never use abbreviated or single-letter variable names in source TypeScript. Every variable, parameter, and function must use full, descriptive, semantic names that are immediately understandable at a scan (e.g., `listWrapper` not `l`, `savedView` not `s`, `filterElement` not `el`). Minification handles compression — source code must prioritize readability.
 - Served via **jsDelivr CDN** using commit hash URLs (NOT tags — tag resolution is unreliable for newer releases). URL format: `https://cdn.jsdelivr.net/gh/{user}/{repo}@{commit_sha}/{path}`
 - Injected into Webflow via `/custom-code-management` skill

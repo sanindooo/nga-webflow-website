@@ -12,7 +12,7 @@
   const __s = ((window as any).__loadedScripts ??= {});
   if (__s['modals']) return; __s['modals'] = true;
 
-  document.addEventListener('DOMContentLoaded', () => {
+  function init() {
     const modalButtons = document.querySelectorAll<HTMLElement>('[button-function="modal-open"]')
 
     modalButtons.forEach((button) => {
@@ -45,5 +45,11 @@
         window.startSmoothScroll?.()
       })
     })
-  })
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init)
+  } else {
+    init()
+  }
 })()

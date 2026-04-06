@@ -25,11 +25,11 @@
     let listWrapper: HTMLElement | null = null
     let gridWrapper: HTMLElement | null = null
 
-    wrappers.forEach((w) => {
-      if (w.classList.contains('u-row-view')) {
-        listWrapper = w
+    wrappers.forEach((wrapper) => {
+      if (wrapper.classList.contains('u-row-view')) {
+        listWrapper = wrapper
       } else {
-        gridWrapper = w
+        gridWrapper = wrapper
       }
     })
 
@@ -42,8 +42,8 @@
       ;(listWrapper as HTMLElement).classList.toggle('is-active', view === 'list')
       ;(gridWrapper as HTMLElement).classList.toggle('is-active', view === 'grid')
 
-      toggles.forEach((t) => {
-        t.classList.toggle('is-active', t.getAttribute('data-view') === view)
+      toggles.forEach((toggle) => {
+        toggle.classList.toggle('is-active', toggle.getAttribute('data-view') === view)
       })
 
       localStorage.setItem(STORAGE_KEY, view)

@@ -9,16 +9,13 @@
 ;(function () {
   'use strict'
 
+  if (typeof gsap === 'undefined' || typeof SplitText === 'undefined') return
+
   const __s = ((window as any).__loadedScripts ??= {})
   if (__s['heroTextReveal']) return; __s['heroTextReveal'] = true
 
-  document.addEventListener('DOMContentLoaded', () => {
-    gsap.registerPlugin(SplitText)
-
-    const heroText = document.querySelector(
-      '.heading-style-h1.hero_title',
-    ) as HTMLElement
-
+  function init() {
+    const heroText = document.querySelector<HTMLElement>('.heading-style-h1.hero_title')
     if (!heroText) return
 
     const split = new SplitText(heroText, { types: 'words, lines' })
@@ -33,5 +30,11 @@
         stagger: 0.05,
       },
     )
-  })
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init)
+  } else {
+    init()
+  }
 })()

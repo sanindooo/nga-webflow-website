@@ -9,6 +9,8 @@
 ;(function () {
   'use strict'
 
+  if (typeof gsap === 'undefined' || typeof Lenis === 'undefined') return
+
   const __s = ((window as any).__loadedScripts ??= {});
   if (__s['gsapSmoothScroll']) return; __s['gsapSmoothScroll'] = true;
 
@@ -40,12 +42,20 @@
     })
   }
 
-  document.querySelectorAll<HTMLElement>('[data-lenis-resize]').forEach((section) => {
-    section.querySelectorAll<HTMLImageElement>('img').forEach((image) => {
-      if (!image.complete) {
-        image.addEventListener('load', scheduleResize, { once: true })
-        image.addEventListener('error', scheduleResize, { once: true })
-      }
+  function initImageListeners() {
+    document.querySelectorAll<HTMLElement>('[data-lenis-resize]').forEach((section) => {
+      section.querySelectorAll<HTMLImageElement>('img').forEach((image) => {
+        if (!image.complete) {
+          image.addEventListener('load', scheduleResize, { once: true })
+          image.addEventListener('error', scheduleResize, { once: true })
+        }
+      })
     })
-  })
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initImageListeners)
+  } else {
+    initImageListeners()
+  }
 })()

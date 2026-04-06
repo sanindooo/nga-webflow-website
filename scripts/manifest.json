@@ -17,13 +17,7 @@
       "description": "Lenis smooth scrolling with GSAP ScrollTrigger integration",
       "integrity": "sha384-ei93YS5BdKd/nO37BkJmvYN+k3WcqXSob0TPspzVtnwZwjr+V0L56DNfvs2mZHDV"
     },
-    {
-      "name": "splitText",
-      "path": "scripts/dist/global/splitText.js",
-      "description": "GSAP SplitText animations for headings and text elements",
-      "integrity": "sha384-1vUqnAKVpt8kA2VsMmc8VwIQRptOQXxLwK1qNtM4CI7T3BaN0Pd2bRhrnNbZim+D"
-    },
-    {
+{
       "name": "accordion",
       "path": "scripts/dist/global/accordion.js",
       "description": "Accordion/FAQ toggle interactions",

@@ -8,10 +8,12 @@
 ;(function () {
   'use strict'
 
+  if (typeof gsap === 'undefined') return
+
   const __s = ((window as any).__loadedScripts ??= {});
   if (__s['accordion']) return; __s['accordion'] = true;
 
-  document.addEventListener('DOMContentLoaded', () => {
+  function init() {
     const accordionTriggers = document.querySelectorAll<HTMLElement>('.accordion_header')
 
     if (!accordionTriggers.length) return
@@ -60,5 +62,11 @@
         text.style.maxHeight = text.style.maxHeight === '0px' ? `${height + 9 * 14}px` : '0px'
       }
     }
-  })
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init)
+  } else {
+    init()
+  }
 })()

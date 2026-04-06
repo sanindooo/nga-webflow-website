@@ -8,10 +8,12 @@
 ;(function () {
   'use strict'
 
+  if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return
+
   const __s = ((window as any).__loadedScripts ??= {});
   if (__s['gsapBasicAnimations']) return; __s['gsapBasicAnimations'] = true;
 
-  document.addEventListener('DOMContentLoaded', () => {
+  function init() {
     gsap.set('.slide-in', { y: 25, opacity: 0 })
     ScrollTrigger.batch('.slide-in', {
       start: 'top bottom-=100px',
@@ -23,5 +25,11 @@
       start: 'top bottom-=100px',
       onEnter: (batch: Element[]) => gsap.to(batch, { opacity: 1, duration: 1 }),
     })
-  })
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init)
+  } else {
+    init()
+  }
 })()
