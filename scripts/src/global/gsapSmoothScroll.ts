@@ -43,14 +43,22 @@
   }
 
   function initImageListeners() {
+    let hasPendingImages = false
+
     document.querySelectorAll<HTMLElement>('[data-lenis-resize]').forEach((section) => {
       section.querySelectorAll<HTMLImageElement>('img').forEach((image) => {
         if (!image.complete) {
+          hasPendingImages = true
           image.addEventListener('load', scheduleResize, { once: true })
           image.addEventListener('error', scheduleResize, { once: true })
         }
       })
     })
+
+    // If all images are already loaded (cached/fast connection), resize immediately
+    if (!hasPendingImages) {
+      scheduleResize()
+    }
   }
 
   if (document.readyState === 'loading') {
