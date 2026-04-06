@@ -47,7 +47,10 @@
 
     document.querySelectorAll<HTMLElement>('[data-lenis-resize]').forEach((section) => {
       section.querySelectorAll<HTMLImageElement>('img').forEach((image) => {
-        if (!image.complete) {
+        // Safari reports complete=true for lazy images that haven't loaded yet.
+        // Check naturalWidth to confirm actual content has loaded.
+        const isLoaded = image.complete && image.naturalWidth > 0
+        if (!isLoaded) {
           hasPendingImages = true
           image.addEventListener('load', scheduleResize, { once: true })
           image.addEventListener('error', scheduleResize, { once: true })
