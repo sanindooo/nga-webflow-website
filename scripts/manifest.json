@@ -52,6 +52,12 @@
       "path": "scripts/dist/components/navToggle.js",
       "description": "Custom nav menu open/close with fade animation",
       "integrity": "sha384-o87v1EZ7JGnOVrpFCQ7K7gztdNRheuytDuq9t//w6GknDuDn3rpPH5RJBWhcFqsj"
+    },
+    {
+      "name": "stickyFilter",
+      "path": "scripts/dist/global/stickyFilter.js",
+      "description": "Hides sticky filter bar on scroll down, reveals on scroll up",
+      "integrity": "sha384-dyYLh8S36r3ECuKsra2/U77G/7RH9K/pcMOTJAwoCPNA0iMTa3VFmhWOt4ts3zL6"
     }
   ],
   "components": {
