@@ -111,6 +111,12 @@ scripts/
 
 - `pnpm run build` — compiles TypeScript to minified IIFE JS
 - `pnpm run typecheck` — validates types without emitting
+- **Dedup guard (mandatory):** Every script must register itself on `window.__loadedScripts` and skip if already present. This prevents double-initialization when the same script loads from both CDN and a local dev proxy (e.g., ngrok). Pattern:
+  ```ts
+  const __s = ((window as any).__loadedScripts ??= {});
+  if (__s['scriptName']) return; __s['scriptName'] = true;
+  ```
+  Place this inside the IIFE, right after `'use strict'`. The key must match the script's name in `manifest.json`.
 - Served via **jsDelivr CDN** from GitHub release tags
 - Injected into Webflow via `/custom-code-management` skill
 - **After pushing a new git tag**, the Webflow loader scripts must also be updated to reference the new version — jsDelivr picks up the tag automatically, but Webflow continues serving the old loader until re-registered via `data_scripts_tool`

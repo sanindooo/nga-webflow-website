@@ -9,6 +9,9 @@
 ;(function () {
   'use strict'
 
+  const __s = ((window as any).__loadedScripts ??= {});
+  if (__s['gsapSmoothScroll']) return; __s['gsapSmoothScroll'] = true;
+
   const lenis = new Lenis({
     prevent: (node: HTMLElement) => node.getAttribute('data-prevent-lenis') === 'true',
   })

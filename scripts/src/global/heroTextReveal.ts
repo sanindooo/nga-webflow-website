@@ -1,6 +1,9 @@
 (function () {
   "use strict";
 
+  const __s = ((window as any).__loadedScripts ??= {});
+  if (__s['heroTextReveal']) return; __s['heroTextReveal'] = true;
+
   document.addEventListener("DOMContentLoaded", () => {
     gsap.registerPlugin(SplitText);
     console.log("test");

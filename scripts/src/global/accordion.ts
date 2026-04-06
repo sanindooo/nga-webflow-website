@@ -8,6 +8,9 @@
 ;(function () {
   'use strict'
 
+  const __s = ((window as any).__loadedScripts ??= {});
+  if (__s['accordion']) return; __s['accordion'] = true;
+
   document.addEventListener('DOMContentLoaded', () => {
     const accordionTriggers = document.querySelectorAll<HTMLElement>('.accordion_header')
 

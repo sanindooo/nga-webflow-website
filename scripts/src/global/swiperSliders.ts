@@ -124,6 +124,9 @@ const animateSlide = (slide: HTMLElement) => {
 ;(function () {
   'use strict'
 
+  const __s = ((window as any).__loadedScripts ??= {});
+  if (__s['swiperSliders']) return; __s['swiperSliders'] = true;
+
   document.addEventListener('DOMContentLoaded', () => {
     const sliderWrappers = document.querySelectorAll<HTMLElement>('.swiper_slider')
     if (!sliderWrappers.length) return

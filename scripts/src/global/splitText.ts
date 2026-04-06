@@ -9,6 +9,9 @@
 ;(function () {
   'use strict'
 
+  const __s = ((window as any).__loadedScripts ??= {});
+  if (__s['splitText']) return; __s['splitText'] = true;
+
   document.addEventListener('DOMContentLoaded', () => {
     gsap.registerPlugin(ScrollTrigger)
 

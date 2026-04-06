@@ -9,6 +9,9 @@
 ;(function () {
   'use strict'
 
+  const __s = ((window as any).__loadedScripts ??= {});
+  if (__s['modals']) return; __s['modals'] = true;
+
   document.addEventListener('DOMContentLoaded', () => {
     const modalButtons = document.querySelectorAll<HTMLElement>('[button-function="modal-open"]')
 

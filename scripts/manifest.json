@@ -1,5 +1,5 @@
 {
-  "version": "v0.6.1",
+  "version": "v0.6.2",
   "jsdelivr": {
     "user": "sanindooo",
     "repo": "nga-webflow-website"
@@ -9,49 +9,49 @@
       "name": "animations",
       "path": "scripts/dist/global/animations.js",
       "description": "Shared scroll-reveal and fade-in animations using GSAP ScrollTrigger",
-      "integrity": "sha384-zDSRA+Zhbg5P4OVeo0+VIoNNUoVhsropywzqiHYceoxAg4YOvL94HNQBbRz4rrYO"
+      "integrity": "sha384-G1MZeVy29G2YLMeVz35VNXh/O5g9MjNKzrjKOn58LFqsbv8eVmNy4TKZ3X3yOw2c"
     },
     {
       "name": "gsapBasicAnimations",
       "path": "scripts/dist/global/gsapBasicAnimations.js",
       "description": "Basic GSAP animations (fades, slides, scales)",
-      "integrity": "sha384-1fqlRbwv2H28r1WmUV8Ftm9tWybONFn3t3v09EYC+EWUvSAcntvIAeYdrJXGc9VZ"
+      "integrity": "sha384-I6yxijphzbmHqSV9OQpEv/H/AO7rRLY28i8e0AQXlCBNOgCcfknLZFtzDE/M9mXo"
     },
     {
       "name": "gsapSmoothScroll",
       "path": "scripts/dist/global/gsapSmoothScroll.js",
       "description": "Lenis smooth scrolling with GSAP ScrollTrigger integration",
-      "integrity": "sha384-KWMXgQF5dLjHwPvyH3mdgzLujKU88e2He4rA1JC4r6tUUiI5gHvyTzIViS7FAAyN"
+      "integrity": "sha384-i4EoENrHFmV02/hkf66BcvMFnOq00Lv+cbmsPW3C+pMSx14etIGyrgtEJ22InGFr"
     },
     {
       "name": "splitText",
       "path": "scripts/dist/global/splitText.js",
       "description": "GSAP SplitText animations for headings and text elements",
-      "integrity": "sha384-IOCcxtAgNzteotC2QFbx3NOeec/rW7lz7DXy/fmjd9nci5syEbUpPlBhv4LgcOYk"
+      "integrity": "sha384-1vUqnAKVpt8kA2VsMmc8VwIQRptOQXxLwK1qNtM4CI7T3BaN0Pd2bRhrnNbZim+D"
     },
     {
       "name": "accordion",
       "path": "scripts/dist/global/accordion.js",
       "description": "Accordion/FAQ toggle interactions",
-      "integrity": "sha384-JwMvhAMAvdNA9bBz8mn0l9o7WFY6l71MF7sF4MKDbLhcHoE4MynnaL8+nVfSU7zk"
+      "integrity": "sha384-HN0GhQlLRNjI9XS80oBawW0QeRE5J6vgAm2imFf4Xp/D6Q10o193MXqzCnQsH9Pj"
     },
     {
       "name": "modals",
       "path": "scripts/dist/global/modals.js",
       "description": "Modal/popup open and close interactions",
-      "integrity": "sha384-TVOwU53aejBEN9o98t7E8m8kjZIyxdZuXknkqLr7/NlHalbk4PsAx4JtGij6gErf"
+      "integrity": "sha384-B0c0MJeew5/SK997aXWbNi770nTFN8CbTVSD9ASj2zAwYKrGG8o9UEL11S/smZ8J"
     },
     {
       "name": "swiperSliders",
       "path": "scripts/dist/global/swiperSliders.js",
       "description": "Swiper.js slider initialisation and configuration",
-      "integrity": "sha384-4efYFUmZw++i+PHyPFNkdaoDn090jPm7o5V+F1E59Ybj6PgOz5zxkqR7HN38detr"
+      "integrity": "sha384-NXVZIQ1GveyRCatxLgcFHvpgT2dCw/H32gT6ZsR24i7nj4uCGObLFMVwZXDp5e4N"
     },
     {
       "name": "navToggle",
       "path": "scripts/dist/components/navToggle.js",
       "description": "Custom nav menu open/close with fade animation",
-      "integrity": "sha384-+X+6v7AmT316+SrXcmQNXjK/frBA6ZItsxP7JsxlOjXS6/CSMsBEJOAr9IfC+saS"
+      "integrity": "sha384-o87v1EZ7JGnOVrpFCQ7K7gztdNRheuytDuq9t//w6GknDuDn3rpPH5RJBWhcFqsj"
     }
   ],
   "components": {
@@ -59,7 +59,7 @@
       "name": "viewSwitcher",
       "path": "scripts/dist/components/viewSwitcher.js",
       "description": "Grid/list view switcher with localStorage persistence",
-      "integrity": "sha384-44dteoEc4Ebj2nfdfLSugHAPKJPp4r9AJ7JycVvt8s4kRAIrEG/8PG1d5pwmjGmR"
+      "integrity": "sha384-jq73ALy6hhHflqiFbtm8HFm7eb3Apm9mkQ5eYg4pYDUMRnn6z9Wlf5H1gw/WumCf"
     }
   }
 }

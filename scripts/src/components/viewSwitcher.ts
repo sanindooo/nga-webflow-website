@@ -9,6 +9,9 @@
 ;(function () {
   'use strict'
 
+  const __s = ((window as any).__loadedScripts ??= {});
+  if (__s['viewSwitcher']) return; __s['viewSwitcher'] = true;
+
   const STORAGE_KEY = 'nga-works-view'
   const DEFAULT_VIEW = 'grid'
 

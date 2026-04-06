@@ -8,6 +8,9 @@
 ;(function () {
   'use strict'
 
+  const __s = ((window as any).__loadedScripts ??= {});
+  if (__s['gsapBasicAnimations']) return; __s['gsapBasicAnimations'] = true;
+
   document.addEventListener('DOMContentLoaded', () => {
     gsap.set('.slide-in', { y: 25, opacity: 0 })
     ScrollTrigger.batch('.slide-in', {

@@ -9,6 +9,9 @@
 ;(function () {
   'use strict'
 
+  const __s = ((window as any).__loadedScripts ??= {});
+  if (__s['animations']) return; __s['animations'] = true;
+
   document.addEventListener('DOMContentLoaded', () => {
     if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
       console.warn('[animations] GSAP or ScrollTrigger not loaded — ensure Webflow GSAP toggle is enabled')

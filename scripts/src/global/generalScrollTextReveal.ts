@@ -1,5 +1,8 @@
 "use strict";
 (() => {
+  const __s = ((window as any).__loadedScripts ??= {});
+  if (__s['generalScrollTextReveal']) return; __s['generalScrollTextReveal'] = true;
+
   (function () {
     const textElements = document.querySelectorAll("[scroll-text-reveal]");
     if (textElements.length === 0) return;
