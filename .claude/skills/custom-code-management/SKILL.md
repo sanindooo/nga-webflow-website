@@ -217,18 +217,77 @@ Visit or `curl` this URL to force-refresh.
 - **SRI is mandatory.** Every script tag must include `integrity` and `crossorigin="anonymous"`. Generate the hash at release time and store in the manifest.
 - **Webflow loaders must be updated after every new tag.** Pushing a new git tag makes files available on jsDelivr, but Webflow still serves the old version until the registered loader script is updated. After tagging, always update the loader's `displayName` version and `sourceCode` URL to reference the new tag, then re-register and re-apply via `data_scripts_tool`. Forgetting this step means the live site continues loading the old version.
 
-## MCP Scripts API Limitations
+## Script Placement Rules (CRITICAL)
 
-### No site-level apply action
-The MCP `data_scripts_tool` can **register** scripts site-wide (`add_inline_site_script`) and **delete** site-level scripts (`delete_all_site_scripts`), but it CANNOT apply scripts at the site level. There is no `upsert_site_script` action.
+**Global scripts → site-level ONLY.** `add_inline_site_script` both registers AND applies at the site level. NEVER apply global scripts to individual pages via `upsert_page_script` — this was the source of a recurring double-loading bug where old page-level scripts lingered after version updates.
 
-**Workaround:** Apply scripts per-page using `upsert_page_script`. This means:
-1. List all pages via `data_pages_tool > list_pages`
-2. Apply the full script set to each page individually
-3. Skip utility pages (401, 404, style-guide) unless they need scripts
+**Page-specific scripts → page-level ONLY.** Use `upsert_page_script` exclusively for scripts that belong on specific pages (e.g., viewSwitcher on Works, stickyFilter on News/Works).
 
-### NEVER delete site scripts without a plan to re-apply
-`delete_all_site_scripts` removes all site-level applied scripts instantly. Since there's no site-level apply action, recovery requires per-page application to every page. Always apply page-level scripts BEFORE deleting site-level ones if migrating.
+| Script type | Where it goes | Tool |
+|---|---|---|
+| Global (manifest `global[]`) | Site-level | `add_inline_site_script` |
+| Component (manifest `components{}`) | Page-level on relevant pages | `upsert_page_script` |
+
+### NEVER mix levels for the same script
+If a global script is at the site level, it MUST NOT also be at the page level. The dedup guard prevents double-init, but duplicate network requests waste bandwidth and signal a broken deployment.
+
+## jsDelivr URL Strategy
+
+**Use commit hashes, not tags.** jsDelivr tag resolution is unreliable for newer tags — tags v0.6.1+ consistently 404 even though the files exist on GitHub. Commit hash URLs resolve immediately and are immutable.
+
+```
+https://cdn.jsdelivr.net/gh/{user}/{repo}@{commit_sha}/{path}
+```
+
+Get the commit hash: `git rev-parse HEAD` (after committing and pushing the built files).
+
+**Fallback:** If tags do resolve (check with `curl -sI`), they're fine to use. But always verify before injecting.
+
+## Full Update Workflow (MANDATORY CHECKLIST)
+
+When updating scripts after a code change, follow EVERY step:
+
+### Phase 1: Build and push
+1. `pnpm run build` — compile TypeScript
+2. Generate new SRI hashes for all changed dist files
+3. Update `scripts/manifest.json` with new version + hashes
+4. Commit all changes (src + dist + manifest)
+5. Push to origin
+6. Get the commit hash: `git rev-parse HEAD`
+
+### Phase 2: Verify CDN
+7. Verify jsDelivr serves each file at the commit hash URL:
+   ```bash
+   curl -sI "https://cdn.jsdelivr.net/gh/{user}/{repo}@{commit_sha}/{path}"
+   ```
+   ALL must return 200. If any 404, the commit may not have pushed — check `git log origin/main`.
+
+### Phase 3: Register new loaders (site-level)
+8. For each global script in `manifest.json`:
+   - `add_inline_site_script` with the new version and commit-hash URL
+   - Location: `footer`
+
+### Phase 4: Clean up old page-level scripts (CRITICAL — DO NOT SKIP)
+9. `list_pages` to get all page IDs
+10. For EACH page, `get_page_script`:
+    - If it has global scripts from an old version → those are stale
+    - Use `upsert_page_script` to replace with ONLY page-specific scripts
+    - Pages with no page-specific scripts → `upsert_page_script` with empty `[]`
+    - `get_page_script` returning 404 = already clean, skip
+11. For pages that need component scripts, apply ONLY component scripts at the CURRENT version
+
+### Phase 5: Verify and publish
+12. `list_applied_scripts` — confirm site-level has all globals at new version
+13. Spot-check 2-3 pages with `get_page_script` — should have ZERO global scripts
+14. `publish_site`
+15. Hard-refresh the live site and check browser Network tab — each script should load ONCE
+
+### Post-publish verification
+- Filter Network tab by "JS" — no script name should appear more than once
+- Console should have no 404 errors for script files
+- If any duplicates or 404s, DO NOT proceed — debug first
+
+## MCP API Notes
 
 ### MCP app must be authorized for the target site
 The MCP `data_scripts_tool` uses an OAuth app token, NOT the `.env` site token. If `list_sites` doesn't show the target site, the MCP app needs re-authorization:
@@ -238,13 +297,5 @@ The MCP `data_scripts_tool` uses an OAuth app token, NOT the `.env` site token. 
 
 The `.env` `WEBFLOW_API_TOKEN` is a legacy site token for CMS/assets only — it CANNOT access the custom code endpoints.
 
-### Full update workflow (tag + register + apply)
-When updating scripts after a code change:
-1. `pnpm run build` — compile TypeScript
-2. Generate new SRI hashes
-3. Update `scripts/manifest.json` with new version + hashes
-4. Commit, tag, and push: `git tag vX.Y.Z && git push && git push --tags`
-5. Verify jsDelivr serves 200: `curl -s -o /dev/null -w "%{http_code}" "{jsdelivr_url}"`
-6. Register new loaders: `add_inline_site_script` for each script at new version
-7. Apply to ALL pages: `upsert_page_script` per page with the full script set
-8. Publish the site for changes to go live
+### upsert_page_script IS DESTRUCTIVE (replaces all)
+`upsert_page_script` replaces ALL existing scripts on the page. You MUST read existing scripts first if you want to preserve any. Writing an empty array `[]` clears all page scripts.

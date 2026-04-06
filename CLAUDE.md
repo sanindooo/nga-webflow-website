@@ -118,9 +118,10 @@ scripts/
   ```
   Place this inside the IIFE, right after `'use strict'`. The key must match the script's name in `manifest.json`.
 - **Clean code naming (mandatory):** Never use abbreviated or single-letter variable names in source TypeScript. Every variable, parameter, and function must use full, descriptive, semantic names that are immediately understandable at a scan (e.g., `listWrapper` not `l`, `savedView` not `s`, `filterElement` not `el`). Minification handles compression — source code must prioritize readability.
-- Served via **jsDelivr CDN** from GitHub release tags
+- Served via **jsDelivr CDN** using commit hash URLs (NOT tags — tag resolution is unreliable for newer releases). URL format: `https://cdn.jsdelivr.net/gh/{user}/{repo}@{commit_sha}/{path}`
 - Injected into Webflow via `/custom-code-management` skill
-- **After pushing a new git tag**, the Webflow loader scripts must also be updated to reference the new version — jsDelivr picks up the tag automatically, but Webflow continues serving the old loader until re-registered via `data_scripts_tool`
+- **Global scripts → site-level ONLY** (via `add_inline_site_script`). **NEVER apply global scripts to individual pages** — this causes duplicate loading when versions update. Page-level (`upsert_page_script`) is reserved for page-specific component scripts only.
+- **After pushing new code**, the Webflow loader scripts must be re-registered with the new commit hash URL via `data_scripts_tool`, and old page-level scripts must be cleaned up. See `SKILL.md` for the full mandatory checklist.
 - See `.claude/skills/custom-code-management/SKILL.md` for full workflow
 
 ## Automation Boundary
