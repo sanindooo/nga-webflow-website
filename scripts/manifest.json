@@ -1,5 +1,5 @@
 {
-  "version": "v0.7.2",
+  "version": "v0.7.3",
   "jsdelivr": {
     "user": "sanindooo",
     "repo": "nga-webflow-website"
@@ -15,7 +15,7 @@
       "name": "gsapSmoothScroll",
       "path": "scripts/dist/global/gsapSmoothScroll.js",
       "description": "Lenis smooth scrolling with GSAP ScrollTrigger integration",
-      "integrity": "sha384-XflXC6K9anBWpHItFjdpnyp5yOcsXaHbOeW8SxFyRcHvM9ml0V7fQaBVPoQHDPyF"
+      "integrity": "sha384-ei93YS5BdKd/nO37BkJmvYN+k3WcqXSob0TPspzVtnwZwjr+V0L56DNfvs2mZHDV"
     },
     {
       "name": "splitText",
