@@ -9,8 +9,6 @@
 ;(function () {
   'use strict'
 
-  if (typeof gsap === 'undefined' || typeof SplitText === 'undefined') return
-
   const __s = ((window as any).__loadedScripts ??= {})
   if (__s['heroTextReveal']) return; __s['heroTextReveal'] = true
 

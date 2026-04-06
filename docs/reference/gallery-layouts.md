@@ -1,6 +1,6 @@
 # Gallery Layout System
 
-Dynamic image gallery for the Works CMS template page. Layout and alignment are controlled per-image via CMS Option fields, applied at runtime by `galleryLayout.ts`.
+Dynamic image gallery for the Works CMS template page. Layout and alignment are controlled per-image via CMS Option fields, applied by CSS attribute selectors (no JavaScript).
 
 ## CMS Fields (per image slot, 1-12)
 
@@ -12,12 +12,13 @@ Each image slot has 3 fields:
 | Image N - Layout | Option | Width + height preset |
 | Image N - Alignment | Option | Horizontal alignment |
 
-### Layout Options (8 total)
+### Layout Options (9 total)
 
 | Option | flex-basis | aspect-ratio | Pairs with |
 |---|---|---|---|
 | Full Width | 100% | 16/9 | Solo row |
 | Full Width — Tall | 100% | 3/2 | Solo row |
+| Extra Large — Tall | calc(75% - 0.5rem) | 3/4 | Solo row (~25% whitespace) |
 | Large | calc(66% - 0.5rem) | 4/3 | Small |
 | Large — Tall | calc(66% - 0.5rem) | 3/4 | Small — Tall |
 | Half | calc(50% - 0.5rem) | 4/3 | Half |
@@ -44,6 +45,10 @@ The container uses `display: flex; flex-wrap: wrap; gap: 1rem`. Any two images w
 - Full Width (100%) = solo row
 - Large (66%) alone = solo row with 34% whitespace (use alignment to position)
 
+## CSS Implementation
+
+Layouts are applied via CSS attribute selectors on `data-layout` and `data-alignment` attributes. The CSS is embedded as a `<style>` block on the CMS template page or in site-level custom code. No JavaScript is used.
+
 ## Webflow Template Wiring
 
 Each `dynamic-image_item` element needs two custom attributes bound to CMS fields:
@@ -51,20 +56,11 @@ Each `dynamic-image_item` element needs two custom attributes bound to CMS field
 - `data-layout` → bound to "Image N - Layout"
 - `data-alignment` → bound to "Image N - Alignment"
 
-The script reads these values and applies inline styles.
-
 ## Adding/Modifying Layout Options
 
 The Webflow Data API **cannot** modify existing Option field option lists. To add a new layout option:
 
-1. Delete the affected "Image N - Layout" field in Webflow Designer
+1. Delete the affected "Image N - Layout" field(s) in Webflow Designer
 2. Recreate via API with the updated option list (use `create_collection_option_field`)
 3. Re-bind `data-layout` attributes in the template
-4. Update `layoutMap` in `scripts/src/components/galleryLayout.ts`
-5. Rebuild: `pnpm run build`
-
-## File Locations
-
-- Script source: `scripts/src/components/galleryLayout.ts`
-- Script dist: `scripts/dist/components/galleryLayout.js`
-- Manifest entry: `components.galleryLayout` in `scripts/manifest.json`
+4. Add the new CSS rule for the new `data-layout` value

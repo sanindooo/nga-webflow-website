@@ -116,19 +116,16 @@ scripts/
   ;(function () {
     'use strict'
 
-    // 1. CDN dependency guard — silent exit if ad blocker or CDN outage
-    if (typeof gsap === 'undefined') return
-
-    // 2. Dedup guard — prevents double-init via ngrok + CDN
+    // 1. Dedup guard — prevents double-init via ngrok + CDN
     const __s = ((window as any).__loadedScripts ??= {});
     if (__s['scriptName']) return; __s['scriptName'] = true;
 
-    // 3. Init function — all DOM queries and logic
+    // 2. Init function — all DOM queries and logic
     function init() {
       // script logic...
     }
 
-    // 4. DOM-ready gate — handles async CDN load timing
+    // 3. DOM-ready gate — handles async CDN load timing
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', init)
     } else {
@@ -136,9 +133,10 @@ scripts/
     }
   })()
   ```
-  - **CDN dependency guard:** Check `typeof` for every external global (gsap, ScrollTrigger, Lenis, SplitText, Swiper) before using it. Place before the dedup guard.
   - **Dedup guard:** Register on `window.__loadedScripts` and skip if present. Key must match `manifest.json` name.
   - **DOM-ready gate:** Never use bare `DOMContentLoaded` — the event fires once and CDN scripts may load after it. The `readyState` check handles both early and late loading.
+  - **CDN dependency handling:** Do NOT put `typeof gsap === 'undefined'` guards in the script itself — this causes permanent silent failures due to async loading races. Instead, declare `pollGlobal` in `manifest.json` and the **polling loader** ensures deps are ready before the script is even injected. See deploy-scripts skill for loader templates.
+  - **Never use `s.defer=true` on dynamic scripts** — it has NO effect per HTML spec. Dynamically created `<script>` elements are always async. The polling loader handles ordering instead.
 - **Lenis + ScrollTrigger rule:** Never call `ScrollTrigger.refresh()` when Lenis smooth scroll is active. Use `lenis.resize()` debounced via `requestAnimationFrame` instead. For lazy-loaded images, use `data-lenis-resize` attribute on the section.
 - **SplitText lifecycle:** Always call `.revert()` before re-splitting an element. Track instances in a `Map` to prevent DOM bloat from accumulated wrapper spans.
 - **Clean code naming (mandatory):** Never use abbreviated or single-letter variable names in source TypeScript. Every variable, parameter, and function must use full, descriptive, semantic names that are immediately understandable at a scan (e.g., `listWrapper` not `l`, `savedView` not `s`, `filterElement` not `el`). Minification handles compression — source code must prioritize readability.

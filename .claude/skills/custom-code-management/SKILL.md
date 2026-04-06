@@ -56,13 +56,25 @@ scripts/
 NO action for external `<script src>` tags. **Workaround: use a loader stub** — a
 small inline script that dynamically creates a `<script>` element pointing to jsDelivr.
 
-### Loader stub template (with SRI)
+### Loader stub templates (with SRI)
+
+**Polling loader** (for scripts with CDN dependencies like GSAP, SplitText, Lenis):
+Check `pollGlobal` in `manifest.json` for the dependency to poll for.
 
 ```javascript
-(function(){var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/gh/{user}/{repo}@{commit_sha}/{path}';s.integrity='{integrity}';s.crossOrigin='anonymous';s.defer=true;document.head.appendChild(s);})()
+(function(){function l(){if(typeof {pollGlobal}==='undefined'){setTimeout(l,50);return}var s=document.createElement('script');s.src='{jsdelivr_url}';s.integrity='{integrity}';s.crossOrigin='anonymous';document.head.appendChild(s)}l()})()
 ```
 
-~220 chars — safely under the 2000-char limit. One loader per jsDelivr script.
+**Direct loader** (for scripts with no CDN dependencies, e.g., viewSwitcher):
+
+```javascript
+(function(){var s=document.createElement('script');s.src='{jsdelivr_url}';s.integrity='{integrity}';s.crossOrigin='anonymous';document.head.appendChild(s)})()
+```
+
+~250 chars max — safely under the 2000-char limit. One loader per jsDelivr script.
+
+**CRITICAL:** Never use `s.defer=true` — it has NO effect on dynamically created
+scripts per HTML spec. They always execute async. The polling loader handles ordering.
 
 ### Two-step workflow: register then apply
 
@@ -178,10 +190,15 @@ Read `jsdelivr.user`, `jsdelivr.repo`, and `version` from `scripts/manifest.json
    curl -s -o /dev/null -w "%{http_code}" "https://cdn.jsdelivr.net/gh/{user}/{repo}@{commit_sha}/{path}"
    ```
    If not 200, wait and retry (jsDelivr may need time to pick up a new commit).
-4. **Build the loader stub** (inline script that loads the jsDelivr file):
-   ```javascript
-   (function(){var s=document.createElement('script');s.src='{jsdelivr_url}';s.integrity='{integrity}';s.crossOrigin='anonymous';s.defer=true;document.head.appendChild(s);})()
-   ```
+4. **Build the loader stub** — check `pollGlobal` in `manifest.json`:
+   - If `pollGlobal` is set (e.g., `"SplitText"`), use the **polling loader**:
+     ```javascript
+     (function(){function l(){if(typeof {pollGlobal}==='undefined'){setTimeout(l,50);return}var s=document.createElement('script');s.src='{jsdelivr_url}';s.integrity='{integrity}';s.crossOrigin='anonymous';document.head.appendChild(s)}l()})()
+     ```
+   - If NO `pollGlobal`, use the **direct loader**:
+     ```javascript
+     (function(){var s=document.createElement('script');s.src='{jsdelivr_url}';s.integrity='{integrity}';s.crossOrigin='anonymous';document.head.appendChild(s)})()
+     ```
 5. **Register the loader** via `data_scripts_tool` → `add_inline_site_script`:
    - `sourceCode`: the loader stub from step 4
    - `displayName`: script name in camelCase (e.g., "animationsLoader") — becomes the script `id`. **Must be alphanumeric only — no hyphens or underscores.**

@@ -11,8 +11,6 @@
 ;(function () {
   'use strict'
 
-  if (typeof gsap === 'undefined' || typeof Swiper === 'undefined') return
-
   const __s = ((window as any).__loadedScripts ??= {});
   if (__s['swiperSliders']) return; __s['swiperSliders'] = true;
 

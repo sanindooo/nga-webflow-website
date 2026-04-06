@@ -8,8 +8,6 @@
 ;(function () {
   'use strict'
 
-  if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return
-
   const __s = ((window as any).__loadedScripts ??= {});
   if (__s['gsapBasicAnimations']) return; __s['gsapBasicAnimations'] = true;
 

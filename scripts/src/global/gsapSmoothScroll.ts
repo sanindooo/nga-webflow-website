@@ -9,8 +9,6 @@
 ;(function () {
   'use strict'
 
-  if (typeof gsap === 'undefined' || typeof Lenis === 'undefined') return
-
   const __s = ((window as any).__loadedScripts ??= {});
   if (__s['gsapSmoothScroll']) return; __s['gsapSmoothScroll'] = true;
 

@@ -8,8 +8,6 @@
 ;(function () {
   'use strict'
 
-  if (typeof gsap === 'undefined') return
-
   const __s = ((window as any).__loadedScripts ??= {});
   if (__s['accordion']) return; __s['accordion'] = true;
 

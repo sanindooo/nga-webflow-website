@@ -1,5 +1,5 @@
 {
-  "version": "v0.7.5",
+  "version": "v0.8.0",
   "jsdelivr": {
     "user": "sanindooo",
     "repo": "nga-webflow-website"
@@ -9,55 +9,63 @@
       "name": "gsapBasicAnimations",
       "path": "scripts/dist/global/gsapBasicAnimations.js",
       "description": "Basic GSAP animations (fades, slides, scales)",
-      "integrity": "sha384-I6yxijphzbmHqSV9OQpEv/H/AO7rRLY28i8e0AQXlCBNOgCcfknLZFtzDE/M9mXo"
+      "pollGlobal": "ScrollTrigger",
+      "integrity": "sha384-fhVelA3PiBPX2J3DwiHq+n7mc1xwvJJKU76KsvUWYbYMHKaayFfUU5dE1RwRdi1v"
     },
     {
       "name": "gsapSmoothScroll",
       "path": "scripts/dist/global/gsapSmoothScroll.js",
       "description": "Lenis smooth scrolling with GSAP ScrollTrigger integration",
-      "integrity": "sha384-r7ky9ityUbgLtGB/unYl1otwIAyxmGRGYoScalrGIR03bK5ccIkateUKaU1EP69z"
+      "pollGlobal": "Lenis",
+      "integrity": "sha384-7DNSetJ90Gb/UofRupPbM3OfWuMaZnFCT/EXV5hjSU3qd7iaGkdnQ/2xv1hdwULV"
     },
-{
+    {
       "name": "accordion",
       "path": "scripts/dist/global/accordion.js",
       "description": "Accordion/FAQ toggle interactions",
-      "integrity": "sha384-HN0GhQlLRNjI9XS80oBawW0QeRE5J6vgAm2imFf4Xp/D6Q10o193MXqzCnQsH9Pj"
+      "pollGlobal": "gsap",
+      "integrity": "sha384-TadOR/U00A9T8x6zSDArIWEFDNH25Wf12ekwLwoYIz8ear1eJZ3moOoLfzJd5y3y"
     },
     {
       "name": "modals",
       "path": "scripts/dist/global/modals.js",
       "description": "Modal/popup open and close interactions",
-      "integrity": "sha384-B0c0MJeew5/SK997aXWbNi770nTFN8CbTVSD9ASj2zAwYKrGG8o9UEL11S/smZ8J"
+      "integrity": "sha384-d75b8Efg0MyVnT4SiFCFfJHocoV+vkTuI0R8H6DxhQkDoFhrDi17Do+MXnoeQnyJ"
     },
     {
       "name": "swiperSliders",
       "path": "scripts/dist/global/swiperSliders.js",
       "description": "Swiper.js slider initialisation and configuration",
-      "integrity": "sha384-NXVZIQ1GveyRCatxLgcFHvpgT2dCw/H32gT6ZsR24i7nj4uCGObLFMVwZXDp5e4N"
+      "pollGlobal": "Swiper",
+      "integrity": "sha384-Z5GxAVOI0hkwywgklMuLZbkj5fqWV3KUOUpkmUMURj6WrOZQZ+8TwaYmd6lRl5aw"
     },
     {
       "name": "navToggle",
       "path": "scripts/dist/components/navToggle.js",
       "description": "Custom nav menu open/close with fade animation",
+      "pollGlobal": "gsap",
       "integrity": "sha384-whYeKqI7LdoZPzA1cHUcNyJdc+PSSRKFNg/GePjltmVr0dhiezuBeCZWx8MTFLdq"
     },
     {
       "name": "stickyFilter",
       "path": "scripts/dist/global/stickyFilter.js",
       "description": "Hides sticky filter bar on scroll down, reveals on scroll up",
-      "integrity": "sha384-dyYLh8S36r3ECuKsra2/U77G/7RH9K/pcMOTJAwoCPNA0iMTa3VFmhWOt4ts3zL6"
+      "pollGlobal": "ScrollTrigger",
+      "integrity": "sha384-x5R/AJ+A1KzXg66iCigQ6osqjhEE6lfRYllrqoN9AA21z6nSEgJgp6Tu8WezabLl"
     },
     {
       "name": "heroTextReveal",
       "path": "scripts/dist/global/heroTextReveal.js",
       "description": "SplitText word-by-word reveal animation for the hero heading",
-      "integrity": "sha384-3oihlPB3oq13dHhq6qrKd/AuC01Dr96l+EIP8sojaPvMnm2oqxz9BjrOWb3i7lKU"
+      "pollGlobal": "SplitText",
+      "integrity": "sha384-ShuI5o5jgMJqWGxfVNWyK59e+ChWy9RAU13rgM11DRRTEF98ne2M2dJQrOQlJI3V"
     },
     {
       "name": "generalScrollTextReveal",
       "path": "scripts/dist/global/generalScrollTextReveal.js",
       "description": "Scroll-triggered SplitText word reveal for [scroll-text-reveal] elements",
-      "integrity": "sha384-KY0wMRBYS1VlOI+ifzEWu9KPwtpuv6vrHWQkIlp1gqBnq+lS4yagPm/ZSYF1EtIH"
+      "pollGlobal": "SplitText",
+      "integrity": "sha384-aoR514XV2MjzwBw/tf9QcfqbeaTOS98ibPGRK26wRzfdQ8uHJuAdT5BcHsyK2qUv"
     }
   ],
   "components": {
@@ -65,7 +73,7 @@
       "name": "viewSwitcher",
       "path": "scripts/dist/components/viewSwitcher.js",
       "description": "Grid/list view switcher with localStorage persistence",
-      "integrity": "sha384-jq73ALy6hhHflqiFbtm8HFm7eb3Apm9mkQ5eYg4pYDUMRnn6z9Wlf5H1gw/WumCf"
+      "integrity": "sha384-rMlSgvzyMKT4EelWP5HC7LP6f+kzZ5T5XIuLiYswewY4DXCu5ZzzlmrhmkhENhsF"
     }
   }
 }
