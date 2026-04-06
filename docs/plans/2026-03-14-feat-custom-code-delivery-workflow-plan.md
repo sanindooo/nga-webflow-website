@@ -10,7 +10,7 @@ brainstorm: docs/brainstorms/2026-03-14-custom-code-delivery-brainstorm.md
 
 ## Overview
 
-Establish a standardized workflow for managing and delivering custom JavaScript to Webflow sites. All JS lives in `scripts/` in this repo, is served via jsDelivr CDN from GitHub release tags, and is injected into Webflow pages using the MCP's `data_scripts_tool`. This also creates the `/custom-code-management` skill referenced (but not yet implemented) in the build-component pipeline.
+Establish a standardized workflow for managing and delivering custom JavaScript to Webflow sites. All JS lives in `scripts/` in this repo, is served via jsDelivr CDN from GitHub commit hash URLs, and is injected into Webflow pages using the MCP's `data_scripts_tool`. This also creates the `/custom-code-management` skill referenced (but not yet implemented) in the build-component pipeline.
 
 ## Problem Statement / Motivation
 
@@ -33,7 +33,7 @@ scripts/
     testimonial-carousel.js
 ```
 
-**Delivery chain:** Local file → git commit → semver tag → jsDelivr CDN → loader stub registered via `data_scripts_tool` (inline, ~220 chars) → applied to page → Webflow publish
+**Delivery chain:** Local file → git commit → push to main → jsDelivr CDN (via commit hash URL) → loader stub registered via `data_scripts_tool` (inline, ~220 chars) → applied to page → Webflow publish
 
 **Note:** `data_scripts_tool` only supports inline scripts (max 2000 chars), not external `<script src>` tags. The workaround is a loader stub that dynamically creates a `<script>` element pointing to jsDelivr with SRI. See `docs/spike-results.md`.
 
@@ -66,12 +66,12 @@ scripts/
 }
 ```
 
-- `version` — current semver tag; all jsDelivr URLs use this tag
+- `version` — current semver version; jsDelivr URLs use the commit hash (not the version tag)
 - `global` — array of scripts injected site-wide via Webflow Project Settings
 - `components` — map of component name → script metadata; injected per-page
 - `integrity` — SRI hash (sha384) for subresource integrity verification
 
-**Resolved URL formula:** `https://cdn.jsdelivr.net/gh/{user}/{repo}@{version}/{path}`
+**Resolved URL formula:** `https://cdn.jsdelivr.net/gh/{user}/{repo}@{commit_sha}/{path}`
 
 ### Script loading strategy
 
@@ -128,7 +128,7 @@ Create `.claude/skills/custom-code-management/SKILL.md` — the skill referenced
 - [x] Add `http-server` (or similar) as a devDependency
 - [x] Add `"dev": "npx http-server scripts/ -p 3000 --cors"` to `package.json`
 - [x] Document the dev testing workflow: use a browser extension (e.g., Resource Override, Requestly) to redirect jsDelivr URLs to `http://localhost:3000/` during development
-- [x] Alternative: use pre-release tags (`v1.0.0-beta.1`) for testing without local server
+- [x] Alternative: push to a branch and use that commit hash for testing without local server
 
 ### Phase 4: Build Pipeline Integration
 
@@ -144,9 +144,11 @@ Update `.claude/skills/build-component/SKILL.md` to integrate with the custom co
 
 ### Phase 5: Versioning and Release Workflow
 
-- [ ] Create first git tag: `git tag v0.1.0`
-- [ ] Add `"release"` script to `package.json`: `git tag $1 && git push --tags`
-- [ ] Document the tagging workflow in a reference doc
+**Update (2026-04-06):** Now uses commit hash URLs instead of tags. Tags were unreliable on jsDelivr (v0.6.1+ consistently 404'd).
+
+- [ ] ~~Create first git tag: `git tag v0.1.0`~~ — no longer needed, use commit hashes
+- [ ] ~~Add `"release"` script to `package.json`: `git tag $1 && git push --tags`~~ — replaced by `git rev-parse HEAD` after push
+- [ ] Document the commit-hash workflow in a reference doc
 - [ ] Add jsDelivr propagation check: verify URL returns 200 before proceeding to publish
 - [ ] Document cache purge URL pattern for troubleshooting
 
@@ -162,9 +164,9 @@ Update `.claude/skills/build-component/SKILL.md` to integrate with the custom co
 jsDelivr requires a public GitHub repo. This repo is intended to become a public starter template (per project memory), so this is aligned. **Verify the repo is public before testing jsDelivr URLs.**
 
 ### jsDelivr propagation timing
-After pushing a new tag, jsDelivr may take up to a few minutes to serve the new content. The pipeline should:
-1. Push the tag
-2. Poll `https://cdn.jsdelivr.net/gh/{user}/{repo}@{tag}/scripts/manifest.json` until it returns 200
+After pushing a new commit, jsDelivr may take up to a few minutes to serve the new content. The pipeline should:
+1. Push to main and get the commit hash via `git rev-parse HEAD`
+2. Poll `https://cdn.jsdelivr.net/gh/{user}/{repo}@{commit_sha}/scripts/manifest.json` until it returns 200
 3. Only then proceed to Webflow publish
 
 ### Script deduplication
@@ -188,7 +190,7 @@ When the pipeline registers a loader stub and applies it to a page, it must not 
 - [x] `build-component` skill Phase 4.4 uses the new skill instead of a stub reference
 - [x] `data_scripts_tool` behavior is documented in spike results
 - [x] Local dev server can serve scripts for testing
-- [ ] At least one git tag exists and jsDelivr successfully serves a script from it *(deferred — requires push + public repo)*
+- [ ] At least one commit hash URL works and jsDelivr successfully serves a script from it *(deferred — requires push + public repo)*
 - [x] `CLAUDE.md` documents the custom code workflow
 
 ## Dependencies & Risks

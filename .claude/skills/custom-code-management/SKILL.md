@@ -25,7 +25,7 @@ allowed-tools:
 
 You manage custom TypeScript/JavaScript delivery for Webflow sites. Source files
 live in `scripts/src/` (TypeScript), compiled output goes to `scripts/dist/`
-(JS), served via jsDelivr CDN from GitHub release tags, and injected into
+(JS), served via jsDelivr CDN from GitHub commit hash URLs, and injected into
 Webflow pages using `data_scripts_tool`.
 
 ## Project Structure
@@ -59,7 +59,7 @@ small inline script that dynamically creates a `<script>` element pointing to js
 ### Loader stub template (with SRI)
 
 ```javascript
-(function(){var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/gh/{user}/{repo}@{version}/{path}';s.integrity='{integrity}';s.crossOrigin='anonymous';s.defer=true;document.head.appendChild(s);})()
+(function(){var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/gh/{user}/{repo}@{commit_sha}/{path}';s.integrity='{integrity}';s.crossOrigin='anonymous';s.defer=true;document.head.appendChild(s);})()
 ```
 
 ~220 chars — safely under the 2000-char limit. One loader per jsDelivr script.
@@ -92,7 +92,7 @@ in `scripts/` for version control and rollback.
 ## jsDelivr URL Formula
 
 ```
-https://cdn.jsdelivr.net/gh/{user}/{repo}@{version}/{path}
+https://cdn.jsdelivr.net/gh/{user}/{repo}@{commit_sha}/{path}
 ```
 
 Read `jsdelivr.user`, `jsdelivr.repo`, and `version` from `scripts/manifest.json`.
@@ -160,13 +160,14 @@ Read `jsdelivr.user`, `jsdelivr.repo`, and `version` from `scripts/manifest.json
    }
    ```
 
-5. **Update version** in manifest.json to the tag you will create (e.g., bump `v0.1.0` → `v0.2.0`).
+5. **Update version** in manifest.json (e.g., bump `v0.1.0` → `v0.2.0`).
 
-6. **Inform user** to commit, push, and tag:
+6. **Inform user** to commit and push to main:
    ```bash
    git add scripts/ && git commit -m "feat: add {name} script"
-   git tag v{new_version} && git push && git push --tags
+   git push
    ```
+   Then get the commit hash with `git rev-parse HEAD` for jsDelivr URLs.
 
 ### 3. Inject Script into Webflow Page
 
@@ -174,9 +175,9 @@ Read `jsdelivr.user`, `jsdelivr.repo`, and `version` from `scripts/manifest.json
 2. Construct the jsDelivr URL from the formula above
 3. **Verify the URL is live** before injecting:
    ```bash
-   curl -s -o /dev/null -w "%{http_code}" "https://cdn.jsdelivr.net/gh/{user}/{repo}@{version}/{path}"
+   curl -s -o /dev/null -w "%{http_code}" "https://cdn.jsdelivr.net/gh/{user}/{repo}@{commit_sha}/{path}"
    ```
-   If not 200, wait and retry (jsDelivr may need time to pick up a new tag).
+   If not 200, wait and retry (jsDelivr may need time to pick up a new commit).
 4. **Build the loader stub** (inline script that loads the jsDelivr file):
    ```javascript
    (function(){var s=document.createElement('script');s.src='{jsdelivr_url}';s.integrity='{integrity}';s.crossOrigin='anonymous';s.defer=true;document.head.appendChild(s);})()
@@ -204,18 +205,18 @@ Read `jsdelivr.user`, `jsdelivr.repo`, and `version` from `scripts/manifest.json
 
 ## Cache Purging
 
-If jsDelivr serves stale content after a new tag:
+If jsDelivr serves stale content after a new commit:
 ```
-https://purge.jsdelivr.net/gh/{user}/{repo}@{tag}/{path}
+https://purge.jsdelivr.net/gh/{user}/{repo}@{commit_sha}/{path}
 ```
 Visit or `curl` this URL to force-refresh.
 
 ## Important Notes
 
 - **jsDelivr requires a public GitHub repo.** Verify the repo is public before testing URLs.
-- **Propagation delay:** After pushing a new tag, jsDelivr may take a few minutes. Always verify the URL returns 200 before injecting into Webflow.
-- **SRI is mandatory.** Every script tag must include `integrity` and `crossorigin="anonymous"`. Generate the hash at release time and store in the manifest.
-- **Webflow loaders must be updated after every new tag.** Pushing a new git tag makes files available on jsDelivr, but Webflow still serves the old version until the registered loader script is updated. After tagging, always update the loader's `displayName` version and `sourceCode` URL to reference the new tag, then re-register and re-apply via `data_scripts_tool`. Forgetting this step means the live site continues loading the old version.
+- **Propagation delay:** After pushing a new commit, jsDelivr may take a few minutes. Always verify the URL returns 200 before injecting into Webflow.
+- **SRI is mandatory.** Every script tag must include `integrity` and `crossorigin="anonymous"`. Generate the hash at build time and store in the manifest.
+- **Webflow loaders must be updated after every new push.** Pushing new code makes files available on jsDelivr at the commit hash URL, but Webflow still serves the old version until the registered loader script is updated. After pushing, always update the loader's `displayName` version and `sourceCode` URL to reference the new commit hash, then re-register and re-apply via `data_scripts_tool`. Forgetting this step means the live site continues loading the old version.
 
 ## Script Placement Rules (CRITICAL)
 
