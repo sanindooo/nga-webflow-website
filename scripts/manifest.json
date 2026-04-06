@@ -59,7 +59,7 @@
       "name": "viewSwitcher",
       "path": "scripts/dist/components/viewSwitcher.js",
       "description": "Grid/list view switcher with localStorage persistence",
-      "integrity": "sha384-cda+GMKYLHqH57sqcn6/6ZMEC1ctRjDL/g9d5ErdpDaTOnt92H5boUaAS18Iatmm"
+      "integrity": "sha384-44dteoEc4Ebj2nfdfLSugHAPKJPp4r9AJ7JycVvt8s4kRAIrEG/8PG1d5pwmjGmR"
     }
   }
 }
