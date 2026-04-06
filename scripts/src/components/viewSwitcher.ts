@@ -18,12 +18,12 @@
 
     if (!toggles.length || wrappers.length < 2) return
 
-    // First wrapper has u-view-filter = list, second = grid
+    // First wrapper has u-row-view = list, second = grid
     let listWrapper: HTMLElement | null = null
     let gridWrapper: HTMLElement | null = null
 
     wrappers.forEach((w) => {
-      if (w.classList.contains('u-view-filter')) {
+      if (w.classList.contains('u-row-view')) {
         listWrapper = w
       } else {
         gridWrapper = w
