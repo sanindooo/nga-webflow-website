@@ -1,1 +1,127 @@
-"use strict";(()=>{(function(){"use strict";const i=window.__loadedScripts??(window.__loadedScripts={});if(i.navToggle)return;i.navToggle=!0;const o=()=>{const e=document.querySelector('[data-nav="open"]'),t=document.querySelector(".header"),s=document.querySelector('[data-nav="menu"]'),c=document.querySelectorAll(".nav-custom_menu-link");if(!e||!t)return;e.setAttribute("role","button"),e.setAttribute("aria-label","Open navigation menu"),e.setAttribute("aria-expanded","false"),s&&e.setAttribute("aria-controls",s.id||"nav-menu");const d=()=>{t.classList.add("is-nav-open"),e.setAttribute("aria-expanded","true"),e.setAttribute("aria-label","Close navigation menu")},n=()=>{t.classList.remove("is-nav-open"),e.setAttribute("aria-expanded","false"),e.setAttribute("aria-label","Open navigation menu")},r=()=>t.classList.contains("is-nav-open");e.addEventListener("click",()=>r()?n():d()),document.addEventListener("keydown",a=>{a.key==="Escape"&&r()&&n()}),c.forEach(a=>a.addEventListener("click",n))};document.readyState==="loading"?document.addEventListener("DOMContentLoaded",o):o()})();})();
+"use strict";
+(() => {
+  (function() {
+    "use strict";
+    const __s = window.__loadedScripts ?? (window.__loadedScripts = {});
+    if (__s["navToggle"]) return;
+    __s["navToggle"] = true;
+    const initNavToggle = () => {
+      const toggle = document.querySelector('[data-nav="open"]');
+      const header = document.querySelector(".header");
+      const menu = document.querySelector('[data-nav="menu"]');
+      const navLinks = document.querySelectorAll(
+        ".nav-custom_menu-link"
+      );
+      const navList = document.querySelector(
+        ".nav-custom_list:not(.u-social-links)"
+      );
+      const socialList = document.querySelector(
+        ".nav-custom_list.u-social-links"
+      );
+      if (!toggle || !header) return;
+      toggle.setAttribute("role", "button");
+      toggle.setAttribute("aria-label", "Open navigation menu");
+      toggle.setAttribute("aria-expanded", "false");
+      if (menu) toggle.setAttribute("aria-controls", menu.id || "nav-menu");
+      let isAnimating = false;
+      const open = () => {
+        if (navList) gsap.set(navList, { x: 0 });
+        if (socialList) gsap.set(socialList, { x: 0 });
+        header.classList.add("is-nav-open");
+        gsap.to(header, {
+          backgroundColor: "#d2c8b9d9",
+          backdropFilter: "blur(20px)",
+          duration: 0.35,
+          ease: "power2.out"
+        });
+        toggle.setAttribute("aria-expanded", "true");
+        toggle.setAttribute("aria-label", "Close navigation menu");
+        const items = [
+          ...navList ? Array.from(navList.children) : [],
+          ...socialList ? Array.from(socialList.children) : []
+        ];
+        if (items.length) {
+          gsap.fromTo(
+            items,
+            { opacity: 0, y: 8 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.35,
+              // stagger: 0.06,
+              ease: "power2.out"
+            }
+          );
+        }
+      };
+      const close = () => {
+        if (isAnimating) return;
+        isAnimating = true;
+        toggle.setAttribute("aria-expanded", "false");
+        toggle.setAttribute("aria-label", "Open navigation menu");
+        const centerX = window.innerWidth / 2;
+        const timeline = gsap.timeline({
+          onComplete: () => {
+            header.classList.remove("is-nav-open");
+            if (navList) gsap.set(navList, { x: 0 });
+            if (socialList) gsap.set(socialList, { x: 0 });
+            isAnimating = false;
+          }
+        });
+        if (navList) {
+          timeline.to(
+            navList,
+            { x: centerX / 2, duration: 0.75, ease: "power2.in" },
+            0
+          );
+        }
+        if (socialList) {
+          timeline.to(
+            socialList,
+            { x: -centerX / 2, duration: 0.75, ease: "power2.in" },
+            0
+          );
+        }
+        const items = [
+          ...navList ? Array.from(navList.children) : [],
+          ...socialList ? Array.from(socialList.children) : []
+        ];
+        if (items.length) {
+          timeline.to(
+            items,
+            { opacity: 0, duration: 0.5, ease: "power1.in" },
+            0.2
+          );
+        }
+        timeline.to(
+          header,
+          {
+            backgroundColor: "rgba(0,0,0,0)",
+            backdropFilter: "blur(0px)",
+            duration: 0.5,
+            ease: "power2.in"
+          },
+          0.2
+        );
+      };
+      const isOpen = () => header.classList.contains("is-nav-open");
+      toggle.addEventListener("click", () => {
+        if (isAnimating) return;
+        isOpen() ? close() : open();
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && isOpen()) close();
+      });
+      navLinks.forEach(
+        (link) => link.addEventListener("click", () => {
+          if (!isAnimating) close();
+        })
+      );
+    };
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initNavToggle);
+    } else {
+      initNavToggle();
+    }
+  })();
+})();
