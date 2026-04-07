@@ -26,6 +26,7 @@
 
   window.stopSmoothScroll = () => lenis.stop()
   window.startSmoothScroll = () => lenis.start()
+  window.resizeSmoothScroll = () => lenis.resize()
 
   // Recalculate Lenis scroll height after lazy-loaded images settle.
   // Add data-lenis-resize to any section with CMS images whose intrinsic

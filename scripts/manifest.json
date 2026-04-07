@@ -1,5 +1,5 @@
 {
-  "version": "v0.10.1",
+  "version": "v0.10.2",
   "jsdelivr": {
     "user": "sanindooo",
     "repo": "nga-webflow-website"
@@ -17,7 +17,7 @@
       "path": "scripts/dist/global/gsapSmoothScroll.js",
       "description": "Lenis smooth scrolling with GSAP ScrollTrigger integration",
       "pollGlobal": "Lenis",
-      "integrity": "sha384-7DNSetJ90Gb/UofRupPbM3OfWuMaZnFCT/EXV5hjSU3qd7iaGkdnQ/2xv1hdwULV"
+      "integrity": "sha384-5Vb74I3qG/nzGYrMIq9cT1Ugs+3sbl4QUItgU981sO949aSOGvg2XzDHuvgNZBEK"
     },
     {
       "name": "accordion",
@@ -79,7 +79,7 @@
       "name": "viewSwitcher",
       "path": "scripts/dist/components/viewSwitcher.js",
       "description": "Grid/list view switcher with localStorage persistence",
-      "integrity": "sha384-rMlSgvzyMKT4EelWP5HC7LP6f+kzZ5T5XIuLiYswewY4DXCu5ZzzlmrhmkhENhsF"
+      "integrity": "sha384-PeUiuxCLPB4AxqgFiSZbtIXTWdCk6XVD6q6fhLzX0x7gYFiS07Oh04Fl3A1SROxW"
     },
     "typologyLinks": {
       "name": "typologyLinks",

@@ -47,6 +47,13 @@
       })
 
       localStorage.setItem(STORAGE_KEY, view)
+
+      // Recalculate Lenis scroll height after layout change
+      if (window.resizeSmoothScroll) {
+        requestAnimationFrame(() => {
+          window.resizeSmoothScroll!()
+        })
+      }
     }
 
     applyView(initialView)

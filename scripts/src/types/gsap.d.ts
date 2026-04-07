@@ -123,4 +123,5 @@ interface Window {
   __loadedScripts?: Record<string, boolean>;
   stopSmoothScroll?: () => void;
   startSmoothScroll?: () => void;
+  resizeSmoothScroll?: () => void;
 }
