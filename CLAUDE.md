@@ -70,6 +70,9 @@ Managed via Webflow's `variable_tool`. The Relume starter template ships with it
 - `button-function` / `button-function-arg1` / `button-function-arg2` — button behavior
 - `data-eapps-font-size` / `data-eapps-line-height` — responsive font scaling
 
+### Finsweet CMS Filter (v1)
+Used for CMS collection filtering on listing pages (e.g., Works, News). See `docs/reference/finsweet-cms-filter.md` for full attribute reference, CDN URLs, and setup patterns.
+
 ## Asset Pipeline
 
 Images, icons, and logos are exported from Figma and uploaded to Webflow via REST API scripts in `scripts/api/`. The pipeline is tracked by `assets/asset-manifest.json`.
@@ -168,6 +171,10 @@ scripts/
 - Claude vision compares against Figma reference (primary)
 - Playwright `toHaveScreenshot()` for regression between iterations (secondary)
 - Baseline URL: configured in `playwright.config.ts`
+
+## Webflow ID Caching (mandatory)
+
+After any Webflow API or MCP call that returns resource IDs (pages, collections, fields, component IDs), **save them to `docs/reference/webflow-ids.md`** if not already cached. This prevents redundant `list_pages`, `get_collection_list`, and similar lookups in future conversations. Always verify cached IDs still exist before using them on destructive operations (e.g., `upsert_page_script`, `delete_collection_items`).
 
 ## Webflow MCP Notes
 - Element Builder limited to 3 nesting levels per operation — use multiple sequential operations for deeper structures
