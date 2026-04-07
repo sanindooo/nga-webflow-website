@@ -85,7 +85,7 @@
       "name": "typologyLinks",
       "path": "scripts/dist/components/typologyLinks.js",
       "description": "Sets typology grid links to Works page with Finsweet filter query param",
-      "integrity": "sha384-6J7L4Bd49lgpK1W7daJu2Zx6QVCzwAOhGWRRJX7u3Jb7aU4WFXc9eUSq80UcaW8i"
+      "integrity": "sha384-Fq/03apDGbbP8Vj5IISwSzS2zqg44DKjTnV6uQQaJBMuZkM7RHQvWL+x9Sifl1cf"
     }
   }
 }
