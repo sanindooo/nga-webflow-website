@@ -159,6 +159,7 @@
       const prevButton = slider.querySelector<HTMLElement>('.slide-button.swiper-button-prev')
       const splitSlider = slider.querySelector<HTMLElement>('.swiper.split')
       const children = slider.querySelectorAll('.image-slider_item')
+      const pagination = slider.querySelector<HTMLElement>('.swiper-pagination')
 
       if (textAnimationSlider) {
         if (children.length === 1) {
@@ -178,7 +179,7 @@
             prevEl: prevButton,
           },
           pagination: {
-            el: '.swiper-pagination',
+            el: pagination,
           },
           on: {
             init: function (swiper: SwiperInstance) {
@@ -211,10 +212,11 @@
 
       if (defaultSlider) {
         new Swiper(defaultSlider, {
-          loop: false,
+          loop: true,
           speed: 1000,
-          freeMode: true,
-          grabCursor: true,
+          slidesPerView: 1,
+          centeredSlides: true,
+          pagination: pagination,
         })
       }
 
