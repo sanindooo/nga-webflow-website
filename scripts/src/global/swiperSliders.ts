@@ -215,10 +215,9 @@
           loop: true,
           speed: 1000,
           slidesPerView: 1,
-          centeredSlides: true,
           pagination: {
             el: pagination,
-            type: 'bullets',
+            clickable: true,
           },
         })
       }

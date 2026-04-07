@@ -73,6 +73,9 @@ Managed via Webflow's `variable_tool`. The Relume starter template ships with it
 ### Finsweet CMS Filter (v1)
 Used for CMS collection filtering on listing pages (e.g., Works, News). See `docs/reference/finsweet-cms-filter.md` for full attribute reference, CDN URLs, and setup patterns.
 
+### Swiper Sliders
+Swiper.js loaded via CDN with polling loader (`pollGlobal: "Swiper"`). Each slider section is wrapped with `swiper_slider`, then the `.swiper` element gets a type combo class (`text-animation`, `default`, `split`) that determines its TS config. CMS Collection Lists map directly to Swiper structure (DynamoWrapper → `.swiper`, DynamoList → `.swiper-wrapper`, DynamoItem → `.swiper-slide`). See `docs/reference/swiper-slider-setup.md` for full class structure, pagination CSS, and how to add new slider types.
+
 ## Asset Pipeline
 
 Images, icons, and logos are exported from Figma and uploaded to Webflow via REST API scripts in `scripts/api/`. The pipeline is tracked by `assets/asset-manifest.json`.
@@ -179,6 +182,7 @@ After any Webflow API or MCP call that returns resource IDs (pages, collections,
 ## Webflow MCP Notes
 - Element Builder limited to 3 nesting levels per operation — use multiple sequential operations for deeper structures
 - Designer API requires Webflow Designer open + companion app running
+- **Site ID verification (mandatory on failure):** Always use the site ID from `docs/reference/webflow-ids.md`. If MCP calls fail twice, do a fresh `sites_list` API call to verify the cached ID is still correct — a wrong site ID produces a generic "Unable to connect" error that mimics connection issues.
 - Images uploaded via `/export-assets` skill or `pnpm run upload-assets` (MCP can't upload directly)
 - Publish via `sites-publish` after building, then wait before screenshotting
 
