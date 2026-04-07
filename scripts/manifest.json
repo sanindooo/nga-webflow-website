@@ -1,5 +1,5 @@
 {
-  "version": "v0.8.0",
+  "version": "v0.8.1",
   "jsdelivr": {
     "user": "sanindooo",
     "repo": "nga-webflow-website"
@@ -59,6 +59,12 @@
       "description": "SplitText word-by-word reveal animation for the hero heading",
       "pollGlobal": "SplitText",
       "integrity": "sha384-ShuI5o5jgMJqWGxfVNWyK59e+ChWy9RAU13rgM11DRRTEF98ne2M2dJQrOQlJI3V"
+    },
+    {
+      "name": "filterActiveState",
+      "path": "scripts/dist/global/filterActiveState.js",
+      "description": "Toggles active class on All/clear button for Finsweet CMS Filter",
+      "integrity": "sha384-ATQ/lld/MqWtxzA+JTKimaf+sQzY7tjMILFnJ9sjhL8pofFSjDeYqbiLPi+52U5c"
     },
     {
       "name": "generalScrollTextReveal",
