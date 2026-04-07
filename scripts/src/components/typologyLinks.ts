@@ -20,7 +20,7 @@
     typologyLinks.forEach((link) => {
       const categoryName = link.getAttribute('data-title')
       if (!categoryName) return
-      link.href = '/works?Category=' + encodeURIComponent(categoryName)
+      link.href = '/works?Category=' + encodeURIComponent(categoryName).replace(/%20/g, '+')
     })
   }
 
