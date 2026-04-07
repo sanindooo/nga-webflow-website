@@ -11,8 +11,9 @@
 ;(function () {
   'use strict'
 
-  const __s = ((window as any).__loadedScripts ??= {});
-  if (__s['swiperSliders']) return; __s['swiperSliders'] = true;
+  const __s = ((window as any).__loadedScripts ??= {})
+  if (__s['swiperSliders']) return
+  __s['swiperSliders'] = true
 
   const splitInstances = new Map<HTMLElement, SplitTypeInstance[]>()
 
@@ -152,13 +153,14 @@
     if (!sliderWrappers.length) return
 
     sliderWrappers.forEach((slider) => {
+      const textAnimationSlider = slider.querySelector<HTMLElement>('.swiper.text-animation')
       const defaultSlider = slider.querySelector<HTMLElement>('.swiper.default')
       const nextButton = slider.querySelector<HTMLElement>('.slide-button.swiper-button-next')
       const prevButton = slider.querySelector<HTMLElement>('.slide-button.swiper-button-prev')
       const splitSlider = slider.querySelector<HTMLElement>('.swiper.split')
       const children = slider.querySelectorAll('.image-slider_item')
 
-      if (defaultSlider) {
+      if (textAnimationSlider) {
         if (children.length === 1) {
           nextButton?.classList.add('hide')
           nextButton?.setAttribute('aria-hidden', 'true')
@@ -166,7 +168,7 @@
           prevButton?.setAttribute('aria-hidden', 'true')
         }
 
-        new Swiper(defaultSlider, {
+        new Swiper(textAnimationSlider, {
           loop: true,
           speed: 1000,
           slidesPerView: 1,
@@ -204,6 +206,15 @@
               }, 200)
             },
           },
+        })
+      }
+
+      if (defaultSlider) {
+        new Swiper(defaultSlider, {
+          loop: false,
+          speed: 1000,
+          freeMode: true,
+          grabCursor: true,
         })
       }
 
