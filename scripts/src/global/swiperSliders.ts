@@ -216,7 +216,9 @@
           speed: 1000,
           slidesPerView: 1,
           centeredSlides: true,
-          pagination: pagination,
+          pagination: {
+            el: pagination,
+          },
         })
       }
 
