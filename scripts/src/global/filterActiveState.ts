@@ -6,7 +6,10 @@
  * it on the parent news-filter_link wrapper (which holds button-square + label).
  * Also manages the "All" clear button active state, which Finsweet doesn't handle.
  *
- * Dependencies: Finsweet CMS Filter v1 (loaded externally)
+ * Uses the Finsweet JS API callback to sync state after initialization,
+ * which handles URL-restored filter state (fs-cmsfilter-showquery).
+ *
+ * Dependencies: Finsweet CMS Filter v1 (loaded externally via CDN)
  */
 
 ;(function () {
@@ -16,6 +19,21 @@
   if (__s['filterActiveState']) return; __s['filterActiveState'] = true
 
   const ACTIVE_CLASS = 'fs-cmsfilter_active'
+
+  function syncActiveStates(filterForm: HTMLElement, clearWrapper: Element | null | undefined) {
+    const hasChecked = filterForm.querySelector<HTMLInputElement>('input[type="checkbox"]:checked') !== null
+
+    if (clearWrapper) {
+      clearWrapper.classList.toggle(ACTIVE_CLASS, !hasChecked)
+    }
+
+    filterForm.querySelectorAll<HTMLInputElement>('input[type="checkbox"]').forEach((checkbox) => {
+      const checkboxWrapper = checkbox.closest('.news-filter_link')
+      if (checkboxWrapper) {
+        checkboxWrapper.classList.toggle(ACTIVE_CLASS, checkbox.checked)
+      }
+    })
+  }
 
   function init() {
     const filterForms = document.querySelectorAll<HTMLElement>('[fs-cmsfilter-element="filters"]')
@@ -30,40 +48,27 @@
         clearWrapper.classList.add(ACTIVE_CLASS)
       }
 
-      // Get all checkboxes and their parent wrappers
-      const checkboxes = filterForm.querySelectorAll<HTMLInputElement>('input[type="checkbox"]')
-
+      // Sync on every filter change
       filterForm.addEventListener('change', () => {
-        const hasChecked = filterForm.querySelector<HTMLInputElement>('input[type="checkbox"]:checked') !== null
-
-        // Toggle "All" wrapper
-        if (clearWrapper) {
-          clearWrapper.classList.toggle(ACTIVE_CLASS, !hasChecked)
-        }
-
-        // Toggle each checkbox's parent wrapper (news-filter_link)
-        checkboxes.forEach((checkbox) => {
-          const checkboxWrapper = checkbox.closest('.news-filter_link')
-          if (checkboxWrapper) {
-            checkboxWrapper.classList.toggle(ACTIVE_CLASS, checkbox.checked)
-          }
-        })
+        syncActiveStates(filterForm, clearWrapper)
       })
 
       // Handle clear button click
-      if (clearButton && clearWrapper) {
+      if (clearButton) {
         clearButton.addEventListener('click', () => {
-          clearWrapper.classList.add(ACTIVE_CLASS)
-          // Remove active from all checkbox wrappers
-          checkboxes.forEach((checkbox) => {
-            const checkboxWrapper = checkbox.closest('.news-filter_link')
-            if (checkboxWrapper) {
-              checkboxWrapper.classList.remove(ACTIVE_CLASS)
-            }
-          })
+          syncActiveStates(filterForm, clearWrapper)
         })
       }
     })
+
+    // Re-sync after Finsweet initializes (handles URL-restored filter state)
+    const fsAttributes = ((window as any).fsAttributes ??= [])
+    fsAttributes.push(['cmsfilter', () => {
+      filterForms.forEach((filterForm) => {
+        const clearWrapper = filterForm.querySelector<HTMLElement>('[fs-cmsfilter-element="clear"]')?.parentElement
+        syncActiveStates(filterForm, clearWrapper)
+      })
+    }])
   }
 
   if (document.readyState === 'loading') {
