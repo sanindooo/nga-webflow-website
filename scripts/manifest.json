@@ -1,5 +1,5 @@
 {
-  "version": "v0.8.2",
+  "version": "v0.9.0",
   "jsdelivr": {
     "user": "sanindooo",
     "repo": "nga-webflow-website"
@@ -80,6 +80,12 @@
       "path": "scripts/dist/components/viewSwitcher.js",
       "description": "Grid/list view switcher with localStorage persistence",
       "integrity": "sha384-rMlSgvzyMKT4EelWP5HC7LP6f+kzZ5T5XIuLiYswewY4DXCu5ZzzlmrhmkhENhsF"
+    },
+    "typologyLinks": {
+      "name": "typologyLinks",
+      "path": "scripts/dist/components/typologyLinks.js",
+      "description": "Sets typology grid links to Works page with Finsweet filter query param",
+      "integrity": "sha384-Opl+gl2gK10r46GJRuKoOLOJakeDZUe7vElQXBgBvYLiCL25ifVYw12EDzMhQzXA"
     }
   }
 }
