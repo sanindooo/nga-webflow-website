@@ -63,15 +63,13 @@ For each named script:
 6. Stage and commit only the changed files: `git add scripts/`
 7. Push to origin, get commit hash
 8. Verify jsDelivr serves the file at the commit hash URL
-9. Register the updated loader via `add_inline_site_script` using the polling or
-   direct loader template (check `pollGlobal` in manifest — see Phase 4 of Full
-   Deployment for loader templates)
+9. **CRITICAL — Full re-registration required:** Run Phase 4 of the Full Deployment
+   Workflow (delete all site scripts, then re-register ALL loaders). See the
+   "Webflow Script Versioning Constraint" section below for why.
 10. If it's a component script, also update relevant page-level scripts
 11. Publish site
-12. Report summary
-
-**Key difference from full deploy:** Step 9 does NOT `delete_all_site_scripts` first.
-It only re-registers the specific loader(s), which supersedes the old version by ID.
+12. Verify with `list_applied_scripts` — confirm exactly 1 entry per script, no dupes
+13. Report summary
 
 ## Full Deployment Workflow
 
@@ -166,6 +164,30 @@ Read `jsdelivr.user` and `jsdelivr.repo` from `scripts/manifest.json`.
 
 **NEVER mix levels.** Global scripts must not appear at page-level.
 `upsert_page_script` is DESTRUCTIVE — always read existing scripts first.
+
+## Webflow Script Versioning Constraint
+
+**`add_inline_site_script` STACKS versions — it does NOT replace.** Registering a
+script at version `0.10.1` when `0.10.0` is already applied results in BOTH versions
+being applied simultaneously. There is no API to update or remove a single applied
+script.
+
+**Consequence:** Every deployment — whether full or single-script — MUST follow this
+sequence:
+
+1. `delete_all_site_scripts` — removes all applied scripts (registrations are kept
+   but that's harmless; only applied scripts load on the page)
+2. Re-register ALL scripts via `add_inline_site_script` at the NEW manifest version
+3. Verify with `list_applied_scripts` — must show exactly 1 entry per script
+
+**The version string must be unique** across the entire registration history. Webflow
+rejects duplicates. Use the manifest version (without `v` prefix) for all scripts in
+a deployment. If a version was already used in a prior deployment, bump it.
+
+**Post-deploy verification checklist:**
+- `list_applied_scripts` returns exactly N scripts (N = globals + components)
+- No script ID appears more than once
+- All versions match the current manifest version
 
 ## Important Notes
 
