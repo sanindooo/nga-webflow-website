@@ -218,6 +218,7 @@
           centeredSlides: true,
           pagination: {
             el: pagination,
+            type: 'bullets',
           },
         })
       }
