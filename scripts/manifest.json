@@ -1,5 +1,5 @@
 {
-  "version": "v0.10.2",
+  "version": "v0.11.0",
   "jsdelivr": {
     "user": "sanindooo",
     "repo": "nga-webflow-website"
@@ -65,6 +65,12 @@
       "path": "scripts/dist/global/filterActiveState.js",
       "description": "Toggles active class on All/clear button for Finsweet CMS Filter",
       "integrity": "sha384-9SgxXZeBgvRS0sbZDqhjkfCjk8j/HizLAgkwVXgADUpQll02HX52mrHrMOGULclY"
+    },
+    {
+      "name": "navTheme",
+      "path": "scripts/dist/global/navTheme.js",
+      "description": "Switches nav logo and hamburger colors based on section background theme",
+      "integrity": "sha384-7a7e/yEMr1T6g1EmC37BvII+XEhMkXT+8k88ZcFVP1maEEUudcJmxeiFHbdxo/1q"
     },
     {
       "name": "generalScrollTextReveal",
