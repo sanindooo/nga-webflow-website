@@ -1,11 +1,8 @@
 /**
  * Slider Animations
  *
- * Swiper-based sliders with split text animations for testimonials.
+ * Swiper-based sliders with split text animations for hero titles.
  * Dependencies: GSAP, Swiper, SplitType (all via CDN)
- *
- * Required CSS:
- * .slide-animated — prevents re-animation of the first slide
  */
 
 ;(function () {
@@ -28,122 +25,39 @@
   }
 
   const setInitialStates = (slide: HTMLElement) => {
-    const testimonialTexts = slide.querySelectorAll('.text-rich-text.u-testimonial p')
-    const clientImages = slide.querySelectorAll<HTMLElement>('.testimonial_client-image')
-    const clientName = slide.querySelector<HTMLElement>('.text-weight-medium.text-color-green')
-    const companyName = slide.querySelector<HTMLElement>('.font-family-sharetech')
-
-    if (testimonialTexts.length > 0) {
-      testimonialTexts.forEach((paragraph) => {
-        gsap.set(paragraph, { opacity: 0 })
-      })
-    }
-
-    if (clientImages.length > 0) {
-      clientImages.forEach((image) => {
-        gsap.set(image, { y: 10, opacity: 0, scale: 0.95 })
-      })
-    }
-
-    if (clientName) gsap.set(clientName, { opacity: 0 })
-    if (companyName) gsap.set(companyName, { opacity: 0 })
+    const heroTitles = slide.querySelectorAll<HTMLElement>('.heading-style-h1.hero_title')
+    heroTitles.forEach((title) => {
+      gsap.set(title, { opacity: 0 })
+    })
   }
 
   const animateSlide = (slide: HTMLElement) => {
     revertSplits(slide)
 
-    const testimonialTexts = slide.querySelectorAll('.text-rich-text.u-testimonial p')
-    const clientImages = slide.querySelectorAll<HTMLElement>('.testimonial_client-image')
-    const clientName = slide.querySelector<HTMLElement>('.text-weight-medium.text-color-green')
-    const companyName = slide.querySelector<HTMLElement>('.font-family-sharetech')
-
+    const heroTitles = slide.querySelectorAll<HTMLElement>('.heading-style-h1.hero_title')
     const instances: SplitTypeInstance[] = []
     const timeline = gsap.timeline()
-    let currentTime = 0.2
 
-    if (testimonialTexts.length > 0) {
-      testimonialTexts.forEach((paragraph, index) => {
-        const split = new SplitType(paragraph as HTMLElement, { types: 'words' })
-        instances.push(split)
+    heroTitles.forEach((title, index) => {
+      const split = new SplitType(title, { types: 'words' })
+      instances.push(split)
 
-        gsap.set(split.words, { yPercent: 80, opacity: 0 })
-
-        timeline.to(
-          split.words,
-          {
-            duration: 0.8,
-            yPercent: 0,
-            opacity: 1,
-            stagger: 0.02,
-            ease: 'power2.out',
-          },
-          currentTime + index * 0.2,
-        )
-
-        timeline.set(paragraph, { opacity: 1 }, currentTime + index * 0.2)
-      })
-
-      const lastParagraphFinish = currentTime + (testimonialTexts.length - 1) * 0.2 + 0.8
-      currentTime = lastParagraphFinish + 0.3
-    }
-
-    if (clientImages.length > 0) {
-      clientImages.forEach((image) => {
-        timeline.to(
-          image,
-          {
-            duration: 0.8,
-            y: 0,
-            opacity: 1,
-            scale: 1,
-            ease: 'power2.out',
-          },
-          currentTime,
-        )
-      })
-      currentTime -= 0.05
-    }
-
-    if (clientName) {
-      const splitName = new SplitType(clientName, { types: 'words' })
-      instances.push(splitName)
-      gsap.set(splitName.words, { yPercent: 30, opacity: 0 })
+      gsap.set(split.words, { yPercent: 80, opacity: 0 })
 
       timeline.to(
-        splitName.words,
+        split.words,
         {
-          duration: 0.6,
+          duration: 0.8,
           yPercent: 0,
           opacity: 1,
-          stagger: 0.01,
+          stagger: 0.03,
           ease: 'power2.out',
         },
-        currentTime,
+        0.2 + index * 0.15,
       )
 
-      timeline.set(clientName, { opacity: 1 }, currentTime)
-      currentTime += 0.1
-    }
-
-    if (companyName) {
-      const splitCompany = new SplitType(companyName, { types: 'words' })
-      instances.push(splitCompany)
-      gsap.set(splitCompany.words, { yPercent: 25, opacity: 0 })
-
-      timeline.to(
-        splitCompany.words,
-        {
-          duration: 0.6,
-          yPercent: 0,
-          opacity: 1,
-          stagger: 0.01,
-          ease: 'power2.out',
-        },
-        currentTime,
-      )
-
-      timeline.set(companyName, { opacity: 1 }, currentTime)
-    }
+      timeline.set(title, { opacity: 1 }, 0.2 + index * 0.15)
+    })
 
     splitInstances.set(slide, instances)
   }
@@ -174,6 +88,7 @@
           speed: 1000,
           slidesPerView: 1,
           centeredSlides: true,
+          grabCursor: true,
           navigation: {
             nextEl: nextButton,
             prevEl: prevButton,
@@ -215,6 +130,7 @@
           loop: true,
           speed: 1000,
           slidesPerView: 1,
+          grabCursor: true,
           pagination: {
             el: pagination,
             clickable: true,

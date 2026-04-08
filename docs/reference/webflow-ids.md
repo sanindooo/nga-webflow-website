@@ -32,6 +32,15 @@ Quick-lookup for site, page, collection, and field IDs to avoid redundant API/MC
 | News | `69bfd12acb21ae530fc28b7a` | News articles |
 | News Categories | `69d500138e25cedac5625829` | Filter categories for news |
 | Categories | `69d391322d74e768b7f530fb` | Work typology categories |
+| Hero Slides | `69d67b80d7fc5b0a878583d5` | Homepage hero slider items |
+
+## Key CMS Fields (Hero Slides)
+
+| Field | Slug | Type |
+|---|---|---|
+| Name | `name` | PlainText (used as heading text) |
+| Background Image | `background-image` | Image |
+| Sort Order | `sort-order` | Number |
 
 ## Key CMS Fields (News)
 
