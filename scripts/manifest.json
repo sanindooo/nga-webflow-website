@@ -1,5 +1,5 @@
 {
-  "version": "v0.12.1",
+  "version": "v0.12.2",
   "jsdelivr": {
     "user": "sanindooo",
     "repo": "nga-webflow-website"
@@ -77,7 +77,7 @@
       "path": "scripts/dist/global/officeCardTabs.js",
       "description": "Place/map tab switcher for office cards on the contact page",
       "guardSelector": ".office-card_component",
-      "integrity": "sha384-n9XeogHrvR4Td8dwTiA1m9DE5DJ3jd0bI2j/bpaxePpSwsLNQHtwZFNI8VjjGPoR"
+      "integrity": "sha384-4DxeuT2YCaQZa70HzpfyZEzztwCuEqlnxoVxfGq4vHfdQsHc09bM7Q4IXznoU9JI"
     },
     {
       "name": "generalScrollTextReveal",
