@@ -1,5 +1,5 @@
 {
-  "version": "v0.11.0",
+  "version": "v0.12.0",
   "jsdelivr": {
     "user": "sanindooo",
     "repo": "nga-webflow-website"
@@ -71,6 +71,13 @@
       "path": "scripts/dist/global/navTheme.js",
       "description": "Switches nav logo and hamburger colors based on section background theme",
       "integrity": "sha384-7a7e/yEMr1T6g1EmC37BvII+XEhMkXT+8k88ZcFVP1maEEUudcJmxeiFHbdxo/1q"
+    },
+    {
+      "name": "officeCardTabs",
+      "path": "scripts/dist/global/officeCardTabs.js",
+      "description": "Place/map tab switcher for office cards on the contact page",
+      "guardSelector": ".office-card_component",
+      "integrity": "sha384-ECGEsWmLhlQJBjGbJXOqeoJ4rnqvPcio6lUPT8AkCiMLqCbN4wleewsMH9oxn/Wo"
     },
     {
       "name": "generalScrollTextReveal",
