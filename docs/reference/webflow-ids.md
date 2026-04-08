@@ -33,6 +33,19 @@ Quick-lookup for site, page, collection, and field IDs to avoid redundant API/MC
 | News Categories | `69d500138e25cedac5625829` | Filter categories for news |
 | Categories | `69d391322d74e768b7f530fb` | Work typology categories |
 
+## Key CMS Fields (News)
+
+| Field | Slug | Type |
+|---|---|---|
+| Hero Image | `hero-image` | Image |
+| Hero Slider | `hero-slider` | MultiImage |
+| News Category | `news-category-2` | Reference → News Categories |
+| Publication Date | `publication-date` | DateTime |
+| Summary | `summary` | PlainText |
+| Body | `body` | RichText |
+| SEO Meta Title | `seo-meta-title` | PlainText |
+| SEO Meta Description | `seo-meta-description` | PlainText |
+
 ## Key CMS Fields (Projects)
 
 | Field | Slug | Type |

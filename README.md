@@ -60,15 +60,68 @@ Figma Design → Export Assets → Extract Tokens → Sync to Webflow → Upload
 
 ## Commands
 
-### Claude Code Skills
+### Pipeline Skills
+
+Core skills that orchestrate the Figma-to-Webflow build process.
 
 | Command | Description |
 |---|---|
-| `/build-component` | Full pipeline — Figma design to Webflow build with visual verification |
-| `/export-assets` | Export images, icons, and logos from Figma and upload to Webflow |
+| `/build-component` | Full pipeline — Figma design to Webflow build with visual verification loop |
+| `/export-assets` | Export images, icons, and logos from Figma and upload to Webflow asset library |
+| `/upload-copy` | Upload client copy from spreadsheets or Word docs to Webflow static pages and CMS items |
+
+### Code & Deployment Skills
+
+Manage custom JavaScript and deploy to production.
+
+| Command | Description |
+|---|---|
+| `/custom-code-management` | Write, build, and inject custom TypeScript/JS via jsDelivr CDN |
+| `/deploy-scripts` | One-command deployment — builds, hashes, commits, pushes, registers loaders, publishes |
+
+### SEO & Metadata Skills
+
+Generate and apply metadata for assets and pages.
+
+| Command | Description |
+|---|---|
 | `/asset-metadata` | Generate and apply alt text for Webflow assets using Claude vision |
 | `/update-seo` | Generate and apply SEO metadata (titles, descriptions, OG tags) for Webflow pages |
-| `/custom-code-management` | Manage custom JavaScript delivery via jsDelivr CDN |
+
+### Webflow Site Management Skills
+
+Audit, publish, and manage Webflow sites. These are shared skills from the `webflow-skills` package.
+
+| Command | Description |
+|---|---|
+| `/safe-publish` | Publish with a plan-confirm-publish workflow showing what changed |
+| `/site-audit` | Comprehensive site audit — pages, CMS, health scoring, actionable insights |
+| `/accessibility-audit` | WCAG 2.1 audit — buttons, forms, links, focus states, headings, keyboard nav |
+| `/link-checker` | Find and fix broken or insecure links across the entire site including CMS |
+| `/asset-audit` | Identify assets missing alt text or with non-SEO-friendly names |
+| `/flowkit-naming` | Apply Flowkit CSS naming system — audit classes or build new components |
+| `/cms-best-practices` | Expert guidance on CMS architecture, relationships, and content structure |
+| `/cms-collection-setup` | Create a new CMS collection with fields and relationships |
+| `/bulk-cms-update` | Create or update multiple CMS items with validation and diff preview |
+
+### Development Workflow Skills
+
+General-purpose skills from the `compound-engineering` package for planning, reviewing, and shipping.
+
+| Command | Description |
+|---|---|
+| `/ce-plan` | Transform feature descriptions into structured implementation plans |
+| `/ce-work` | Execute work plans efficiently while maintaining quality |
+| `/ce-review` | Exhaustive code review using multi-agent analysis and worktrees |
+| `/ce-brainstorm` | Explore requirements through collaborative dialogue before planning |
+| `/ce-ideate` | Generate and evaluate grounded improvement ideas for the project |
+| `/ce-compound` | Document a recently solved problem to compound team knowledge |
+| `/deepen-plan` | Enhance a plan with parallel research agents for depth and best practices |
+| `/reproduce-bug` | Systematically reproduce and investigate a bug from a GitHub issue |
+| `/agent-browser` | Browser automation — navigate pages, fill forms, take screenshots, extract data |
+| `/frontend-design` | Build web interfaces with genuine design quality |
+| `/simplify` | Review changed code for reuse, quality, and efficiency |
+| `/git-worktree` | Manage Git worktrees for isolated parallel development |
 
 ### Scripts
 
@@ -90,7 +143,9 @@ Figma Design → Export Assets → Extract Tokens → Sync to Webflow → Upload
 ├── .claude/skills/             # Claude Code skills (pipeline orchestration)
 │   ├── build-component/        # Main Figma-to-Webflow pipeline skill
 │   ├── custom-code-management/ # jsDelivr script delivery skill
+│   ├── deploy-scripts/         # One-command script deployment skill
 │   ├── export-assets/          # Figma export + Webflow upload skill
+│   ├── upload-copy/            # Spreadsheet/doc copy upload skill
 │   ├── asset-metadata/         # Bulk alt text generation skill
 │   └── update-seo/             # SEO metadata automation skill
 ├── scripts/

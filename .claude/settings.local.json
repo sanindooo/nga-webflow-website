@@ -102,7 +102,31 @@
       "Bash(curl -s -X POST \"https://api.webflow.com/v2/sites/$WEBFLOW_SITE_ID/custom_code\" -H \"Authorization: Bearer $WEBFLOW_API_TOKEN\" -H \"Content-Type: application/json\" -d '{:*)",
       "Bash(git rm:*)",
       "Bash(git rebase:*)",
-      "Bash(GIT_EDITOR=true git rebase:*)"
+      "Bash(GIT_EDITOR=true git rebase:*)",
+      "Bash(git stash:*)",
+      "Bash(/usr/bin/curl --version)",
+      "Bash(/usr/bin/curl:*)",
+      "Bash(npx tsc:*)",
+      "Skill(deploy-scripts)",
+      "WebFetch(domain:html.spec.whatwg.org)",
+      "WebFetch(domain:help.webflow.com)",
+      "WebFetch(domain:wiki.whatwg.org)",
+      "WebFetch(domain:gsap.com)",
+      "WebFetch(domain:dev.to)",
+      "WebFetch(domain:javascript.info)",
+      "WebFetch(domain:finsweet.com)",
+      "WebFetch(domain:forum.finsweet.com)",
+      "WebFetch(domain:attributes.finsweet.com)",
+      "WebFetch(domain:www.npmjs.com)",
+      "WebFetch(domain:discourse.webflow.com)",
+      "WebFetch(domain:www.dereksiu.com.au)",
+      "WebFetch(domain:www.sygnal.com)",
+      "WebFetch(domain:axiabits.medium.com)",
+      "WebFetch(domain:www.flowradar.com)",
+      "WebFetch(domain:cdn.jsdelivr.net)",
+      "Bash(/usr/bin/openssl dgst:*)",
+      "Bash(/usr/bin/openssl base64:*)",
+      "Bash(ls -d ~/*/syntech-intelligence-dashboard)"
     ]
   }
 }

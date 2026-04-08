@@ -66,7 +66,8 @@ For each named script:
 9. **CRITICAL — Full re-registration required:** Run Phase 4 of the Full Deployment
    Workflow (delete all site scripts, then re-register ALL loaders). See the
    "Webflow Script Versioning Constraint" section below for why.
-10. If it's a component script, also update relevant page-level scripts
+10. **CRITICAL — Clean page-level scripts:** Run Phase 5 of the Full Deployment
+    Workflow. `delete_all_site_scripts` does NOT touch page-level scripts.
 11. Publish site
 12. Verify with `list_applied_scripts` — confirm exactly 1 entry per script, no dupes
 13. Report summary
@@ -128,17 +129,18 @@ For each named script:
 
 ### Phase 5: Clean page-level scripts
 
-14. `list_pages` to get all page IDs
+**All scripts are now site-level.** Component scripts (viewSwitcher, typologyLinks)
+are registered via `add_inline_site_script` just like globals — dedup guards prevent
+double-init. Page-level scripts are NEVER needed and are always stale duplicates.
+
+14. Read page IDs from `docs/reference/webflow-ids.md`
 15. For EACH page, `get_page_script`:
     - 404 = clean, skip
     - Empty array = clean, skip
-    - Has scripts → check each one:
-      - If it's a global script → stale duplicate, remove it
-      - If it's a component script → keep, but update version to current
-    - `upsert_page_script` with the cleaned array
-16. Apply component scripts to their relevant pages (read page names to determine):
-    - `viewSwitcher` → Works page
-    - Other component scripts → match by page purpose
+    - Has ANY scripts → stale duplicates of site-level scripts. Clear with
+      `upsert_page_script` passing an empty array `[]`
+16. This step is mandatory — `delete_all_site_scripts` does NOT touch page-level
+    scripts, so stale page scripts survive across deploys indefinitely
 
 ### Phase 6: Verify and publish
 
