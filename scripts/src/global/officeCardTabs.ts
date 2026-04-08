@@ -21,8 +21,9 @@
         map: mapPanel,
       }
 
-      // Set default state: place visible, map hidden
-      mapPanel.style.display = 'none'
+      // Set default state: place active
+      placePanel.classList.add('is-active')
+      mapPanel.classList.remove('is-active')
 
       tabs.forEach((tab) => {
         const target = tab.getAttribute('data-office-tab')
@@ -38,9 +39,9 @@
           tabs.forEach((sibling) => sibling.classList.remove('is-active'))
           tab.classList.add('is-active')
 
-          // Toggle panel visibility
+          // Toggle active class on panels
           Object.entries(panels).forEach(([key, panel]) => {
-            panel.style.display = key === target ? '' : 'none'
+            panel.classList.toggle('is-active', key === target)
           })
         })
       })
