@@ -15,7 +15,7 @@
 
     // Set up stacking styles and inject a black overlay div into each card
     sections.forEach((section, index) => {
-      section.style.cssText = `position: sticky; top: 0; background: white; z-index: ${index + 1};`
+      section.style.cssText = `position: sticky; top: 0; z-index: ${index + 1};`
 
       const blackOverlay = document.createElement('div')
       blackOverlay.style.cssText =

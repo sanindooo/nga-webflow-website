@@ -1,5 +1,5 @@
 {
-  "version": "v0.12.5",
+  "version": "v0.13.0",
   "jsdelivr": {
     "user": "sanindooo",
     "repo": "nga-webflow-website"
@@ -85,6 +85,13 @@
       "description": "Scroll-triggered SplitText word reveal for [scroll-text-reveal] elements",
       "pollGlobal": "SplitText",
       "integrity": "sha384-aoR514XV2MjzwBw/tf9QcfqbeaTOS98ibPGRK26wRzfdQ8uHJuAdT5BcHsyK2qUv"
+    },
+    {
+      "name": "careersStackingCards",
+      "path": "scripts/dist/global/careersStackingCards.js",
+      "description": "Stacking benefit cards with clip-path reveal and black overlay fade",
+      "pollGlobal": "ScrollTrigger",
+      "integrity": "sha384-jFzs8jMpmj/LpGpErhbFwuuASXX+tHudAA7qIapxUWvBnVMAora91f1SmWvNsTMi"
     }
   ],
   "components": {
