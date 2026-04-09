@@ -76,6 +76,9 @@ Used for CMS collection filtering on listing pages (e.g., Works, News). See `doc
 ### Swiper Sliders
 Swiper.js loaded via CDN with polling loader (`pollGlobal: "Swiper"`). Each slider section is wrapped with `swiper_slider`, then the `.swiper` element gets a type combo class (`text-animation`, `default`, `split`) that determines its TS config. CMS Collection Lists map directly to Swiper structure (DynamoWrapper → `.swiper`, DynamoList → `.swiper-wrapper`, DynamoItem → `.swiper-slide`). See `docs/reference/swiper-slider-setup.md` for full class structure, pagination CSS, how to add new slider types, and the **Animating Slides with SplitText** section (mandatory reading before touching any slider text/image animation — covers the GSAP SplitText vs SplitType gotcha, the mask reveal pattern, the compound polling loader for Swiper+SplitText, and the correct Swiper callback pattern for animating the first slide on load).
 
+### Modals
+Accessible dialog modals are driven by the global `modals.ts` script and a tiny DOM contract — no new JS per instance. Discovery is via `[role="dialog"]` + native `id` (bound to CMS slug for CMS dialogs); triggers use `data-modal-open="{id}"`; close controls use `data-modal-close`; the optional global overlay uses `[data-modal-overlay]`. The script handles `is-open` class toggling, aria-hidden/aria-expanded sync, runtime aria-labelledby/describedby wiring, ESC + click-outside + close-button dismissal, focus trap, return-focus, and body scroll lock. Per-dialog overlay opt-out via `data-modal-no-overlay`. **See `docs/reference/modal-setup.md` for the complete attribute table, three reusable patterns (static, CMS-list, multi-static), sanity-check snippet, and common mistakes. Mandatory reading before building any new modal.**
+
 ## Asset Pipeline
 
 Images, icons, and logos are exported from Figma and uploaded to Webflow via REST API scripts in `scripts/api/`. The pipeline is tracked by `assets/asset-manifest.json`.
