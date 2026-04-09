@@ -1,5 +1,5 @@
 {
-  "version": "v0.13.0",
+  "version": "v0.13.1",
   "jsdelivr": {
     "user": "sanindooo",
     "repo": "nga-webflow-website"
@@ -30,7 +30,7 @@
       "name": "modals",
       "path": "scripts/dist/global/modals.js",
       "description": "Modal/popup open and close interactions",
-      "integrity": "sha384-d75b8Efg0MyVnT4SiFCFfJHocoV+vkTuI0R8H6DxhQkDoFhrDi17Do+MXnoeQnyJ"
+      "integrity": "sha384-ssW82XCUA/7UGMpWEN+MVYamgvNH70tvpInN0cuuNoyPhrVvEQIb0m11u+3+n1H6"
     },
     {
       "name": "heroTextReveal",
