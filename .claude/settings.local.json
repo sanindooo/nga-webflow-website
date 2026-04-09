@@ -126,7 +126,14 @@
       "WebFetch(domain:cdn.jsdelivr.net)",
       "Bash(/usr/bin/openssl dgst:*)",
       "Bash(/usr/bin/openssl base64:*)",
-      "Bash(ls -d ~/*/syntech-intelligence-dashboard)"
+      "Bash(ls -d ~/*/syntech-intelligence-dashboard)",
+      "Bash(echo \"swiperSliders: $\\(openssl dgst -sha384 -binary scripts/dist/global/swiperSliders.js)",
+      "Bash(mv bleu-bird.jpg publications/kingfisher-on-branch.jpg)",
+      "Bash(mv close-up-plant.svg publications/close-up-plant.svg)",
+      "Bash(mv field-with-sky.jpg publications/grass-field-cloudy-sky.jpg)",
+      "Bash(mv flower-field.jpg publications/red-poppies-in-wheat-field.jpg)",
+      "Bash(mv flower-image.jpg publications/yellow-cosmos-flowers.jpg)",
+      "Bash(ls /Users/sanindo/nga-webflow-website/.env*)"
     ]
   }
 }
