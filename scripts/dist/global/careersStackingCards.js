@@ -21,20 +21,25 @@
         const figure = section.querySelector(".benefit-card_figure");
         const blackOverlay = section.querySelector('div[style*="background: black"]');
         if (figure) {
+          const image = figure.querySelector("img");
+          const sharedScrollTrigger = {
+            trigger: section,
+            start: "top 30%",
+            end: "top top"
+            //   scrub: true,
+          };
           gsap.fromTo(
             figure,
             { clipPath: "inset(0% 0% 100% 0%)" },
-            {
-              clipPath: "inset(0% 0% 0% 0%)",
-              ease: "none",
-              scrollTrigger: {
-                trigger: section,
-                start: "top 30%",
-                end: "top top"
-                //   scrub: true,
-              }
-            }
+            { clipPath: "inset(0% 0% 0% 0%)", ease: "none", scrollTrigger: sharedScrollTrigger }
           );
+          if (image) {
+            gsap.fromTo(
+              image,
+              { scale: 1.2 },
+              { scale: 1, ease: "power4.out", duration: 1, scrollTrigger: sharedScrollTrigger }
+            );
+          }
         }
         if (index < sections.length - 1 && blackOverlay) {
           const nextSection = sections[index + 1];

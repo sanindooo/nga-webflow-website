@@ -27,22 +27,30 @@
       const figure = section.querySelector<HTMLElement>('.benefit-card_figure')
       const blackOverlay = section.querySelector<HTMLElement>('div[style*="background: black"]')
 
-      // Clip-path reveal on incoming card's figure — starts after card is halfway up
+      // Clip-path reveal + image scale on incoming card — starts after card is 30% up
       if (figure) {
+        const image = figure.querySelector<HTMLElement>('img')
+
+        const sharedScrollTrigger = {
+          trigger: section,
+          start: 'top 30%',
+          end: 'top top',
+          //   scrub: true,
+        }
+
         gsap.fromTo(
           figure,
           { clipPath: 'inset(0% 0% 100% 0%)' },
-          {
-            clipPath: 'inset(0% 0% 0% 0%)',
-            ease: 'none',
-            scrollTrigger: {
-              trigger: section,
-              start: 'top 30%',
-              end: 'top top',
-              //   scrub: true,
-            },
-          },
+          { clipPath: 'inset(0% 0% 0% 0%)', ease: 'none', scrollTrigger: sharedScrollTrigger },
         )
+
+        if (image) {
+          gsap.fromTo(
+            image,
+            { scale: 1.2 },
+            { scale: 1, ease: 'power4.out', duration: 1, scrollTrigger: sharedScrollTrigger },
+          )
+        }
       }
 
       // Fade in black overlay on the card being covered as the next card scrolls over it
