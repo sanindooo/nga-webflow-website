@@ -248,6 +248,95 @@ if (gallerySlider) {
 
 4. **Build and deploy:** `pnpm run build` → commit → push → `/deploy-scripts`
 
+## Animating Slides with SplitText
+
+When a slider needs per-slide text animations (e.g., the hero on the homepage), follow these rules — they exist because every rule here maps to a bug we've already hit.
+
+### Library: GSAP SplitText only
+
+**Always use `new SplitText(...)` — never `new SplitType(...)`.** Webflow loads GSAP SplitText via the GSAP toggle; the separate `split-type` npm library is NOT loaded. `new SplitType(...)` throws silently, the animation never runs, and the failure looks like "my text is just stuck invisible." The TypeScript declarations in `scripts/src/types/gsap.d.ts` export both names with the same shape, so the compiler won't catch the mistake — you have to remember.
+
+Match the pattern in `generalScrollTextReveal.ts` and `heroTextReveal.ts`:
+
+```ts
+const split = new SplitText(element, { types: 'words, lines' })
+gsap.set(split.lines, { overflow: 'hidden' })   // creates the mask
+gsap.set(split.words, { y: '110%' })              // hide words under the mask
+gsap.to(split.words, {
+  y: '0%',
+  duration: 1,
+  ease: 'power4.out',
+  stagger: 0.05,
+})
+```
+
+### Mask reveal pattern
+
+Lines get `overflow: hidden` (the mask). Words start at `y: 110%` (below the visible line) and animate to `y: 0%`. **Do not also animate opacity** — the mask alone handles visibility. Mixing opacity and transform tends to double up and introduce jank.
+
+### Scope slider animations with `.is-slider`
+
+If a page might have both a static hero (animated by `heroTextReveal.ts`) AND a slider hero (animated by `swiperSliders.ts`), the two scripts will fight for the same element. Avoid this by adding `is-slider` as a combo class on slider hero titles, then:
+
+- `swiperSliders.ts` queries `.heading-style-h1.hero_title.is-slider`
+- `heroTextReveal.ts` queries `.heading-style-h1.hero_title:not(.is-slider)`
+
+### Compound polling loader for Swiper + SplitText
+
+A script that uses both Swiper and SplitText must wait for BOTH globals before it runs. The standard polling loader only polls one global, so for these scripts write a compound loader at deploy time:
+
+```js
+(function(){function l(){if(typeof Swiper==='undefined'||typeof SplitText==='undefined'){setTimeout(l,50);return}var s=document.createElement('script');s.src='{jsdelivr_url}';s.integrity='{integrity}';s.crossOrigin='anonymous';document.head.appendChild(s)}l()})()
+```
+
+Pass this as the `sourceCode` in `add_inline_site_script`. Keep `pollGlobal: "Swiper"` in the manifest as a hint for humans — the actual compound check lives in the registered loader.
+
+### Swiper callback pattern for text reveals
+
+For a slider whose text should animate in on page load **and** on every slide change:
+
+```ts
+on: {
+  init: function (swiper) {
+    // Split every slide once (including loop clones — they're in swiper.slides).
+    swiper.slides.forEach((slide) => splitHeroTitles(slide))
+
+    // Reveal the initial active slide. Swiper does NOT fire slideChange on init,
+    // so if you skip this step the first slide stays hidden under the mask.
+    const activeSlide = swiper.slides.find((s) =>
+      s.classList.contains('swiper-slide-active'),
+    )
+    if (activeSlide) revealHeroTitles(activeSlide)
+  },
+  slideChangeTransitionStart: function (swiper) {
+    // Hide the outgoing slide (reset its words to y:110%) so the next time
+    // it becomes active, it can animate back in cleanly.
+    const previousSlide = swiper.slides[swiper.previousIndex]
+    if (previousSlide) hideHeroTitles(previousSlide)
+
+    // Reveal the incoming active slide in parallel with the Swiper transition.
+    const activeSlide = swiper.slides[swiper.activeIndex]
+    if (activeSlide) revealHeroTitles(activeSlide)
+  },
+},
+```
+
+**Anti-patterns to avoid:**
+
+- **Do not** use a `setTimeout` inside `slideChange` to "wait for the transition" — `slideChangeTransitionStart` fires at the right moment already.
+- **Do not** iterate all slides in `slideChangeTransitionStart` to reset them all — you'll zero out slides you never land on, including loop clones, and they'll stay stuck. Only reset the previous slide.
+- **Do not** skip the `init` reveal — the first slide gets no animation on page load otherwise.
+- **Do not** re-split an element without tracking the instance in a `Map` and calling `revert()` first, or you'll accumulate DOM bloat from stacked wrapper spans.
+
+### Coordinating text + image animations
+
+When you need to animate both the slide's image (e.g., clip-path reveal, scale-in) AND its text:
+
+- Keep both animations in the same Swiper callback so they stay synchronised with the transition.
+- For the image, use `gsap.fromTo` on the background image element inside the slide. Scope with `slide.querySelector('.{component}_image')`.
+- Offset the text reveal slightly (add `delay: 0.2` to the text timeline) so the image reveal leads and the text catches up — reads better than both starting together.
+- If the image animation needs to run only on the first reveal (not on every loop-back), track it on the slide element: `slide.dataset.imageAnimated = 'true'` and skip if already set.
+
 ## Swiper Configuration Quick Reference
 
 | Option | Type | Common values |
