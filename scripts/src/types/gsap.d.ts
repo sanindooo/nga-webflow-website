@@ -109,6 +109,8 @@ interface SwiperSlide extends HTMLElement {}
 
 interface SwiperInstance {
   slides: SwiperSlide[];
+  activeIndex: number;
+  previousIndex: number;
 }
 
 interface SwiperConstructor {

@@ -1,8 +1,9 @@
 /**
  * Slider Animations
  *
- * Swiper-based sliders with split text animations for hero titles.
- * Dependencies: GSAP, Swiper, SplitType (all via CDN)
+ * Swiper-based sliders. The text-animation variant runs a SplitText mask
+ * reveal on hero titles as slides change (matches generalScrollTextReveal).
+ * Dependencies: GSAP, SplitText, Swiper (all via CDN)
  */
 
 ;(function () {
@@ -12,54 +13,41 @@
   if (__s['swiperSliders']) return
   __s['swiperSliders'] = true
 
-  const splitInstances = new Map<HTMLElement, SplitTypeInstance[]>()
+  const heroSplits = new Map<HTMLElement, SplitTypeInstance[]>()
 
-  const revertSplits = (slide: HTMLElement) => {
-    const instances = splitInstances.get(slide)
-    if (instances) {
-      instances.forEach((instance) => {
-        if ((instance as any).revert) (instance as any).revert()
-      })
-      splitInstances.delete(slide)
-    }
-  }
+  const getHeroTitles = (slide: HTMLElement) =>
+    slide.querySelectorAll<HTMLElement>('.heading-style-h1.hero_title.is-slider')
 
-  const setInitialStates = (slide: HTMLElement) => {
-    const heroTitles = slide.querySelectorAll<HTMLElement>('.heading-style-h1.hero_title.is-slider')
-    heroTitles.forEach((title) => {
-      gsap.set(title, { opacity: 0 })
-    })
-  }
-
-  const animateSlide = (slide: HTMLElement) => {
-    revertSplits(slide)
-
-    const heroTitles = slide.querySelectorAll<HTMLElement>('.heading-style-h1.hero_title.is-slider')
+  const splitHeroTitles = (slide: HTMLElement) => {
     const instances: SplitTypeInstance[] = []
-    const timeline = gsap.timeline()
-
-    heroTitles.forEach((title, index) => {
-      const split = new SplitType(title, { types: 'words' })
+    getHeroTitles(slide).forEach((title) => {
+      const split = new SplitText(title, { types: 'words, lines' })
+      gsap.set(split.lines, { overflow: 'hidden' })
+      gsap.set(split.words, { y: '110%' })
       instances.push(split)
-
-      gsap.set(split.words, { yPercent: 80, opacity: 0 })
-
-      timeline.to(
-        split.words,
-        {
-          duration: 0.8,
-          yPercent: 0,
-          opacity: 1,
-          stagger: 0.03,
-          ease: 'power2.out',
-        },
-        0.2 + index * 0.15,
-      )
-
-      timeline.set(title, { opacity: 1 }, 0.2 + index * 0.15)
     })
+    if (instances.length) heroSplits.set(slide, instances)
+  }
 
-    splitInstances.set(slide, instances)
+  const hideHeroTitles = (slide: HTMLElement) => {
+    const instances = heroSplits.get(slide)
+    if (!instances) return
+    instances.forEach((split) => {
+      gsap.set(split.words, { y: '110%' })
+    })
+  }
+
+  const revealHeroTitles = (slide: HTMLElement) => {
+    const instances = heroSplits.get(slide)
+    if (!instances) return
+    instances.forEach((split) => {
+      gsap.to(split.words, {
+        y: '0%',
+        duration: 1,
+        ease: 'power4.out',
+        stagger: 0.05,
+      })
+    })
   }
 
   function init() {
@@ -99,30 +87,18 @@
           on: {
             init: function (swiper: SwiperInstance) {
               swiper.slides.forEach((slide: SwiperSlide) => {
-                if (!slide.classList.contains('swiper-slide-active')) {
-                  setInitialStates(slide)
-                }
+                splitHeroTitles(slide)
               })
               const activeSlide = swiper.slides.find((slide: SwiperSlide) =>
                 slide.classList.contains('swiper-slide-active'),
               )
-              if (activeSlide) animateSlide(activeSlide)
+              if (activeSlide) revealHeroTitles(activeSlide)
             },
             slideChangeTransitionStart: function (swiper: SwiperInstance) {
               const previousSlide = swiper.slides[swiper.previousIndex]
-              if (previousSlide) setInitialStates(previousSlide)
-            },
-            slideChange: function (swiper: SwiperInstance) {
-              setTimeout(() => {
-                const activeSlide = swiper.slides.find((slide: SwiperSlide) =>
-                  slide.classList.contains('swiper-slide-active'),
-                )
-
-                if (activeSlide) {
-                  setInitialStates(activeSlide)
-                  animateSlide(activeSlide)
-                }
-              }, 200)
+              if (previousSlide) hideHeroTitles(previousSlide)
+              const activeSlide = swiper.slides[swiper.activeIndex]
+              if (activeSlide) revealHeroTitles(activeSlide)
             },
           },
         })
