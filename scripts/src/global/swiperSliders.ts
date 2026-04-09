@@ -25,7 +25,7 @@
   }
 
   const setInitialStates = (slide: HTMLElement) => {
-    const heroTitles = slide.querySelectorAll<HTMLElement>('.heading-style-h1.hero_title')
+    const heroTitles = slide.querySelectorAll<HTMLElement>('.heading-style-h1.hero_title.is-slider')
     heroTitles.forEach((title) => {
       gsap.set(title, { opacity: 0 })
     })
@@ -34,7 +34,7 @@
   const animateSlide = (slide: HTMLElement) => {
     revertSplits(slide)
 
-    const heroTitles = slide.querySelectorAll<HTMLElement>('.heading-style-h1.hero_title')
+    const heroTitles = slide.querySelectorAll<HTMLElement>('.heading-style-h1.hero_title.is-slider')
     const instances: SplitTypeInstance[] = []
     const timeline = gsap.timeline()
 
@@ -103,11 +103,14 @@
                   setInitialStates(slide)
                 }
               })
+              const activeSlide = swiper.slides.find((slide: SwiperSlide) =>
+                slide.classList.contains('swiper-slide-active'),
+              )
+              if (activeSlide) animateSlide(activeSlide)
             },
             slideChangeTransitionStart: function (swiper: SwiperInstance) {
-              swiper.slides.forEach((slide: SwiperSlide) => {
-                setInitialStates(slide)
-              })
+              const previousSlide = swiper.slides[swiper.previousIndex]
+              if (previousSlide) setInitialStates(previousSlide)
             },
             slideChange: function (swiper: SwiperInstance) {
               setTimeout(() => {

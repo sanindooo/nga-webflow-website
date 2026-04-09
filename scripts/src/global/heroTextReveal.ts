@@ -13,7 +13,7 @@
   if (__s['heroTextReveal']) return; __s['heroTextReveal'] = true
 
   function init() {
-    const heroText = document.querySelector<HTMLElement>('.heading-style-h1.hero_title')
+    const heroText = document.querySelector<HTMLElement>('.heading-style-h1.hero_title:not(.is-slider)')
     if (!heroText) return
 
     const split = new SplitText(heroText, { types: 'words, lines' })

@@ -1,5 +1,5 @@
 {
-  "version": "v0.12.3",
+  "version": "v0.12.4",
   "jsdelivr": {
     "user": "sanindooo",
     "repo": "nga-webflow-website"
@@ -33,11 +33,18 @@
       "integrity": "sha384-d75b8Efg0MyVnT4SiFCFfJHocoV+vkTuI0R8H6DxhQkDoFhrDi17Do+MXnoeQnyJ"
     },
     {
+      "name": "heroTextReveal",
+      "path": "scripts/dist/global/heroTextReveal.js",
+      "description": "SplitText word-by-word reveal animation for the hero heading",
+      "pollGlobal": "SplitText",
+      "integrity": "sha384-DhBDU8VVYfsJ6GsBpMhXzGC6ZdeayEfMj0bHhM3DmgJOuwQOkJGHZXImvDnDZdd6"
+    },
+    {
       "name": "swiperSliders",
       "path": "scripts/dist/global/swiperSliders.js",
       "description": "Swiper.js slider initialisation and configuration",
       "pollGlobal": "Swiper",
-      "integrity": "sha384-tHbLATP3BRPdTUUP/t0Bi/q7QcdLs9oDQwP2NgvWP6Vd+LvXtD4B+egkyLyrSxef"
+      "integrity": "sha384-+xhLBij7qcKynTuHdNm9W6n8a297i5QXubb22mApYSRD7iGhkKyKaQOSGUj4VF8/"
     },
     {
       "name": "navToggle",
@@ -52,13 +59,6 @@
       "description": "Hides sticky filter bar on scroll down, reveals on scroll up",
       "pollGlobal": "ScrollTrigger",
       "integrity": "sha384-x5R/AJ+A1KzXg66iCigQ6osqjhEE6lfRYllrqoN9AA21z6nSEgJgp6Tu8WezabLl"
-    },
-    {
-      "name": "heroTextReveal",
-      "path": "scripts/dist/global/heroTextReveal.js",
-      "description": "SplitText word-by-word reveal animation for the hero heading",
-      "pollGlobal": "SplitText",
-      "integrity": "sha384-ShuI5o5jgMJqWGxfVNWyK59e+ChWy9RAU13rgM11DRRTEF98ne2M2dJQrOQlJI3V"
     },
     {
       "name": "filterActiveState",
