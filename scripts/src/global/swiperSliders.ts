@@ -83,6 +83,7 @@
           },
           pagination: {
             el: pagination,
+            clickable: true,
           },
           on: {
             init: function (swiper: SwiperInstance) {

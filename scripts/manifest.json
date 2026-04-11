@@ -1,5 +1,5 @@
 {
-  "version": "v0.13.1",
+  "version": "v0.13.2",
   "jsdelivr": {
     "user": "sanindooo",
     "repo": "nga-webflow-website"
@@ -44,7 +44,7 @@
       "path": "scripts/dist/global/swiperSliders.js",
       "description": "Swiper.js slider initialisation and configuration",
       "pollGlobal": "Swiper",
-      "integrity": "sha384-l9MdB3crpQkY1+IzT4K3w/b+0/3gGxtBRxS/L/s77erzbmMn61oTnVY0/Zq37Iy4"
+      "integrity": "sha384-qSDw/Qsdk1hgvPWP9SOkjmltbN4yLudo/H6H+EuWTSP/6KhuweE1elAgcy/EeodV"
     },
     {
       "name": "navToggle",
