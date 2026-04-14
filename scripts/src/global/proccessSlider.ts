@@ -24,107 +24,128 @@
     return section.querySelector<HTMLElement>('.process-slider_figure')
   }
 
-  function buildTransition(
-    incomingSection: HTMLElement,
-    totalSections: number,
-    incomingIndex: number,
-  ): GSAPTimeline {
-    const incomingTitle = getTitle(incomingSection)
-    const incomingNumber = getNumber(incomingSection)
-    const incomingParagraph = getParagraph(incomingSection)
-    const incomingFigure = getFigure(incomingSection)
-
-    const transitionTimeline = gsap.timeline()
-
-    // Reveal and bring incoming section above the current one
-    transitionTimeline.set(incomingSection, { autoAlpha: 1, zIndex: totalSections + incomingIndex })
-
-    // Incoming: title + number rotate in from above (unfold from top)
-    transitionTimeline.fromTo(
-      [incomingTitle, incomingNumber],
-      { autoAlpha: 0, y: -24, rotateX: 40, transformOrigin: '50% 0%' },
-      {
-        autoAlpha: 1,
-        y: 0,
-        rotateX: 0,
-        duration: TRANSITION_DURATION,
-        ease: 'power2.out',
-        transformOrigin: '50% 0%',
-      },
-      0,
-    )
-
-    // Incoming: paragraph + figure simple fade
-    transitionTimeline.fromTo(
-      [incomingParagraph, incomingFigure],
-      { autoAlpha: 0 },
-      {
-        autoAlpha: 1,
-        duration: TRANSITION_DURATION,
-        ease: 'power2.out',
-      },
-      0,
-    )
-
-    return transitionTimeline
-  }
-
   function init() {
+    const gsap = (window as any).gsap
+    const ScrollTrigger = (window as any).ScrollTrigger
+
+    if (!gsap || !ScrollTrigger) return
+
+    gsap.registerPlugin(ScrollTrigger)
+
     const wrapper = document.querySelector<HTMLElement>('.process-card_wrapper')
     if (!wrapper) return
 
     const sections = Array.from(wrapper.querySelectorAll<HTMLElement>('.process-slider_component'))
     if (sections.length < 2) return
 
-    const totalSections = sections.length
+    // ── Initial state ────────────────────────────────────────────────────────
 
-    // Enable 3D perspective for rotateX animations
-    gsap.set(wrapper, { perspective: 800 })
+    gsap.set(wrapper, { position: 'relative' })
 
-    // Set initial states — section 0 visible, rest hidden above
-    sections.forEach((section, index) => {
+    sections.forEach((section, sectionIndex) => {
+      gsap.set(section, { backgroundColor: 'transparent', zIndex: sections.length - sectionIndex })
+
+      const figure = getFigure(section)
       const title = getTitle(section)
       const number = getNumber(section)
       const paragraph = getParagraph(section)
-      const figure = getFigure(section)
 
-      if (index === 0) {
-        gsap.set(section, { autoAlpha: 1, zIndex: totalSections })
-        gsap.set([title, number], { autoAlpha: 1, y: 0, rotateX: 0 })
-        gsap.set([paragraph, figure], { autoAlpha: 1 })
-      } else {
-        // Hide the section itself so DOM stacking order doesn't bleed through
-        gsap.set(section, { autoAlpha: 0, zIndex: totalSections - index })
-        gsap.set([title, number], { autoAlpha: 0, y: -24, rotateX: 40, transformOrigin: '50% 0%' })
-        gsap.set([paragraph, figure], { autoAlpha: 0 })
+      // Clip containers so yPercent slides are invisible when off-position
+      if (title?.parentElement) gsap.set(title.parentElement, { overflow: 'hidden' })
+      if (number?.parentElement) gsap.set(number.parentElement, { overflow: 'hidden' })
+      if (paragraph?.parentElement) gsap.set(paragraph.parentElement, { overflow: 'hidden' })
+
+      if (sectionIndex === 0) {
+        // First section is fully visible — no offset needed
+        return
       }
+
+      // All subsequent sections: text content starts below, out of sight
+      // Images sit at natural position — revealed when the section above clips out
+      if (title) gsap.set(title, { yPercent: 100 })
+      if (number) gsap.set(number, { yPercent: 120 })
+      if (paragraph) gsap.set(paragraph, { yPercent: 100 })
     })
 
-    // Build master timeline: transition → hold → transition → hold ...
-    const masterTimeline = gsap.timeline({ paused: true })
+    // ── Build one sequential timeline for all transitions ────────────────────
 
-    sections.forEach((section, index) => {
-      if (index === sections.length - 1) return
+    const timeline = gsap.timeline()
+    // Each step = transition animation + hold pause before the next one
+    const stepDuration = TRANSITION_DURATION + HOLD_DURATION
 
-      const nextSection = sections[index + 1]
+    sections.slice(1).forEach((incomingSection, relativeIndex) => {
+      const outgoingSection = sections[relativeIndex]
+      const timeOffset = relativeIndex * stepDuration
 
-      masterTimeline.add(buildTransition(nextSection, totalSections, index + 1))
+      const outFigure = getFigure(outgoingSection)
+      const outTitle = getTitle(outgoingSection)
+      const outNumber = getNumber(outgoingSection)
+      const outParagraph = getParagraph(outgoingSection)
 
-      // Hold the incoming section before the next transition
-      if (index < sections.length - 2) {
-        masterTimeline.to({}, { duration: HOLD_DURATION })
-      }
+      const inFigure = getFigure(incomingSection)
+      const inTitle = getTitle(incomingSection)
+      const inNumber = getNumber(incomingSection)
+      const inParagraph = getParagraph(incomingSection)
+
+      // Outgoing image: clip from bottom to top, revealing the image stacked underneath
+      if (outFigure)
+        timeline.to(
+          outFigure,
+          { clipPath: 'inset(0 0 100% 0)', duration: TRANSITION_DURATION, ease: 'power2.inOut' },
+          timeOffset,
+        )
+
+      // Outgoing text: slide up and off
+      if (outTitle)
+        timeline.to(
+          outTitle,
+          { yPercent: -100, duration: TRANSITION_DURATION, ease: 'power2.inOut' },
+          timeOffset,
+        )
+      if (outNumber)
+        timeline.to(
+          outNumber,
+          { yPercent: -120, duration: TRANSITION_DURATION, ease: 'power2.inOut' },
+          timeOffset,
+        )
+      if (outParagraph)
+        timeline.to(
+          outParagraph,
+          { yPercent: -100, duration: TRANSITION_DURATION, ease: 'power2.inOut' },
+          timeOffset,
+        )
+
+      // Incoming image: already in position underneath — no animation needed
+      // Incoming text: slide up into view from below
+      if (inTitle)
+        timeline.to(
+          inTitle,
+          { yPercent: 0, duration: TRANSITION_DURATION, ease: 'power2.inOut' },
+          timeOffset,
+        )
+      if (inNumber)
+        timeline.to(
+          inNumber,
+          { yPercent: 0, duration: TRANSITION_DURATION, ease: 'power2.inOut' },
+          timeOffset,
+        )
+      if (inParagraph)
+        timeline.to(
+          inParagraph,
+          { yPercent: 0, duration: TRANSITION_DURATION, ease: 'power2.inOut' },
+          timeOffset,
+        )
     })
 
-    // Pin wrapper and drive master timeline via scroll
+    // ── Single pinned ScrollTrigger driving the whole timeline ───────────────
+
     ScrollTrigger.create({
       trigger: wrapper,
       pin: true,
-      anticipatePin: 1,
-      start: 'top top',
-      end: `+=${(totalSections - 1) * SCROLL_PX_PER_SECTION}`,
-      scrub: 1.2,
-      animation: masterTimeline,
+      markers: true,
+      animation: timeline,
+      scrub: true,
+      end: `+=${sections.length * SCROLL_PX_PER_SECTION}`,
     })
   }
 

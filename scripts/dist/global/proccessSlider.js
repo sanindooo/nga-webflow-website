@@ -20,77 +20,95 @@
     function getFigure(section) {
       return section.querySelector(".process-slider_figure");
     }
-    function buildTransition(incomingSection, totalSections, incomingIndex) {
-      const incomingTitle = getTitle(incomingSection);
-      const incomingNumber = getNumber(incomingSection);
-      const incomingParagraph = getParagraph(incomingSection);
-      const incomingFigure = getFigure(incomingSection);
-      const transitionTimeline = gsap.timeline();
-      transitionTimeline.set(incomingSection, { autoAlpha: 1, zIndex: totalSections + incomingIndex });
-      transitionTimeline.fromTo(
-        [incomingTitle, incomingNumber],
-        { autoAlpha: 0, y: -24, rotateX: 40, transformOrigin: "50% 0%" },
-        {
-          autoAlpha: 1,
-          y: 0,
-          rotateX: 0,
-          duration: TRANSITION_DURATION,
-          ease: "power2.out",
-          transformOrigin: "50% 0%"
-        },
-        0
-      );
-      transitionTimeline.fromTo(
-        [incomingParagraph, incomingFigure],
-        { autoAlpha: 0 },
-        {
-          autoAlpha: 1,
-          duration: TRANSITION_DURATION,
-          ease: "power2.out"
-        },
-        0
-      );
-      return transitionTimeline;
-    }
     function init() {
+      const gsap = window.gsap;
+      const ScrollTrigger = window.ScrollTrigger;
+      if (!gsap || !ScrollTrigger) return;
+      gsap.registerPlugin(ScrollTrigger);
       const wrapper = document.querySelector(".process-card_wrapper");
       if (!wrapper) return;
       const sections = Array.from(wrapper.querySelectorAll(".process-slider_component"));
       if (sections.length < 2) return;
-      const totalSections = sections.length;
-      gsap.set(wrapper, { perspective: 800 });
-      sections.forEach((section, index) => {
+      gsap.set(wrapper, { position: "relative" });
+      sections.forEach((section, sectionIndex) => {
+        gsap.set(section, { backgroundColor: "transparent", zIndex: sections.length - sectionIndex });
+        const figure = getFigure(section);
         const title = getTitle(section);
         const number = getNumber(section);
         const paragraph = getParagraph(section);
-        const figure = getFigure(section);
-        if (index === 0) {
-          gsap.set(section, { autoAlpha: 1, zIndex: totalSections });
-          gsap.set([title, number], { autoAlpha: 1, y: 0, rotateX: 0 });
-          gsap.set([paragraph, figure], { autoAlpha: 1 });
-        } else {
-          gsap.set(section, { autoAlpha: 0, zIndex: totalSections - index });
-          gsap.set([title, number], { autoAlpha: 0, y: -24, rotateX: 40, transformOrigin: "50% 0%" });
-          gsap.set([paragraph, figure], { autoAlpha: 0 });
+        if (title?.parentElement) gsap.set(title.parentElement, { overflow: "hidden" });
+        if (number?.parentElement) gsap.set(number.parentElement, { overflow: "hidden" });
+        if (paragraph?.parentElement) gsap.set(paragraph.parentElement, { overflow: "hidden" });
+        if (sectionIndex === 0) {
+          return;
         }
+        if (title) gsap.set(title, { yPercent: 100 });
+        if (number) gsap.set(number, { yPercent: 120 });
+        if (paragraph) gsap.set(paragraph, { yPercent: 100 });
       });
-      const masterTimeline = gsap.timeline({ paused: true });
-      sections.forEach((section, index) => {
-        if (index === sections.length - 1) return;
-        const nextSection = sections[index + 1];
-        masterTimeline.add(buildTransition(nextSection, totalSections, index + 1));
-        if (index < sections.length - 2) {
-          masterTimeline.to({}, { duration: HOLD_DURATION });
-        }
+      const timeline = gsap.timeline();
+      const stepDuration = TRANSITION_DURATION + HOLD_DURATION;
+      sections.slice(1).forEach((incomingSection, relativeIndex) => {
+        const outgoingSection = sections[relativeIndex];
+        const timeOffset = relativeIndex * stepDuration;
+        const outFigure = getFigure(outgoingSection);
+        const outTitle = getTitle(outgoingSection);
+        const outNumber = getNumber(outgoingSection);
+        const outParagraph = getParagraph(outgoingSection);
+        const inFigure = getFigure(incomingSection);
+        const inTitle = getTitle(incomingSection);
+        const inNumber = getNumber(incomingSection);
+        const inParagraph = getParagraph(incomingSection);
+        if (outFigure)
+          timeline.to(
+            outFigure,
+            { clipPath: "inset(0 0 100% 0)", duration: TRANSITION_DURATION, ease: "power2.inOut" },
+            timeOffset
+          );
+        if (outTitle)
+          timeline.to(
+            outTitle,
+            { yPercent: -100, duration: TRANSITION_DURATION, ease: "power2.inOut" },
+            timeOffset
+          );
+        if (outNumber)
+          timeline.to(
+            outNumber,
+            { yPercent: -120, duration: TRANSITION_DURATION, ease: "power2.inOut" },
+            timeOffset
+          );
+        if (outParagraph)
+          timeline.to(
+            outParagraph,
+            { yPercent: -100, duration: TRANSITION_DURATION, ease: "power2.inOut" },
+            timeOffset
+          );
+        if (inTitle)
+          timeline.to(
+            inTitle,
+            { yPercent: 0, duration: TRANSITION_DURATION, ease: "power2.inOut" },
+            timeOffset
+          );
+        if (inNumber)
+          timeline.to(
+            inNumber,
+            { yPercent: 0, duration: TRANSITION_DURATION, ease: "power2.inOut" },
+            timeOffset
+          );
+        if (inParagraph)
+          timeline.to(
+            inParagraph,
+            { yPercent: 0, duration: TRANSITION_DURATION, ease: "power2.inOut" },
+            timeOffset
+          );
       });
       ScrollTrigger.create({
         trigger: wrapper,
         pin: true,
-        anticipatePin: 1,
-        start: "top top",
-        end: `+=${(totalSections - 1) * SCROLL_PX_PER_SECTION}`,
-        scrub: 1.2,
-        animation: masterTimeline
+        markers: true,
+        animation: timeline,
+        scrub: true,
+        end: `+=${sections.length * SCROLL_PX_PER_SECTION}`
       });
     }
     if (document.readyState === "loading") {
