@@ -1,5 +1,5 @@
 {
-  "version": "v0.14.4",
+  "version": "v0.14.5",
   "jsdelivr": {
     "user": "sanindooo",
     "repo": "nga-webflow-website"
@@ -48,7 +48,7 @@
     },
     {
       "name": "navToggle",
-      "path": "scripts/dist/components/navToggle.js",
+      "path": "scripts/dist/global/navToggle.js",
       "description": "Custom nav menu open/close with fade animation",
       "pollGlobal": "gsap",
       "integrity": "sha384-fal1RG+2k7ocuwk6JkBdWEOTGxiBCP4hqBR0hRLUWBT4CZeWDf7UYqCeN5xX38fT"
@@ -58,7 +58,8 @@
       "path": "scripts/dist/global/stickyFilter.js",
       "description": "Hides sticky filter bar on scroll down, reveals on scroll up",
       "pollGlobal": "ScrollTrigger",
-      "integrity": "sha384-x5R/AJ+A1KzXg66iCigQ6osqjhEE6lfRYllrqoN9AA21z6nSEgJgp6Tu8WezabLl"
+      "integrity": "sha384-x5R/AJ+A1KzXg66iCigQ6osqjhEE6lfRYllrqoN9AA21z6nSEgJgp6Tu8WezabLl",
+      "disabled": true
     },
     {
       "name": "filterActiveState",
@@ -104,20 +105,18 @@
       "path": "scripts/dist/global/videoPlayPauseToggle.js",
       "description": "Reveals .video-play-pause buttons when user prefers reduced motion",
       "integrity": "sha384-bicZqG41FhEL4GsALo0y8IMjEFvQVj6nvGIvWxVprJR3Lrem4Si2d1fGGaK9Gpbn"
-    }
-  ],
-  "components": {
-    "viewSwitcher": {
+    },
+    {
       "name": "viewSwitcher",
-      "path": "scripts/dist/components/viewSwitcher.js",
+      "path": "scripts/dist/global/viewSwitcher.js",
       "description": "Grid/list view switcher with localStorage persistence",
       "integrity": "sha384-PeUiuxCLPB4AxqgFiSZbtIXTWdCk6XVD6q6fhLzX0x7gYFiS07Oh04Fl3A1SROxW"
     },
-    "cmsFilterLinks": {
+    {
       "name": "cmsFilterLinks",
-      "path": "scripts/dist/components/cmsFilterLinks.js",
+      "path": "scripts/dist/global/cmsFilterLinks.js",
       "description": "Sets CMS listing links (project grid, footer sitemap) with Finsweet category filter query param",
       "integrity": "sha384-udAWnTI06rNDonrO39XKwGcgNweGpAuBsSdNm+K+9lhfOk8GnGc0E7Qly1AJ9MaB"
     }
-  }
+  ]
 }

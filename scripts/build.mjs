@@ -2,7 +2,7 @@ import * as esbuild from 'esbuild'
 import { readdirSync, existsSync } from 'fs'
 import { join } from 'path'
 
-const dirs = ['scripts/src/global', 'scripts/src/components']
+const dirs = ['scripts/src/global']
 const entryPoints = []
 
 for (const dir of dirs) {
