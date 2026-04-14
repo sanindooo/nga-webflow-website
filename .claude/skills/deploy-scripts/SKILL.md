@@ -52,7 +52,7 @@ Check the ARGUMENTS value passed to this skill:
 
 For each named script:
 
-1. Find the source file: check `scripts/src/global/{name}.ts` then `scripts/src/components/{name}.ts`
+1. Find the source file at `scripts/src/global/{name}.ts`
 2. Run `pnpm run build` (builds all, but we only care about the named one)
 3. Generate SRI hash for the built dist file:
    ```bash
@@ -84,7 +84,9 @@ For each named script:
    ```
 4. Compare each hash against `scripts/manifest.json`:
    - If a hash changed → the script was modified, update the manifest
-   - If a script exists in dist but not manifest → new script, add to manifest
+   - If a script exists in dist but not manifest → **STOP and ask the user.** It may
+     be WIP (committed source not yet ready to ship). Do not auto-add — the user
+     decides whether to register it, leave it as orphan WIP, or delete the source.
    - If a script exists in manifest but not dist → deleted script, remove from manifest
 5. Bump the manifest `version` (minor bump for new scripts, patch for updates only)
 
@@ -108,6 +110,9 @@ For each named script:
 
 11. `delete_all_site_scripts` to clear stale loaders
 12. For each **global** script (manifest `global[]`), register via `add_inline_site_script`:
+    - **Skip any entry with `"disabled": true`** — these are temporarily turned off.
+      The file still builds and ships via jsDelivr, but no loader is registered on
+      Webflow. Remove the flag to re-enable.
     - Check if the script has a `pollGlobal` field in the manifest
     - If `pollGlobal` is set, build a **polling loader** that waits for the CDN
       dependency before injecting the script:
@@ -124,14 +129,11 @@ For each named script:
     - `displayName`: `{scriptName}Loader` (camelCase, alphanumeric only)
     - `version`: manifest version (without `v` prefix)
     - `location`: `footer`
-13. For each **component** script (manifest `components{}`), also register via
-    `add_inline_site_script` (required to get an ID for page-level application)
 
 ### Phase 5: Clean page-level scripts
 
-**All scripts are now site-level.** Component scripts (viewSwitcher, typologyLinks)
-are registered via `add_inline_site_script` just like globals — dedup guards prevent
-double-init. Page-level scripts are NEVER needed and are always stale duplicates.
+**All scripts are site-level.** Page-level scripts are NEVER needed and are always
+stale duplicates — dedup guards on the source scripts prevent double-init.
 
 14. Read page IDs from `docs/reference/webflow-ids.md`
 15. For EACH page, `get_page_script`:
@@ -159,13 +161,10 @@ Read `jsdelivr.user` and `jsdelivr.repo` from `scripts/manifest.json`.
 
 ## Script Placement Rules
 
-| Script type | Manifest location | Where it goes | Tool |
-|---|---|---|---|
-| Global | `global[]` | Site-level | `add_inline_site_script` |
-| Component | `components{}` | Page-level on relevant pages | `upsert_page_script` |
-
-**NEVER mix levels.** Global scripts must not appear at page-level.
-`upsert_page_script` is DESTRUCTIVE — always read existing scripts first.
+All scripts live in `manifest.json → global[]` and register site-level via
+`add_inline_site_script`. Dedup guards prevent double-init on pages that don't
+need a given script. **Never use page-level scripts** — they survive across
+deploys as stale duplicates. Phase 5 clears any that exist.
 
 ## Webflow Script Versioning Constraint
 
@@ -186,16 +185,56 @@ sequence:
 rejects duplicates. Use the manifest version (without `v` prefix) for all scripts in
 a deployment. If a version was already used in a prior deployment, bump it.
 
+**`delete_all_site_scripts` does NOT free version numbers.** It only un-applies
+scripts; the registrations (and their versions) stay in the history forever. So if
+you wipe and retry inside the same deployment, the second attempt MUST use a fresh
+bumped version, not the same one. On `duplicate_registered_script` errors, bump the
+manifest patch version and retry — do not try to "reuse" the failed version.
+
+## Applied-Script Limit (15 per site)
+
+**Webflow caps APPLIED site scripts at 15.** The error surfaces as
+`max_scripts_per_block: scripts cannot exceed 15 in length` when the 16th
+`add_inline_site_script` call fires. Registrations are unlimited; only the applied
+count is gated.
+
+When the manifest has more than 15 enabled entries, **bundle no-dependency scripts
+into a single `noDepLoader`** that injects them in series. One inline loader, many
+scripts. Pattern (matches the legacy `miscNoDep`):
+
+```javascript
+(function(){
+  var b='https://cdn.jsdelivr.net/gh/{user}/{repo}@{commit_sha}/scripts/dist/';
+  var f=[
+    ['global/scriptA.js','sha384-...'],
+    ['global/scriptB.js','sha384-...'],
+    ['global/scriptC.js','sha384-...']
+  ];
+  f.forEach(function(x){
+    var s=document.createElement('script');
+    s.src=b+x[0]; s.integrity=x[1]; s.crossOrigin='anonymous';
+    document.head.appendChild(s);
+  });
+})()
+```
+
+Bundle ONLY scripts with no `pollGlobal` field. Anything with a CDN dep needs its
+own polling loader. Register the bundle as `noDepLoader` (displayName) at the
+current manifest version like any other entry.
+
+Count budget for the next deploy: `applied = (globals with pollGlobal) + (globals
+without pollGlobal NOT in bundle) + 1 (noDepLoader if any bundled)`.
+
 **Post-deploy verification checklist:**
-- `list_applied_scripts` returns exactly N scripts (N = globals + components)
+- `list_applied_scripts` returns exactly N scripts (N = enabled globals)
 - No script ID appears more than once
 - All versions match the current manifest version
 
 ## Important Notes
 
 - Use `/usr/bin/curl` (full path) for HTTP checks — shell aliases may not resolve
-- `add_inline_site_script` both registers AND applies at site level — component
-  scripts will appear site-wide (dedup guards prevent double-init)
+- `add_inline_site_script` both registers AND applies at site level — dedup guards
+  prevent double-init on pages that don't need a given script
 - Always verify jsDelivr URLs return 200 BEFORE registering loaders
 - If the push was rejected (remote has new commits), pull --rebase first
 - After rebase conflicts on dist files, just `pnpm run build` to regenerate
