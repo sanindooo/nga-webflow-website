@@ -1,7 +1,8 @@
 /**
  * Nav Toggle — adds/removes "is-nav-open" class on .header.
- * Open: fades in nav items. Close: .nav-custom_list slides from left and
- * .nav-custom_list.u-social-links slides from right, meeting at center, then closes.
+ * Open: fades nav items in with a small upward shift and reveals the blurred
+ * header background. Close: plays the reverse — items fade out and the
+ * background fades back to transparent.
  * Requires GSAP to be available globally.
  */
 
@@ -37,13 +38,9 @@
     let isAnimating = false;
 
     const open = () => {
-      // Reset any close-animation transforms first
-      if (navList) gsap.set(navList, { x: 0 });
-      if (socialList) gsap.set(socialList, { x: 0 });
-
       header.classList.add("is-nav-open");
       gsap.to(header, {
-        backgroundColor: "#d2c8b9d9",
+        backgroundColor: "rgba(250, 250, 250, 0.55)",
         backdropFilter: "blur(20px)",
         duration: 0.35,
         ease: "power2.out",
@@ -77,33 +74,14 @@
       toggle.setAttribute("aria-expanded", "false");
       toggle.setAttribute("aria-label", "Open navigation menu");
 
-      const centerX = window.innerWidth / 2;
-
       const timeline = gsap.timeline({
         onComplete: () => {
           header.classList.remove("is-nav-open");
-          if (navList) gsap.set(navList, { x: 0 });
-          if (socialList) gsap.set(socialList, { x: 0 });
           isAnimating = false;
         },
       });
 
-      // Fade out header background and blur as part of close animation
-      if (navList) {
-        timeline.to(
-          navList,
-          { x: centerX / 2, duration: 0.75, ease: "power2.in" },
-          0,
-        );
-      }
-      if (socialList) {
-        timeline.to(
-          socialList,
-          { x: -centerX / 2, duration: 0.75, ease: "power2.in" },
-          0,
-        );
-      }
-      // Fade out items as they converge
+      // Reverse of the open animation: items fade/shift out, header background fades to transparent
       const items = [
         ...(navList ? Array.from(navList.children) : []),
         ...(socialList ? Array.from(socialList.children) : []),
@@ -111,8 +89,8 @@
       if (items.length) {
         timeline.to(
           items,
-          { opacity: 0, duration: 0.5, ease: "power1.in" },
-          0.2,
+          { opacity: 0, y: 8, duration: 0.35, ease: "power2.in" },
+          0,
         );
       }
       timeline.to(
@@ -120,10 +98,10 @@
         {
           backgroundColor: "rgba(0,0,0,0)",
           backdropFilter: "blur(0px)",
-          duration: 0.5,
+          duration: 0.35,
           ease: "power2.in",
         },
-        0.2,
+        0,
       );
     };
 

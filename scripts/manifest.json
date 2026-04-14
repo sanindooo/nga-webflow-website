@@ -1,5 +1,5 @@
 {
-  "version": "v0.14.1",
+  "version": "v0.14.2",
   "jsdelivr": {
     "user": "sanindooo",
     "repo": "nga-webflow-website"
@@ -51,7 +51,7 @@
       "path": "scripts/dist/components/navToggle.js",
       "description": "Custom nav menu open/close with fade animation",
       "pollGlobal": "gsap",
-      "integrity": "sha384-whYeKqI7LdoZPzA1cHUcNyJdc+PSSRKFNg/GePjltmVr0dhiezuBeCZWx8MTFLdq"
+      "integrity": "sha384-fal1RG+2k7ocuwk6JkBdWEOTGxiBCP4hqBR0hRLUWBT4CZeWDf7UYqCeN5xX38fT"
     },
     {
       "name": "stickyFilter",
