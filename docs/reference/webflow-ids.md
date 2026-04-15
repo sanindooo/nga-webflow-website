@@ -32,6 +32,7 @@ Quick-lookup for site, page, collection, and field IDs to avoid redundant API/MC
 | News | `69bfd12acb21ae530fc28b7a` | News articles |
 | News Categories | `69d500138e25cedac5625829` | Filter categories for news |
 | Categories | `69d391322d74e768b7f530fb` | Work typology categories |
+| Countries | `69de1399c71af6b802640ff6` | Normalized country list (referenced by Projects) |
 | Hero Slides | `69d67b80d7fc5b0a878583d5` | Homepage hero slider items |
 
 ## Key CMS Fields (Hero Slides)
@@ -61,5 +62,18 @@ Quick-lookup for site, page, collection, and field IDs to avoid redundant API/MC
 |---|---|---|
 | Category | `category` | MultiReference → Categories |
 | Primary Category | `primary-category` | Reference → Categories |
-| Location | `location` | PlainText |
+| City | `city` | PlainText |
+| Country | `country-2` | Reference → Countries |
 | Year | `year` | PlainText |
+| Area | `area` | RichText |
+| Description | `description` | RichText |
+| Interactive Map URL | `interactive-map-url` | Link |
+| ~~Location~~ | `location` | PlainText (deprecated — delete in Designer) |
+| ~~Country (deprecated)~~ | `country` | PlainText (deprecated — delete in Designer) |
+
+## Country Items (seeded)
+
+| Name | ID | Slug |
+|---|---|---|
+| Lebanon | `69de13a2d19bf3a4ecb4be90` | `lebanon` |
+| United Arab Emirates | `69de13a2d19bf3a4ecb4be92` | `united-arab-emirates` |

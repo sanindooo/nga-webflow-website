@@ -133,7 +133,19 @@
       "Bash(mv field-with-sky.jpg publications/grass-field-cloudy-sky.jpg)",
       "Bash(mv flower-field.jpg publications/red-poppies-in-wheat-field.jpg)",
       "Bash(mv flower-image.jpg publications/yellow-cosmos-flowers.jpg)",
-      "Bash(ls /Users/sanindo/nga-webflow-website/.env*)"
+      "Bash(ls /Users/sanindo/nga-webflow-website/.env*)",
+      "Bash(pnpm typecheck:*)",
+      "WebFetch(domain:css-irl.info)",
+      "WebFetch(domain:css-tricks.com)",
+      "WebFetch(domain:9elements.com)",
+      "WebFetch(domain:frontendmasters.com)",
+      "WebFetch(domain:www.quirksmode.org)",
+      "WebFetch(domain:www.bram.us)",
+      "WebFetch(domain:medium.com)",
+      "Bash(git --version)",
+      "Bash(xcode-select:*)",
+      "Bash(git pull:*)",
+      "Bash(git mv:*)"
     ]
   }
 }
