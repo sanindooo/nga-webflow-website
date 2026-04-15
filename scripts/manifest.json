@@ -1,5 +1,5 @@
 {
-  "version": "v0.14.7",
+  "version": "v0.15.0",
   "jsdelivr": {
     "user": "sanindooo",
     "repo": "nga-webflow-website"
@@ -117,6 +117,34 @@
       "path": "scripts/dist/global/cmsFilterLinks.js",
       "description": "Sets CMS listing links (project grid, footer sitemap) with Finsweet category filter query param",
       "integrity": "sha384-udAWnTI06rNDonrO39XKwGcgNweGpAuBsSdNm+K+9lhfOk8GnGc0E7Qly1AJ9MaB"
+    },
+    {
+      "name": "proccessSlider",
+      "path": "scripts/dist/global/proccessSlider.js",
+      "description": "Pinned process slider with staggered title/number/paragraph reveals",
+      "pollGlobal": "ScrollTrigger",
+      "integrity": "sha384-FuX2npYNOfWlSXGF9A7RDZGZaM74oMsPmZ7hFziN9F3h8F9F5rjVCLf2sZ97wh4x"
+    },
+    {
+      "name": "randomImagesFadeIn",
+      "path": "scripts/dist/global/randomImagesFadeIn.js",
+      "description": "Scroll-triggered random fade-in reveal for grid images",
+      "pollGlobal": "ScrollTrigger",
+      "integrity": "sha384-F9l9wTGshdCcpQlxcJ/7eZ2Q81psfsrHGO7rroAoPXNcunvE+eHpZPPY0mUVzJKI"
+    },
+    {
+      "name": "teamCardHover",
+      "path": "scripts/dist/global/teamCardHover.js",
+      "description": "Team card hover reveal for description text",
+      "pollGlobal": "gsap",
+      "integrity": "sha384-hLAylPRT+Gp67HQfyN156tBo9Tyhu8zD4Oj88wsF8y6bJqf4amhL/93Z9ssodJAh"
+    },
+    {
+      "name": "teamLeaders",
+      "path": "scripts/dist/global/teamLeaders.js",
+      "description": "Team leader hover figures with randomised positions",
+      "pollGlobal": "gsap",
+      "integrity": "sha384-mODABpJLkqxPhKUBw84nV1a7z6/SHp2y7hHq0PO2ENMp1ot3QMlpyPi21gFUPWkZ"
     }
   ]
 }
