@@ -25,7 +25,7 @@
             pin: true,
             pinSpacing: true,
             scrub: true,
-            markers: true
+            markers: false
           }
         });
         headerItems.forEach((headerItem) => {

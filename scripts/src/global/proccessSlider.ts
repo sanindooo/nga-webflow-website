@@ -142,7 +142,7 @@
     ScrollTrigger.create({
       trigger: wrapper,
       pin: true,
-      markers: true,
+      markers: false,
       animation: timeline,
       scrub: true,
       end: `+=${sections.length * SCROLL_PX_PER_SECTION}`,
