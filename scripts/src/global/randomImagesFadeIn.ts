@@ -6,38 +6,51 @@
   loadedScripts['randomImagesFadeIn'] = true
 
   function init() {
-    const gridSections = document.querySelectorAll<HTMLElement>('.process_grid')
-    if (!gridSections.length) return
+    const wrapper = document.querySelector<HTMLElement>('.process_grid-wrapper')
+    if (!wrapper) return
 
-    gridSections.forEach((gridSection) => {
-      const gridItems = Array.from(gridSection.querySelectorAll<HTMLElement>('.process_grid-item'))
-      if (!gridItems.length) return
+    const sections = Array.from(wrapper.querySelectorAll<HTMLElement>('.process_compontent'))
+    if (!sections.length) return
 
-      // Set initial state — all figures invisible
-      gsap.set(gridItems, { autoAlpha: 0, y: 20 })
+    // Flex containers don't play well with GSAP pin spacers — switch to block so
+    // each spacer pushes subsequent sections down correctly
+    wrapper.style.display = 'block'
 
-      ScrollTrigger.create({
-        trigger: gridSection,
-        start: 'top 50%',
-        once: true,
-        onEnter() {
-          // Shuffle figures into a random order
-          const shuffledItems = [...gridItems].sort(() => Math.random() - 0.5)
+    sections.forEach((section) => {
+      const headerItems = Array.from(section.querySelectorAll<HTMLElement>('.process_header-item'))
+      const gridItems = Array.from(section.querySelectorAll<HTMLElement>('.process_grid-item'))
+      const shuffledGridItems = [...gridItems].sort(() => Math.random() - 0.5)
 
-          const fadeInTimeline = gsap.timeline()
-          shuffledItems.forEach((gridItem) => {
-            fadeInTimeline.to(
-              gridItem,
-              {
-                autoAlpha: 1,
-                y: 0,
-                duration: 0.5,
-                ease: 'power2.out',
-              },
-              `<0.1`,
-            )
-          })
+      gsap.set([...headerItems, ...gridItems], { autoAlpha: 0, y: 20 })
+
+      const scrollDistance = (headerItems.length + gridItems.length) * 120
+
+      const sectionTimeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: 'top top',
+          end: `+=${scrollDistance}`,
+          pin: true,
+          pinSpacing: true,
+          scrub: true,
+          markers: true,
         },
+      })
+
+      headerItems.forEach((headerItem) => {
+        sectionTimeline.to(
+          headerItem,
+          { autoAlpha: 1, y: 0, duration: 1, ease: 'power2.out' },
+          '<0.3',
+        )
+      })
+
+      shuffledGridItems.forEach((gridItem) => {
+        sectionTimeline.to(
+          gridItem,
+          { autoAlpha: 1, y: 0, duration: 1, ease: 'power2.out' },
+          '<0.3',
+        )
       })
     })
   }
