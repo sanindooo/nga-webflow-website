@@ -1,0 +1,1 @@
+"use strict";(()=>{(function(){"use strict";const e=window.__loadedScripts??(window.__loadedScripts={});if(e.currentYear)return;e.currentYear=!0;function t(){const n=document.getElementById("current-year");n&&(n.textContent=String(new Date().getFullYear()))}document.readyState==="loading"?document.addEventListener("DOMContentLoaded",t):t()})();})();
