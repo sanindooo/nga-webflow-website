@@ -145,7 +145,8 @@
       "Bash(git --version)",
       "Bash(xcode-select:*)",
       "Bash(git pull:*)",
-      "Bash(git mv:*)"
+      "Bash(git mv:*)",
+      "Bash(\" docs/reference/webflow-ids.md | head -40)"
     ]
   }
 }
