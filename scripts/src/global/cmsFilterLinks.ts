@@ -2,7 +2,9 @@
  * CMS Filter Links
  *
  * Sets link hrefs to a CMS listing page with the Finsweet CMS Filter
- * `category` query parameter based on data attributes.
+ * `category` query parameter based on data attributes. Applies to any
+ * anchor carrying both data attributes — nav dropdowns, mobile menus,
+ * project grid cards, footer sitemap, etc.
  *
  *   data-filter-path — listing page slug (e.g. "works", "news")
  *   data-title       — category name to filter by
@@ -18,7 +20,7 @@
 
   function init() {
     const filterLinks = document.querySelectorAll<HTMLAnchorElement>(
-      '.project-grid_link[data-title][data-filter-path], .footer_sitemap-link[data-title][data-filter-path]'
+      'a[data-filter-path][data-title]'
     )
 
     filterLinks.forEach((link) => {

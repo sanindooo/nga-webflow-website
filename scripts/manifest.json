@@ -1,5 +1,5 @@
 {
-  "version": "v0.16.0",
+  "version": "v0.16.1",
   "jsdelivr": {
     "user": "sanindooo",
     "repo": "nga-webflow-website"
@@ -116,7 +116,7 @@
       "name": "cmsFilterLinks",
       "path": "scripts/dist/global/cmsFilterLinks.js",
       "description": "Sets CMS listing links (project grid, footer sitemap) with Finsweet category filter query param",
-      "integrity": "sha384-udAWnTI06rNDonrO39XKwGcgNweGpAuBsSdNm+K+9lhfOk8GnGc0E7Qly1AJ9MaB"
+      "integrity": "sha384-yfknIqThtxlJiJcSYjVOzRzpsMoh1jNkosHmcjl28B30L/s7G+YeHnHTYZOuj853"
     },
     {
       "name": "proccessSlider",
