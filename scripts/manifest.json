@@ -1,5 +1,5 @@
 {
-  "version": "v0.15.0",
+  "version": "v0.16.0",
   "jsdelivr": {
     "user": "sanindooo",
     "repo": "nga-webflow-website"
@@ -123,14 +123,14 @@
       "path": "scripts/dist/global/proccessSlider.js",
       "description": "Pinned process slider with staggered title/number/paragraph reveals",
       "pollGlobal": "ScrollTrigger",
-      "integrity": "sha384-FuX2npYNOfWlSXGF9A7RDZGZaM74oMsPmZ7hFziN9F3h8F9F5rjVCLf2sZ97wh4x"
+      "integrity": "sha384-mrErAgMLYesGV7gSwhWlO73XlzgyHLJ6nkl2lVP3fBeLZvDMoUWKuCF1HCJYpymu"
     },
     {
       "name": "randomImagesFadeIn",
       "path": "scripts/dist/global/randomImagesFadeIn.js",
       "description": "Scroll-triggered random fade-in reveal for grid images",
       "pollGlobal": "ScrollTrigger",
-      "integrity": "sha384-F9l9wTGshdCcpQlxcJ/7eZ2Q81psfsrHGO7rroAoPXNcunvE+eHpZPPY0mUVzJKI"
+      "integrity": "sha384-aVl+lqsZ7zq0Xlx2GYe4JZ5FWl7F4lmwkz/YnucO2lrAJovpXEIt60G5nifFzBMZ"
     },
     {
       "name": "teamCardHover",
@@ -145,6 +145,19 @@
       "description": "Team leader hover figures with randomised positions",
       "pollGlobal": "gsap",
       "integrity": "sha384-mODABpJLkqxPhKUBw84nV1a7z6/SHp2y7hHq0PO2ENMp1ot3QMlpyPi21gFUPWkZ"
+    },
+    {
+      "name": "publicationsGridFade",
+      "path": "scripts/dist/global/publicationsGridFade.js",
+      "description": "Scroll-scrubbed fade-in reveal for .card-grid_grid items in randomised order",
+      "pollGlobal": "ScrollTrigger",
+      "integrity": "sha384-y86saRhtAUXNT/wyJu94R9yWvRLjt2IgVEmIz5ec2PYMilj46apWyKekwvcO1d3T"
+    },
+    {
+      "name": "worksCardHover",
+      "path": "scripts/dist/global/worksCardHover.js",
+      "description": "Desktop-only hover reveal for works card overlay and content",
+      "integrity": "sha384-MTqpJ2wr1II3IovcFzFoDSMnIUfWFl/ELBxsa6yh2IdvEYpaDPcBJnxxqANiP0yU"
     }
   ]
 }
