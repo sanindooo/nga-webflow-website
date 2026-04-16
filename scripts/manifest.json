@@ -1,5 +1,5 @@
 {
-  "version": "v0.16.1",
+  "version": "v0.16.2",
   "jsdelivr": {
     "user": "sanindooo",
     "repo": "nga-webflow-website"
@@ -10,7 +10,7 @@
       "path": "scripts/dist/global/gsapBasicAnimations.js",
       "description": "Basic GSAP animations (fades, slides, scales)",
       "pollGlobal": "ScrollTrigger",
-      "integrity": "sha384-fhVelA3PiBPX2J3DwiHq+n7mc1xwvJJKU76KsvUWYbYMHKaayFfUU5dE1RwRdi1v"
+      "integrity": "sha384-E1zETLhtINLHIyH3jEMraN+WGp8vLeOj4ZojSbv6fk7wgCL2jMHVsSmMOArcJJ6x"
     },
     {
       "name": "gsapSmoothScroll",
