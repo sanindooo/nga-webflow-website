@@ -10,7 +10,8 @@
   'use strict'
 
   const __s = ((window as any).__loadedScripts ??= {})
-  if (__s['generalScrollTextReveal']) return; __s['generalScrollTextReveal'] = true
+  if (__s['generalScrollTextReveal']) return
+  __s['generalScrollTextReveal'] = true
 
   function init() {
     const textElements = document.querySelectorAll('[scroll-text-reveal]')
@@ -21,16 +22,16 @@
         const timeline = gsap.timeline()
 
         Array.from(element.children).forEach((child, index) => {
-          const split = new SplitText(child, { types: 'words, lines' })
-          gsap.set(split.lines, { overflow: 'hidden' })
+          const split = new SplitText(child, { types: 'lines', mask: 'lines' })
+          // gsap.set(split.lines, { overflow: 'hidden' })
           timeline.fromTo(
-            split.words,
+            split.lines,
             { y: '110%' },
             {
               y: '0%',
               duration: 0.75,
               ease: 'power4.out',
-              stagger: 0.025,
+              stagger: 0.05,
             },
             index * 0.75,
           )
@@ -43,21 +44,21 @@
           animation: timeline,
         })
       } else {
-        const split = new SplitText(element, { types: 'words, lines' })
-        gsap.set(split.lines, { overflow: 'hidden' })
+        const split = new SplitText(element, { types: 'lines', mask: 'lines' })
+        // gsap.set(split.lines, { overflow: 'hidden' })
 
         ScrollTrigger.create({
           trigger: element,
           start: 'top 80%',
           end: 'bottom 20%',
           animation: gsap.fromTo(
-            split.words,
+            split.lines,
             { y: '110%' },
             {
               y: '0%',
               duration: 1,
               ease: 'power4.out',
-              stagger: 0.05,
+              stagger: 0.15,
             },
           ),
         })

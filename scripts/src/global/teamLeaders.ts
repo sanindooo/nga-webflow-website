@@ -6,11 +6,11 @@
   loadedScripts['teamLeaders'] = true
 
   const DURATION = 0.5
-  const HIDE_DELAY_MS = 50
+  const HIDE_DELAY_MS = 0
 
   function getRandomX(): number {
     const minX = window.innerWidth * 0.2
-    const maxX = window.innerWidth * 0.8
+    const maxX = window.innerWidth * 0.6
     return Math.floor(minX + Math.random() * (maxX - minX))
   }
 
@@ -25,15 +25,15 @@
       const figure = item.querySelector<HTMLElement>('.studio-team_floating-figure')
       if (!figure) return
 
-      gsap.set(figure, { autoAlpha: 0, border: '1px solid black', zIndex: 1000 })
+      gsap.set(figure, { autoAlpha: 0, border: '1px solid #717171', zIndex: 1000 })
 
-      let hideTimeout: ReturnType<typeof setTimeout> | null = null
+      // let hideTimeout: ReturnType<typeof setTimeout> | null = null
 
       item.addEventListener('mouseenter', () => {
-        if (hideTimeout) {
-          clearTimeout(hideTimeout)
-          hideTimeout = null
-        }
+        // if (hideTimeout) {
+        //   clearTimeout(hideTimeout)
+        //   hideTimeout = null
+        // }
 
         const randomX = getRandomX()
         gsap.set(figure, { left: randomX })
@@ -41,10 +41,10 @@
       })
 
       item.addEventListener('mouseleave', () => {
-        hideTimeout = setTimeout(() => {
-          gsap.to(figure, { autoAlpha: 0, duration: DURATION, ease: 'power2.in' })
-          hideTimeout = null
-        }, HIDE_DELAY_MS)
+        // hideTimeout = setTimeout(() => {
+        gsap.to(figure, { autoAlpha: 0, duration: DURATION, ease: 'power2.in' })
+        // hideTimeout = null
+        // })
       })
     })
   }
