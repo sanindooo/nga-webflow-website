@@ -1,5 +1,5 @@
 {
-  "version": "v0.16.2",
+  "version": "v0.17.0",
   "jsdelivr": {
     "user": "sanindooo",
     "repo": "nga-webflow-website"
@@ -23,7 +23,6 @@
       "name": "accordion",
       "path": "scripts/dist/global/accordion.js",
       "description": "Accordion/FAQ toggle interactions",
-      "pollGlobal": "gsap",
       "integrity": "sha384-TadOR/U00A9T8x6zSDArIWEFDNH25Wf12ekwLwoYIz8ear1eJZ3moOoLfzJd5y3y"
     },
     {
@@ -144,7 +143,7 @@
       "path": "scripts/dist/global/teamLeaders.js",
       "description": "Team leader hover figures with randomised positions",
       "pollGlobal": "gsap",
-      "integrity": "sha384-R5msiqDrVfd88yZWHYy8LMKVpsnz57nzhrByiTl4fMpTfs2aOIKvV1XX16ATv7Yi"
+      "integrity": "sha384-5kx8wwKw20lypp16TLleU+tKz+deiyV94/8tD+ztUdLrI1n5Mp8RTxRyGMdRM9iy"
     },
     {
       "name": "publicationsGridFade",
@@ -157,7 +156,21 @@
       "name": "worksCardHover",
       "path": "scripts/dist/global/worksCardHover.js",
       "description": "Desktop-only hover reveal for works card overlay and content",
-      "integrity": "sha384-MTqpJ2wr1II3IovcFzFoDSMnIUfWFl/ELBxsa6yh2IdvEYpaDPcBJnxxqANiP0yU"
+      "integrity": "sha384-/ijwKEKrJ1ZcsK5Edxg8cfmjS+ci4sKdkRavSjb1YsJj6jn7HbPnsp8XdLFi4eQ4"
+    },
+    {
+      "name": "generalImageHover",
+      "path": "scripts/dist/global/generalImageHover.js",
+      "description": "Scale-up hover effect for elements with [hover-scale=\"true\"]",
+      "pollGlobal": "gsap",
+      "integrity": "sha384-Mqk7cbP67qq3ENvyfChdTEdd3vCVabI44hr3Xx7f0BB23whPLJnrFelj7FRxUn2i"
+    },
+    {
+      "name": "homeTextSticky",
+      "path": "scripts/dist/global/homeTextSticky.js",
+      "description": "Pinned sticky-text sections with SplitText word reveal on scroll",
+      "pollGlobal": "SplitText",
+      "integrity": "sha384-6r/ScWOXFHbemH7RT5hxOCezNScqSWAUKfh+KzjTN8//L+nEJP1Mbh3KTpAEB2Vc"
     }
   ]
 }
