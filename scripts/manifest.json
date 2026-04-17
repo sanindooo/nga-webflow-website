@@ -1,5 +1,5 @@
 {
-  "version": "v0.16.0",
+  "version": "v0.16.2",
   "jsdelivr": {
     "user": "sanindooo",
     "repo": "nga-webflow-website"
@@ -10,7 +10,7 @@
       "path": "scripts/dist/global/gsapBasicAnimations.js",
       "description": "Basic GSAP animations (fades, slides, scales)",
       "pollGlobal": "ScrollTrigger",
-      "integrity": "sha384-fhVelA3PiBPX2J3DwiHq+n7mc1xwvJJKU76KsvUWYbYMHKaayFfUU5dE1RwRdi1v"
+      "integrity": "sha384-E1zETLhtINLHIyH3jEMraN+WGp8vLeOj4ZojSbv6fk7wgCL2jMHVsSmMOArcJJ6x"
     },
     {
       "name": "gsapSmoothScroll",
@@ -85,14 +85,14 @@
       "path": "scripts/dist/global/generalScrollTextReveal.js",
       "description": "Scroll-triggered SplitText word reveal for [scroll-text-reveal] elements",
       "pollGlobal": "SplitText",
-      "integrity": "sha384-aoR514XV2MjzwBw/tf9QcfqbeaTOS98ibPGRK26wRzfdQ8uHJuAdT5BcHsyK2qUv"
+      "integrity": "sha384-UezUjpViIpPD50gBBYV5CldUbn+9oU5iYVHc/J9nEru/NbIGFaHSqK1bAI0FZnuc"
     },
     {
       "name": "careersStackingCards",
       "path": "scripts/dist/global/careersStackingCards.js",
       "description": "Stacking benefit cards with clip-path reveal and black overlay fade",
       "pollGlobal": "ScrollTrigger",
-      "integrity": "sha384-jFzs8jMpmj/LpGpErhbFwuuASXX+tHudAA7qIapxUWvBnVMAora91f1SmWvNsTMi"
+      "integrity": "sha384-K2Wkq5Gf1TwBzdJ6xYSbvdzoZtB32BE7gVClM5bxQ5aipLQ0Ryu4oOuh24d55O9L"
     },
     {
       "name": "currentYear",
@@ -116,7 +116,7 @@
       "name": "cmsFilterLinks",
       "path": "scripts/dist/global/cmsFilterLinks.js",
       "description": "Sets CMS listing links (project grid, footer sitemap) with Finsweet category filter query param",
-      "integrity": "sha384-udAWnTI06rNDonrO39XKwGcgNweGpAuBsSdNm+K+9lhfOk8GnGc0E7Qly1AJ9MaB"
+      "integrity": "sha384-yfknIqThtxlJiJcSYjVOzRzpsMoh1jNkosHmcjl28B30L/s7G+YeHnHTYZOuj853"
     },
     {
       "name": "proccessSlider",
@@ -137,14 +137,14 @@
       "path": "scripts/dist/global/teamCardHover.js",
       "description": "Team card hover reveal for description text",
       "pollGlobal": "gsap",
-      "integrity": "sha384-hLAylPRT+Gp67HQfyN156tBo9Tyhu8zD4Oj88wsF8y6bJqf4amhL/93Z9ssodJAh"
+      "integrity": "sha384-4B7WRh6/KEoAL3DE0PDHOJsmHobTfhpPD8rQVq3cUNegqFd3iWYunawRXbXTTV5a"
     },
     {
       "name": "teamLeaders",
       "path": "scripts/dist/global/teamLeaders.js",
       "description": "Team leader hover figures with randomised positions",
       "pollGlobal": "gsap",
-      "integrity": "sha384-mODABpJLkqxPhKUBw84nV1a7z6/SHp2y7hHq0PO2ENMp1ot3QMlpyPi21gFUPWkZ"
+      "integrity": "sha384-R5msiqDrVfd88yZWHYy8LMKVpsnz57nzhrByiTl4fMpTfs2aOIKvV1XX16ATv7Yi"
     },
     {
       "name": "publicationsGridFade",
