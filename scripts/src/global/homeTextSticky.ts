@@ -32,21 +32,31 @@
       gsap.set([split.lines, arrow?.parentElement], { overflow: 'hidden' })
       gsap.set([split.words, arrow], { y: '110%' })
 
+      let arrowVisible = false
+
+      titleWrapper.addEventListener('mouseenter', () => {
+        if (!arrowVisible) return
+        gsap.to(arrow, { y: '0%', duration: 0.4, ease: 'power2.out' })
+      })
+
+      titleWrapper.addEventListener('mouseleave', () => {
+        if (!arrowVisible) return
+        gsap.to(arrow, { y: '110%', duration: 0.4, ease: 'power2.in' })
+      })
+
       const tl = gsap.timeline()
 
       tl.to(split.words, {
         y: '0%',
-      }).to(
-        arrow,
-        {
-          y: '0%',
+        stagger: 0.1,
+        onComplete: () => {
+          arrowVisible = true
         },
-        '-=.25',
-      )
+      })
 
       ScrollTrigger.create({
         trigger: section,
-        start: 'top top',
+        start: 'top 5%',
         end: 'bottom top',
         pin: titleWrapper,
         pinSpacing: false,
