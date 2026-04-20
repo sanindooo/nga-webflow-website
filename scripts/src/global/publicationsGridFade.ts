@@ -16,27 +16,44 @@
       const gridItems = Array.from(grid.querySelectorAll<HTMLElement>('.card-grid_grid-item'))
       if (!gridItems.length) return
 
-      const shuffledGridItems = [...gridItems].sort(() => Math.random() - 0.5)
-
       gsap.set(gridItems, { autoAlpha: 0, y: 20 })
 
-      const scrollDistance = gridItems.length * 120
+      // Group items into rows by their top offset position
+      const rowMap = new Map<number, HTMLElement[]>()
+      gridItems.forEach((gridItem) => {
+        const topOffset = gridItem.offsetTop
+        if (!rowMap.has(topOffset)) rowMap.set(topOffset, [])
+        rowMap.get(topOffset)!.push(gridItem)
+      })
+
+      // Sort rows top-to-bottom and shuffle items within each row
+      const rows = Array.from(rowMap.entries())
+        .sort(([topOffsetA], [topOffsetB]) => topOffsetA - topOffsetB)
+        .map(([, rowItems]) => [...rowItems].sort(() => Math.random() - 0.5))
+
+      const scrollDistance = rows.length * 300
 
       const gridTimeline = gsap.timeline({
         scrollTrigger: {
           trigger: grid,
-          start: 'top 80%',
+          start: 'top 50%',
           end: `+=${scrollDistance}`,
           scrub: true,
+          markers: true,
         },
       })
 
-      shuffledGridItems.forEach((gridItem) => {
-        gridTimeline.to(
-          gridItem,
-          { autoAlpha: 1, y: 0, duration: 1, ease: 'power2.out' },
-          '<0.3',
-        )
+      rows.forEach((rowItems, rowIndex) => {
+        const rowStartPosition = rowIndex === 0 ? 0 : `>-0.2`
+
+        rowItems.forEach((gridItem, itemIndex) => {
+          const itemPosition = itemIndex === 0 ? rowStartPosition : '<0.15'
+          gridTimeline.to(
+            gridItem,
+            { autoAlpha: 1, y: 0, duration: 1, ease: 'power2.out' },
+            itemPosition,
+          )
+        })
       })
     })
   }
