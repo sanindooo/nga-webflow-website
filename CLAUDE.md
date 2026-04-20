@@ -74,7 +74,7 @@ Managed via Webflow's `variable_tool`. The Relume starter template ships with it
 Used for CMS collection filtering on listing pages (e.g., Works, News). See `docs/reference/finsweet-cms-filter.md` for full attribute reference, CDN URLs, and setup patterns.
 
 ### Swiper Sliders
-Swiper.js loaded via CDN with polling loader (`pollGlobal: "Swiper"`). Each slider section is wrapped with `swiper_slider`, then the `.swiper` element gets a type combo class (`text-animation`, `default`, `split`) that determines its TS config. CMS Collection Lists map directly to Swiper structure (DynamoWrapper → `.swiper`, DynamoList → `.swiper-wrapper`, DynamoItem → `.swiper-slide`). See `docs/reference/swiper-slider-setup.md` for full class structure, pagination CSS, how to add new slider types, and the **Animating Slides with SplitText** section (mandatory reading before touching any slider text/image animation — covers the GSAP SplitText vs SplitType gotcha, the mask reveal pattern, the compound polling loader for Swiper+SplitText, and the correct Swiper callback pattern for animating the first slide on load).
+Swiper.js is loaded via CDN in Webflow Site Settings footer (before the bundle), so `Swiper` is an ambient global when `swiperSliders()` runs. Each slider section is wrapped with `swiper_slider`, then the `.swiper` element gets a type combo class (`text-animation`, `default`, `split`) that determines its TS config. CMS Collection Lists map directly to Swiper structure (DynamoWrapper → `.swiper`, DynamoList → `.swiper-wrapper`, DynamoItem → `.swiper-slide`). See `docs/reference/swiper-slider-setup.md` for full class structure, pagination CSS, how to add new slider types, and the **Animating Slides with SplitText** section (mandatory reading before touching any slider text/image animation — covers the GSAP SplitText vs SplitType gotcha, the mask reveal pattern, and the correct Swiper callback pattern for animating the first slide on load).
 
 ### Modals
 Accessible dialog modals are driven by the global `modals.ts` script and a tiny DOM contract — no new JS per instance. Discovery is via `[role="dialog"]` + native `id` (bound to CMS slug for CMS dialogs); triggers use `data-modal-open="{id}"`; close controls use `data-modal-close`; the optional global overlay uses `[data-modal-overlay]`. The script handles `is-open` class toggling, aria-hidden/aria-expanded sync, runtime aria-labelledby/describedby wiring, ESC + click-outside + close-button dismissal, focus trap, return-focus, and body scroll lock. Per-dialog overlay opt-out via `data-modal-no-overlay`. **See `docs/reference/modal-setup.md` for the complete attribute table, three reusable patterns (static, CMS-list, multi-static), sanity-check snippet, and common mistakes. Mandatory reading before building any new modal.**
@@ -104,56 +104,64 @@ Images, icons, and logos are exported from Figma and uploaded to Webflow via RES
 
 ## Custom Code Delivery
 
-All custom code is written in **TypeScript** with a `src/` → `dist/` build pattern:
+All custom code is bundled from a single TypeScript entry into one minified JS
+file served from jsDelivr by git tag. One CDN URL goes into Webflow Site
+Settings → Custom Code → Footer; updates ship by bumping a changeset and
+editing the URL.
 
 ```
-scripts/
-├── src/                          ← TypeScript source (edit here)
-│   ├── global/{name}.ts          ← site-wide scripts
-│   └── components/{name}.ts      ← per-component scripts
-├── dist/                         ← compiled JS output (jsDelivr serves from here)
-│   ├── global/{name}.js
-│   └── components/{name}.js
-├── build.mjs                     ← esbuild config
-└── manifest.json                 ← script registry (paths point to dist/)
+src/
+├── index.ts                 ← single entry: imports every feature and wires it into Webflow.push
+├── utils/{name}.ts          ← one file per feature, named export
+└── types/gsap.d.ts          ← ambient CDN globals (gsap, ScrollTrigger, Lenis, SplitText, Swiper)
+bin/
+└── build.js                 ← esbuild: bundle: true, entry: src/index.ts, outdir: dist/
+dist/
+└── index.js                 ← committed build output; jsDelivr serves this at the tag
+.changeset/                  ← changeset versioning
 ```
 
-- `pnpm run build` — compiles TypeScript to minified IIFE JS
-- `pnpm run typecheck` — validates types without emitting
-- **Standard script boilerplate (mandatory):** Every script must follow this structure:
-  ```ts
-  ;(function () {
-    'use strict'
+- `pnpm run build` — production bundle (minified IIFE)
+- `pnpm run dev` — watch mode with live reload on `localhost:3000`
+- `pnpm run check` — strict typecheck (no emit)
 
-    // 1. Dedup guard — prevents double-init via ngrok + CDN
-    const __s = ((window as any).__loadedScripts ??= {});
-    if (__s['scriptName']) return; __s['scriptName'] = true;
+**Module pattern (mandatory):**
 
-    // 2. Init function — all DOM queries and logic
-    function init() {
-      // script logic...
-    }
+```ts
+// src/utils/featureName.ts
+export const featureName = () => {
+  const root = document.querySelector<HTMLElement>('.selector')
+  if (!root) return  // selector-presence guard — the only guard needed
 
-    // 3. DOM-ready gate — handles async CDN load timing
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', init)
-    } else {
-      init()
-    }
-  })()
-  ```
-  - **Dedup guard:** Register on `window.__loadedScripts` and skip if present. Key must match `manifest.json` name.
-  - **DOM-ready gate:** Never use bare `DOMContentLoaded` — the event fires once and CDN scripts may load after it. The `readyState` check handles both early and late loading.
-  - **CDN dependency handling:** Do NOT put `typeof gsap === 'undefined'` guards in the script itself — this causes permanent silent failures due to async loading races. Instead, declare `pollGlobal` in `manifest.json` and the **polling loader** ensures deps are ready before the script is even injected. See deploy-scripts skill for loader templates.
-  - **Never use `s.defer=true` on dynamic scripts** — it has NO effect per HTML spec. Dynamically created `<script>` elements are always async. The polling loader handles ordering instead.
-- **Lenis + ScrollTrigger rule:** Never call `ScrollTrigger.refresh()` when Lenis smooth scroll is active. Use `lenis.resize()` debounced via `requestAnimationFrame` instead. For lazy-loaded images, use `data-lenis-resize` attribute on the section.
-- **SplitText lifecycle:** Always call `.revert()` before re-splitting an element. Track instances in a `Map` to prevent DOM bloat from accumulated wrapper spans.
-- **Clean code naming (mandatory):** Never use abbreviated or single-letter variable names in source TypeScript. Every variable, parameter, and function must use full, descriptive, semantic names that are immediately understandable at a scan (e.g., `listWrapper` not `l`, `savedView` not `s`, `filterElement` not `el`). Minification handles compression — source code must prioritize readability.
-- Served via **jsDelivr CDN** using commit hash URLs (NOT tags — tag resolution is unreliable for newer releases). URL format: `https://cdn.jsdelivr.net/gh/{user}/{repo}@{commit_sha}/{path}`
-- Injected into Webflow via `/custom-code-management` skill
-- **Global scripts → site-level ONLY** (via `add_inline_site_script`). **NEVER apply global scripts to individual pages** — this causes duplicate loading when versions update. Page-level (`upsert_page_script`) is reserved for page-specific component scripts only.
-- **After pushing new code**, the Webflow loader scripts must be re-registered with the new commit hash URL via `data_scripts_tool`, and old page-level scripts must be cleaned up. See `SKILL.md` for the full mandatory checklist.
-- See `.claude/skills/custom-code-management/SKILL.md` for full workflow
+  // do the work; CDN globals (gsap, ScrollTrigger, Lenis, SplitText, Swiper)
+  // are ambient and guaranteed available inside Webflow.push
+}
+```
+
+Every module is called once from `src/index.ts` inside `window.Webflow.push(() => {...})`.
+`Webflow.push` fires after DOMContentLoaded and after Webflow.js has
+initialised, so every CDN global is resolved by the time the callback runs.
+No polling loaders, no dedup guards, no readyState checks, no onLayoutReady
+queues, no scheduleLayoutInvalidation helpers — the bundle is loaded once
+from a single `<script src>` tag and modules run in the order `src/index.ts`
+dictates. Cross-module calls are normal TypeScript imports; don't put helpers
+on `window`.
+
+- **Clean naming (mandatory):** Use full, descriptive identifiers in source
+  (`listWrapper`, not `l`). Minification handles compression.
+- **SplitText:** Use `new SplitText(el, { autoSplit: true, onSplit: (self) => <animation> })`.
+  GSAP 3.13+ auto-resplits on font swap and container resize. Never call
+  `.revert()` manually when `autoSplit: true`.
+- **ScrollTrigger.refresh:** Don't call `refresh()` from inside a scroll
+  handler, `gsap.ticker` callback, or `lenis.on('scroll', …)` — that causes
+  scroll lock. For a deliberate, discrete content-size change (CMS filter,
+  accordion expand), call `ScrollTrigger.refresh(true)` inline; it defers
+  until momentum scroll settles.
+
+**Deploy:** bump a changeset, tag, push. Live CDN URL:
+`https://cdn.jsdelivr.net/gh/sanindooo/nga-webflow-website@vX.Y.Z/dist/index.js`.
+Update the Webflow footer tag to the new version to ship. See the
+`webflow-deploy` skill for the full checklist.
 
 ## Automation Boundary
 

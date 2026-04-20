@@ -1,17 +1,25 @@
 {
   "name": "figma-to-webflow-pipeline",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Automated Figma-to-Webflow pipeline with Claude Code, MCP, and Playwright visual testing",
+  "type": "module",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "test": "npx playwright test",
     "test:capture": "npx playwright test --grep 'capture'",
     "test:regression": "npx playwright test --grep 'regression'",
     "test:update-baseline": "npx playwright test --update-snapshots",
     "setup": "npx playwright install chromium",
-    "build": "node scripts/build.mjs",
-    "watch": "node scripts/build.mjs --watch",
+    "build": "cross-env NODE_ENV=production node ./bin/build.js",
+    "dev": "cross-env NODE_ENV=development node ./bin/build.js --watch",
+    "watch": "cross-env NODE_ENV=development node ./bin/build.js --watch",
+    "check": "tsc --noEmit",
     "typecheck": "tsc --noEmit",
-    "dev": "npx http-server scripts/ -p 3000 --cors -c-1",
+    "release": "changeset publish",
     "export-assets": "node scripts/api/figma/export-assets.js",
     "upload-assets": "node scripts/api/webflow/upload-assets.js",
     "update-metadata": "node scripts/api/webflow/update-metadata.js",
@@ -33,7 +41,10 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@changesets/changelog-git": "^0.2.1",
+    "@changesets/cli": "^2.31.0",
     "@playwright/test": "^1.58.2",
+    "cross-env": "^10.1.0",
     "esbuild": "^0.27.4",
     "http-server": "^14.1.1",
     "typescript": "^5.9.3"
