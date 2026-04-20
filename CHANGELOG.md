@@ -1,5 +1,11 @@
 # figma-to-webflow-pipeline
 
+## 1.0.1
+
+### Patch Changes
+
+- Fix word breaking in home sticky text reveal. The previous pass used `mask: 'lines'` which wraps each line in an extra `overflow: hidden; display: inline-block` div — that nested wrapper changed inline flow and forced words like "sky bar" onto separate lines. Reverted to the original behavior: no `mask` option, set `overflow: hidden` on `self.lines` manually inside `onSplit`. Keeps `autoSplit: true` for font-load robustness.
+
 ## 1.0.0
 
 ### Major Changes

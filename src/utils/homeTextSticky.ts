@@ -46,25 +46,22 @@ export const homeTextSticky = () => {
 
     new SplitText(heading, {
       types: 'words, lines',
-      mask: 'lines',
       autoSplit: true,
       onSplit: (self: SplitTypeInstance) => {
-        return gsap.fromTo(
-          self.words,
-          { y: '110%' },
-          {
-            y: '0%',
-            stagger: 0.1,
-            scrollTrigger: {
-              trigger: section,
-              start: 'top 2%',
-              end: 'bottom top',
-            },
-            onComplete: () => {
-              arrowVisible = true
-            },
+        gsap.set(self.lines, { overflow: 'hidden' })
+        gsap.set(self.words, { y: '110%' })
+        return gsap.to(self.words, {
+          y: '0%',
+          stagger: 0.1,
+          scrollTrigger: {
+            trigger: section,
+            start: 'top 2%',
+            end: 'bottom top',
           },
-        )
+          onComplete: () => {
+            arrowVisible = true
+          },
+        })
       },
     })
   })
