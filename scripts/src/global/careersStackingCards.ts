@@ -5,7 +5,7 @@
   if (__s['careersStackingCards']) return
   __s['careersStackingCards'] = true
 
-  function init() {
+  function setupStackingCards() {
     const sections = document.querySelectorAll<HTMLElement>('.benefit-card_component')
     if (sections.length === 0) return
 
@@ -69,6 +69,14 @@
         })
       }
     })
+  }
+
+  function init() {
+    if (typeof window.onLayoutReady === 'function') {
+      window.onLayoutReady(setupStackingCards)
+    } else {
+      setupStackingCards()
+    }
   }
 
   if (document.readyState === 'loading') {

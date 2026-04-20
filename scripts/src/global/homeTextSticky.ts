@@ -15,7 +15,7 @@
   if (__s['homeTextSticky']) return
   __s['homeTextSticky'] = true
 
-  function init() {
+  function setupStickyText() {
     const sections = Array.from(document.querySelectorAll<HTMLElement>('.section_sticky-text'))
     if (sections.length === 0) return
 
@@ -69,6 +69,14 @@
         animation: tl,
       })
     })
+  }
+
+  function init() {
+    if (typeof window.onLayoutReady === 'function') {
+      window.onLayoutReady(setupStickyText)
+    } else {
+      setupStickyText()
+    }
   }
 
   if (document.readyState === 'loading') {

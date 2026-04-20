@@ -8,7 +8,7 @@
   if (loadedScripts['publicationsGridFade']) return
   loadedScripts['publicationsGridFade'] = true
 
-  function init() {
+  function setupGridFade() {
     const grids = document.querySelectorAll<HTMLElement>('.card-grid_grid')
     if (!grids.length) return
 
@@ -39,7 +39,7 @@
           start: 'top 50%',
           end: `+=${scrollDistance}`,
           scrub: true,
-          markers: true,
+          markers: false,
         },
       })
 
@@ -56,6 +56,14 @@
         })
       })
     })
+  }
+
+  function init() {
+    if (typeof window.onLayoutReady === 'function') {
+      window.onLayoutReady(setupGridFade)
+    } else {
+      setupGridFade()
+    }
   }
 
   if (document.readyState === 'loading') {

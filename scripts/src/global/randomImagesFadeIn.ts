@@ -5,7 +5,7 @@
   if (loadedScripts['randomImagesFadeIn']) return
   loadedScripts['randomImagesFadeIn'] = true
 
-  function init() {
+  function setupRandomFadeIn() {
     const wrapper = document.querySelector<HTMLElement>('.process_grid-wrapper')
     if (!wrapper) return
 
@@ -53,6 +53,14 @@
         )
       })
     })
+  }
+
+  function init() {
+    if (typeof window.onLayoutReady === 'function') {
+      window.onLayoutReady(setupRandomFadeIn)
+    } else {
+      setupRandomFadeIn()
+    }
   }
 
   if (document.readyState === 'loading') {

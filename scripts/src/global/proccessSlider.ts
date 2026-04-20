@@ -24,13 +24,11 @@
     return section.querySelector<HTMLElement>('.process-slider_figure')
   }
 
-  function init() {
+  function setupProcessSlider() {
     const gsap = (window as any).gsap
     const ScrollTrigger = (window as any).ScrollTrigger
 
     if (!gsap || !ScrollTrigger) return
-
-    gsap.registerPlugin(ScrollTrigger)
 
     const wrapper = document.querySelector<HTMLElement>('.process-card_wrapper')
     if (!wrapper) return
@@ -147,6 +145,14 @@
       scrub: true,
       end: `+=${sections.length * SCROLL_PX_PER_SECTION}`,
     })
+  }
+
+  function init() {
+    if (typeof window.onLayoutReady === 'function') {
+      window.onLayoutReady(setupProcessSlider)
+    } else {
+      setupProcessSlider()
+    }
   }
 
   if (document.readyState === 'loading') {

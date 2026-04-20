@@ -3,6 +3,7 @@
  *
  * Initialises Lenis smooth scrolling integrated with GSAP's ticker.
  * Exposes stop/start on window for other scripts (e.g., modals).
+ * Coordinates ScrollTrigger initialization via layoutReady event.
  * Dependencies: GSAP, ScrollTrigger, Lenis (all via CDN)
  */
 
@@ -28,20 +29,59 @@
   window.startSmoothScroll = () => lenis.start()
   window.resizeSmoothScroll = () => lenis.resize()
 
-  // Recalculate Lenis scroll height after lazy-loaded images settle.
-  // Add data-lenis-resize to any section with CMS images whose intrinsic
-  // aspect ratios aren't known upfront (causes layout shift on load).
+  // ─── Layout Ready Coordination ─────────────────────────────────────────────
+  // All ScrollTrigger-creating scripts must wait for layoutReady before
+  // creating triggers. This ensures:
+  // 1. Fonts are loaded (affects text measurement for SplitText)
+  // 2. Initial layout has settled (rAF after fonts)
+  // 3. ScrollTrigger.refresh() has been called once
   //
-  // Strategy:
-  // 1. Track ALL pending images in marked sections
-  // 2. Call lenis.resize() on each load (progressively fixes scroll bounds)
-  // 3. Call ScrollTrigger.refresh() ONCE after ALL images load (fixes trigger positions)
-  //
-  // ScrollTrigger.refresh() is dangerous mid-scroll, but safe here because:
-  // - Initial page load: user hasn't scrolled yet
-  // - Images load quickly in parallel
-  // - One-time refresh after all images >> wrong positions throughout session
-  let pendingImageCount = 0
+  // We do NOT wait for lazy images — they load on scroll and would block
+  // forever. Instead, images with aspect-ratio CSS reserve space upfront,
+  // and we call lenis.resize() progressively as images load.
+
+  let layoutReadyFired = false
+  const pendingCallbacks: (() => void)[] = []
+
+  window.onLayoutReady = (callback: () => void) => {
+    if (layoutReadyFired) {
+      callback()
+    } else {
+      pendingCallbacks.push(callback)
+    }
+  }
+
+  function fireLayoutReady() {
+    if (layoutReadyFired) return
+    layoutReadyFired = true
+
+    lenis.resize()
+    ScrollTrigger.refresh()
+
+    pendingCallbacks.forEach((callback) => callback())
+    pendingCallbacks.length = 0
+
+    window.dispatchEvent(new CustomEvent('layoutReady'))
+  }
+
+  function initLayoutReady() {
+    const fontsReady = document.fonts?.ready ?? Promise.resolve()
+
+    fontsReady.then(() => {
+      // Give browser one frame to settle layout after fonts load
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          fireLayoutReady()
+        })
+      })
+    })
+  }
+
+  // ─── Lazy Image Resize (progressive, non-blocking) ─────────────────────────
+  // For images without aspect-ratio that cause layout shift after loading,
+  // add data-lenis-resize to the section. This calls lenis.resize() on each
+  // image load to update scroll bounds — but does NOT block layoutReady.
+
   let resizeScheduled = false
 
   const scheduleResize = () => {
@@ -53,58 +93,30 @@
     })
   }
 
-  const handleImageLoaded = () => {
-    pendingImageCount--
-    scheduleResize()
-
-    // When all images have loaded, refresh ScrollTrigger positions once
-    if (pendingImageCount === 0) {
-      requestAnimationFrame(() => {
-        ScrollTrigger.refresh()
-        window.dispatchEvent(new CustomEvent('layoutReady'))
-      })
-    }
-  }
-
   function initImageListeners() {
     const sections = document.querySelectorAll<HTMLElement>('[data-lenis-resize]')
 
     sections.forEach((section) => {
       section.querySelectorAll<HTMLImageElement>('img').forEach((image) => {
-        // Safari reports complete=true for lazy images that haven't loaded yet.
-        // Check naturalWidth to confirm actual content has loaded.
         const isLoaded = image.complete && image.naturalWidth > 0
         if (!isLoaded) {
-          pendingImageCount++
-          image.addEventListener('load', handleImageLoaded, { once: true })
-          image.addEventListener('error', handleImageLoaded, { once: true })
+          image.addEventListener('load', scheduleResize, { once: true })
+          image.addEventListener('error', scheduleResize, { once: true })
         }
       })
     })
-
-    // If all images are already loaded (cached/fast connection), refresh immediately
-    if (pendingImageCount === 0 && sections.length > 0) {
-      requestAnimationFrame(() => {
-        lenis.resize()
-        ScrollTrigger.refresh()
-        window.dispatchEvent(new CustomEvent('layoutReady'))
-      })
-    }
   }
 
-  // Expose a global helper for scripts that need to wait for layout to settle
-  // before measuring (e.g., SplitText line width calculations)
-  window.onLayoutReady = (callback: () => void) => {
-    if (pendingImageCount === 0) {
-      callback()
-    } else {
-      window.addEventListener('layoutReady', callback, { once: true })
-    }
+  // ─── Initialization ────────────────────────────────────────────────────────
+
+  function init() {
+    initImageListeners()
+    initLayoutReady()
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initImageListeners)
+    document.addEventListener('DOMContentLoaded', init)
   } else {
-    initImageListeners()
+    init()
   }
 })()

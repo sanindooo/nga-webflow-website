@@ -1,5 +1,5 @@
 {
-  "version": "v0.18.0",
+  "version": "v0.19.0",
   "jsdelivr": {
     "user": "sanindooo",
     "repo": "nga-webflow-website"
@@ -10,14 +10,14 @@
       "path": "scripts/dist/global/gsapBasicAnimations.js",
       "description": "Basic GSAP animations (fades, slides, scales)",
       "pollGlobal": "ScrollTrigger",
-      "integrity": "sha384-E1zETLhtINLHIyH3jEMraN+WGp8vLeOj4ZojSbv6fk7wgCL2jMHVsSmMOArcJJ6x"
+      "integrity": "sha384-pPejhphgOcF/r7pRS6NZ7FL1FrrYe90e9xfCIfAEC2vqQNkYFCwCccdYVP+j9i6q"
     },
     {
       "name": "gsapSmoothScroll",
       "path": "scripts/dist/global/gsapSmoothScroll.js",
       "description": "Lenis smooth scrolling with GSAP ScrollTrigger integration",
       "pollGlobal": "Lenis",
-      "integrity": "sha384-thJ9Fq2Bzb0J7jlS0l19k4uYrh1msNML58BzYQioPDsFTdbpp/0YQND+NjkhsqtB"
+      "integrity": "sha384-25jPqaVwhfc8vPNzWMXCAXW6ZatwWCoQvHMd0dYWdLhoHPUhMDK4oPuQb64JNywj"
     },
     {
       "name": "accordion",
@@ -84,14 +84,14 @@
       "path": "scripts/dist/global/generalScrollTextReveal.js",
       "description": "Scroll-triggered SplitText word reveal for [scroll-text-reveal] elements",
       "pollGlobal": "SplitText",
-      "integrity": "sha384-NV+3IsaKx4vS2sFWZFLv1XLEkubDk0nbcWBxJ2NP1pKT+hzBkiwPke6lawZ7GYP4"
+      "integrity": "sha384-gqVSMDhUAfI4N1DQuDj1l7YkXay0eSrME6DRcEP7g7SP55dl1BUme6/wTchJaiRx"
     },
     {
       "name": "careersStackingCards",
       "path": "scripts/dist/global/careersStackingCards.js",
       "description": "Stacking benefit cards with clip-path reveal and black overlay fade",
       "pollGlobal": "ScrollTrigger",
-      "integrity": "sha384-06hE1RcXQ0syHWush1mcqMncF9jaR5Xn+kq/Rln7BKKHD6AKzcdkb+nySAYfYJPB"
+      "integrity": "sha384-xgr+9P2lRLnB0dyjMo7QsdbvoZYag3qSuL6ely7R7HcxqgL/eT2cYZMEK1rdjXK0"
     },
     {
       "name": "currentYear",
@@ -122,14 +122,14 @@
       "path": "scripts/dist/global/proccessSlider.js",
       "description": "Pinned process slider with staggered title/number/paragraph reveals",
       "pollGlobal": "ScrollTrigger",
-      "integrity": "sha384-mrErAgMLYesGV7gSwhWlO73XlzgyHLJ6nkl2lVP3fBeLZvDMoUWKuCF1HCJYpymu"
+      "integrity": "sha384-CleEjZ/lqZPgJbBHh6LYP6LuaL0Jg3qhNzsuZ9vwg573ZMV8Vo0D6lkb1dO+pNS3"
     },
     {
       "name": "randomImagesFadeIn",
       "path": "scripts/dist/global/randomImagesFadeIn.js",
       "description": "Scroll-triggered random fade-in reveal for grid images",
       "pollGlobal": "ScrollTrigger",
-      "integrity": "sha384-aVl+lqsZ7zq0Xlx2GYe4JZ5FWl7F4lmwkz/YnucO2lrAJovpXEIt60G5nifFzBMZ"
+      "integrity": "sha384-mGw8SAHZrrSuTJZdeVf56I2YjnRtES1HpIKB2NjNKsLKsUwhsRDyf6bg0HmBjc32"
     },
     {
       "name": "teamCardHover",
@@ -150,7 +150,7 @@
       "path": "scripts/dist/global/publicationsGridFade.js",
       "description": "Scroll-scrubbed fade-in reveal for .card-grid_grid items in randomised order",
       "pollGlobal": "ScrollTrigger",
-      "integrity": "sha384-sK6/k/SZ5k1KsIQT94eJGRGEXQJvftN+H9i1b4Ia3fWLAviBRXv/KmEARhOiZpvC"
+      "integrity": "sha384-L4D0e2P0+ZCyzVHiKu4hDcfD7tac6I3cPO+WWiq757JWygE7T32LEiwFMT/jN3az"
     },
     {
       "name": "worksCardHover",
@@ -170,7 +170,7 @@
       "path": "scripts/dist/global/homeTextSticky.js",
       "description": "Pinned sticky-text sections with SplitText word reveal on scroll",
       "pollGlobal": "SplitText",
-      "integrity": "sha384-6r/ScWOXFHbemH7RT5hxOCezNScqSWAUKfh+KzjTN8//L+nEJP1Mbh3KTpAEB2Vc"
+      "integrity": "sha384-7AVgmBno/z5sFU82eQ0RvnS49bvNO5ftV3xfbs//NyS5zQylgoBQg03AaTYPyl0v"
     }
   ]
 }

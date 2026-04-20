@@ -67,18 +67,12 @@
   }
 
   function init() {
-    // Wait for fonts to load AND layout to settle before measuring text
-    // This prevents incorrect line breaks from container width changes
-    const fontsReady = document.fonts?.ready ?? Promise.resolve()
-
-    fontsReady.then(() => {
-      // If onLayoutReady exists (from gsapSmoothScroll), wait for images too
-      if (typeof window.onLayoutReady === 'function') {
-        window.onLayoutReady(setupTextReveals)
-      } else {
-        setupTextReveals()
-      }
-    })
+    // layoutReady already waits for fonts — just use onLayoutReady
+    if (typeof window.onLayoutReady === 'function') {
+      window.onLayoutReady(setupTextReveals)
+    } else {
+      setupTextReveals()
+    }
   }
 
   if (document.readyState === 'loading') {

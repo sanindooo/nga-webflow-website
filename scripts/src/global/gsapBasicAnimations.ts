@@ -12,7 +12,7 @@
   if (__s['gsapBasicAnimations']) return
   __s['gsapBasicAnimations'] = true
 
-  function init() {
+  function setupAnimations() {
     gsap.set('.slide-in', { y: 25, opacity: 0 })
     ScrollTrigger.batch('.slide-in', {
       start: 'top 80%',
@@ -26,6 +26,14 @@
       end: 'bottom 20%',
       onEnter: (batch: Element[]) => gsap.to(batch, { opacity: 1, duration: 1 }),
     })
+  }
+
+  function init() {
+    if (typeof window.onLayoutReady === 'function') {
+      window.onLayoutReady(setupAnimations)
+    } else {
+      setupAnimations()
+    }
   }
 
   if (document.readyState === 'loading') {
