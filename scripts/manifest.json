@@ -1,5 +1,5 @@
 {
-  "version": "v0.19.0",
+  "version": "v0.20.0",
   "jsdelivr": {
     "user": "sanindooo",
     "repo": "nga-webflow-website"
@@ -17,7 +17,7 @@
       "path": "scripts/dist/global/gsapSmoothScroll.js",
       "description": "Lenis smooth scrolling with GSAP ScrollTrigger integration",
       "pollGlobal": "Lenis",
-      "integrity": "sha384-25jPqaVwhfc8vPNzWMXCAXW6ZatwWCoQvHMd0dYWdLhoHPUhMDK4oPuQb64JNywj"
+      "integrity": "sha384-shTN2KYSRuoLqvMmmsK/XNYJV9usucA6yiwNVNSEa/lrqSGotm35vTHs2DK1tFNm"
     },
     {
       "name": "accordion",

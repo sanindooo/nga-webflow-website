@@ -31,36 +31,13 @@
 
   // ─── Layout Ready Coordination ─────────────────────────────────────────────
   // All ScrollTrigger-creating scripts must wait for layoutReady before
-  // creating triggers. This ensures:
-  // 1. Fonts are loaded (affects text measurement for SplitText)
-  // 2. Initial layout has settled (rAF after fonts)
-  // 3. ScrollTrigger.refresh() has been called once
-  //
-  // We do NOT wait for lazy images — they load on scroll and would block
-  // forever. Instead, images with aspect-ratio CSS reserve space upfront,
-  // and we call lenis.resize() progressively as images load.
-
-  let layoutReadyFired = false
-  const pendingCallbacks: (() => void)[] = []
-
-  window.onLayoutReady = (callback: () => void) => {
-    if (layoutReadyFired) {
-      callback()
-    } else {
-      pendingCallbacks.push(callback)
-    }
-  }
+  // creating triggers. The coordination mechanism (window.onLayoutReady) is
+  // initialized by an inline script in <head> BEFORE any CDN scripts load.
+  // This script just fires the event when Lenis + fonts are ready.
 
   function fireLayoutReady() {
-    if (layoutReadyFired) return
-    layoutReadyFired = true
-
     lenis.resize()
     ScrollTrigger.refresh()
-
-    pendingCallbacks.forEach((callback) => callback())
-    pendingCallbacks.length = 0
-
     window.dispatchEvent(new CustomEvent('layoutReady'))
   }
 
