@@ -1,1 +1,51 @@
-"use strict";(()=>{(function(){"use strict";const e=window.__loadedScripts??(window.__loadedScripts={});if(e.publicationsGridFade)return;e.publicationsGridFade=!0;function r(){const n=document.querySelectorAll(".card-grid_grid");n.length&&n.forEach(i=>{const t=Array.from(i.querySelectorAll(".card-grid_grid-item"));if(!t.length)return;const o=[...t].sort(()=>Math.random()-.5);gsap.set(t,{autoAlpha:0,y:20});const d=t.length*120,a=gsap.timeline({scrollTrigger:{trigger:i,start:"top 80%",end:`+=${d}`,scrub:!0}});o.forEach(s=>{a.to(s,{autoAlpha:1,y:0,duration:1,ease:"power2.out"},"<0.3")})})}document.readyState==="loading"?document.addEventListener("DOMContentLoaded",r):r()})();})();
+"use strict";
+(() => {
+  (function() {
+    "use strict";
+    const loadedScripts = window.__loadedScripts ?? (window.__loadedScripts = {});
+    if (loadedScripts["publicationsGridFade"]) return;
+    loadedScripts["publicationsGridFade"] = true;
+    function init() {
+      const grids = document.querySelectorAll(".card-grid_grid");
+      if (!grids.length) return;
+      grids.forEach((grid) => {
+        const gridItems = Array.from(grid.querySelectorAll(".card-grid_grid-item"));
+        if (!gridItems.length) return;
+        gsap.set(gridItems, { autoAlpha: 0, y: 20 });
+        const rowMap = /* @__PURE__ */ new Map();
+        gridItems.forEach((gridItem) => {
+          const topOffset = gridItem.offsetTop;
+          if (!rowMap.has(topOffset)) rowMap.set(topOffset, []);
+          rowMap.get(topOffset).push(gridItem);
+        });
+        const rows = Array.from(rowMap.entries()).sort(([topOffsetA], [topOffsetB]) => topOffsetA - topOffsetB).map(([, rowItems]) => [...rowItems].sort(() => Math.random() - 0.5));
+        const scrollDistance = rows.length * 300;
+        const gridTimeline = gsap.timeline({
+          scrollTrigger: {
+            trigger: grid,
+            start: "top 50%",
+            end: `+=${scrollDistance}`,
+            scrub: true,
+            markers: true
+          }
+        });
+        rows.forEach((rowItems, rowIndex) => {
+          const rowStartPosition = rowIndex === 0 ? 0 : `>-0.2`;
+          rowItems.forEach((gridItem, itemIndex) => {
+            const itemPosition = itemIndex === 0 ? rowStartPosition : "<0.15";
+            gridTimeline.to(
+              gridItem,
+              { autoAlpha: 1, y: 0, duration: 1, ease: "power2.out" },
+              itemPosition
+            );
+          });
+        });
+      });
+    }
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init);
+    } else {
+      init();
+    }
+  })();
+})();
