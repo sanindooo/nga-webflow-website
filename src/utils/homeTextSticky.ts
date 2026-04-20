@@ -14,26 +14,33 @@ export const homeTextSticky = () => {
     const titleWrapper = section.querySelector<HTMLElement>('.sticky-text_component')
     if (!titleWrapper) return
 
-    const heading = titleWrapper.querySelector<HTMLElement>('h2')
-    if (!heading) return
-
-    const arrow = titleWrapper.querySelector<HTMLElement>('.right-arrow_svg')
-    const arrowParent = arrow?.parentElement ?? null
-
     gsap.set(section, { position: 'relative', zIndex: sectionIndex + 1 })
-    if (arrowParent) gsap.set(arrowParent, { overflow: 'hidden' })
-    if (arrow) gsap.set(arrow, { y: '110%' })
+
+    const split = new SplitText(titleWrapper.querySelector('h2')!, { types: 'words, lines' })
+    const arrow = titleWrapper.querySelector<HTMLElement>('.right-arrow_svg')
+    gsap.set([split.lines, arrow?.parentElement], { overflow: 'hidden' })
+    gsap.set([split.words, arrow], { y: '110%' })
 
     let arrowVisible = false
 
     titleWrapper.addEventListener('mouseenter', () => {
-      if (!arrowVisible || !arrow) return
+      if (!arrowVisible) return
       gsap.to(arrow, { y: '0%', duration: 0.4, ease: 'power2.out' })
     })
 
     titleWrapper.addEventListener('mouseleave', () => {
-      if (!arrowVisible || !arrow) return
+      if (!arrowVisible) return
       gsap.to(arrow, { y: '110%', duration: 0.4, ease: 'power2.in' })
+    })
+
+    const tl = gsap.timeline()
+
+    tl.to(split.words, {
+      y: '0%',
+      stagger: 0.1,
+      onComplete: () => {
+        arrowVisible = true
+      },
     })
 
     ScrollTrigger.create({
@@ -43,26 +50,12 @@ export const homeTextSticky = () => {
       pin: titleWrapper,
       pinSpacing: false,
     })
-
-    new SplitText(heading, {
-      types: 'words, lines',
-      autoSplit: true,
-      onSplit: (self: SplitTypeInstance) => {
-        gsap.set(self.lines, { overflow: 'hidden' })
-        gsap.set(self.words, { y: '110%' })
-        return gsap.to(self.words, {
-          y: '0%',
-          stagger: 0.1,
-          scrollTrigger: {
-            trigger: section,
-            start: 'top 2%',
-            end: 'bottom top',
-          },
-          onComplete: () => {
-            arrowVisible = true
-          },
-        })
-      },
+    ScrollTrigger.create({
+      trigger: section,
+      start: 'top 2%',
+      end: 'bottom top',
+      markers: false,
+      animation: tl,
     })
   })
 }

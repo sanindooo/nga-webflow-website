@@ -1,5 +1,11 @@
 # figma-to-webflow-pipeline
 
+## 1.0.2
+
+### Patch Changes
+
+- Restore the developer's original home sticky text reveal code. v1.0.1 still used an `autoSplit + onSplit` wrapper with a single `gsap.to`; the developer's pattern is `const split = new SplitText(h2, { types: 'words, lines' })` + manual `overflow: hidden` on `split.lines` + a `gsap.timeline()` driven by a separate `ScrollTrigger.create({ animation: tl })`. Only structural simplifications applied (dropped IIFE wrapper, `__loadedScripts` dedup, `readyState` bootstrap, `onLayoutReady` shim). Fixes "sky bar" and similar short titles wrapping onto two lines.
+
 ## 1.0.1
 
 ### Patch Changes
