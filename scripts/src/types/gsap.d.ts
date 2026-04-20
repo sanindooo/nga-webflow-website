@@ -93,10 +93,15 @@ interface SplitTypeInstance {
   lines: HTMLElement[] | null;
 }
 
+interface SplitTextOptions {
+  types: string;
+  mask?: string;
+}
+
 interface SplitTypeConstructor {
   new (
     target: HTMLElement | Element,
-    options: { types: string },
+    options: SplitTextOptions,
   ): SplitTypeInstance;
 }
 
@@ -126,4 +131,5 @@ interface Window {
   stopSmoothScroll?: () => void;
   startSmoothScroll?: () => void;
   resizeSmoothScroll?: () => void;
+  onLayoutReady?: (callback: () => void) => void;
 }

@@ -1,5 +1,5 @@
 {
-  "version": "v0.17.0",
+  "version": "v0.18.0",
   "jsdelivr": {
     "user": "sanindooo",
     "repo": "nga-webflow-website"
@@ -17,7 +17,7 @@
       "path": "scripts/dist/global/gsapSmoothScroll.js",
       "description": "Lenis smooth scrolling with GSAP ScrollTrigger integration",
       "pollGlobal": "Lenis",
-      "integrity": "sha384-5Vb74I3qG/nzGYrMIq9cT1Ugs+3sbl4QUItgU981sO949aSOGvg2XzDHuvgNZBEK"
+      "integrity": "sha384-thJ9Fq2Bzb0J7jlS0l19k4uYrh1msNML58BzYQioPDsFTdbpp/0YQND+NjkhsqtB"
     },
     {
       "name": "accordion",
@@ -84,14 +84,14 @@
       "path": "scripts/dist/global/generalScrollTextReveal.js",
       "description": "Scroll-triggered SplitText word reveal for [scroll-text-reveal] elements",
       "pollGlobal": "SplitText",
-      "integrity": "sha384-UezUjpViIpPD50gBBYV5CldUbn+9oU5iYVHc/J9nEru/NbIGFaHSqK1bAI0FZnuc"
+      "integrity": "sha384-NV+3IsaKx4vS2sFWZFLv1XLEkubDk0nbcWBxJ2NP1pKT+hzBkiwPke6lawZ7GYP4"
     },
     {
       "name": "careersStackingCards",
       "path": "scripts/dist/global/careersStackingCards.js",
       "description": "Stacking benefit cards with clip-path reveal and black overlay fade",
       "pollGlobal": "ScrollTrigger",
-      "integrity": "sha384-K2Wkq5Gf1TwBzdJ6xYSbvdzoZtB32BE7gVClM5bxQ5aipLQ0Ryu4oOuh24d55O9L"
+      "integrity": "sha384-06hE1RcXQ0syHWush1mcqMncF9jaR5Xn+kq/Rln7BKKHD6AKzcdkb+nySAYfYJPB"
     },
     {
       "name": "currentYear",
@@ -150,7 +150,7 @@
       "path": "scripts/dist/global/publicationsGridFade.js",
       "description": "Scroll-scrubbed fade-in reveal for .card-grid_grid items in randomised order",
       "pollGlobal": "ScrollTrigger",
-      "integrity": "sha384-y86saRhtAUXNT/wyJu94R9yWvRLjt2IgVEmIz5ec2PYMilj46apWyKekwvcO1d3T"
+      "integrity": "sha384-sK6/k/SZ5k1KsIQT94eJGRGEXQJvftN+H9i1b4Ia3fWLAviBRXv/KmEARhOiZpvC"
     },
     {
       "name": "worksCardHover",
