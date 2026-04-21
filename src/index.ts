@@ -45,7 +45,7 @@ window.Webflow.push(() => {
   randomImagesFadeIn()
   careersStackingCards()
   proccessSlider()
-  stickyFilter()
+  // stickyFilter()
   swiperSliders()
 
   navToggle()
