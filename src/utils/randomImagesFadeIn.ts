@@ -12,9 +12,11 @@ export const randomImagesFadeIn = () => {
   const sections = Array.from(wrapper.querySelectorAll<HTMLElement>('.process_compontent'))
   if (!sections.length) return
 
-  wrapper.style.display = 'block'
-
   const isMobile = window.matchMedia('(max-width: 991px)').matches
+
+  if (!isMobile) {
+    wrapper.style.display = 'block'
+  }
 
   sections.forEach((section) => {
     const headerItems = Array.from(section.querySelectorAll<HTMLElement>('.process_header-item'))

@@ -873,8 +873,10 @@
     if (!wrapper) return;
     const sections = Array.from(wrapper.querySelectorAll(".process_compontent"));
     if (!sections.length) return;
-    wrapper.style.display = "block";
     const isMobile = window.matchMedia("(max-width: 991px)").matches;
+    if (!isMobile) {
+      wrapper.style.display = "block";
+    }
     sections.forEach((section) => {
       const headerItems = Array.from(section.querySelectorAll(".process_header-item"));
       const gridItems = Array.from(section.querySelectorAll(".process_grid-item"));
