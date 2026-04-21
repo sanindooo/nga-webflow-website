@@ -8,6 +8,7 @@
  */
 
 import { accordion } from '$utils/accordion'
+import { buttonIconHover } from '$utils/buttonIconHover'
 import { careersStackingCards } from '$utils/careersStackingCards'
 import { cmsFilterLinks } from '$utils/cmsFilterLinks'
 import { currentYear } from '$utils/currentYear'
@@ -51,6 +52,7 @@ window.Webflow.push(() => {
   navToggle()
   navTheme()
 
+  buttonIconHover()
   teamCardHover()
   teamLeaders()
   worksCardHover()

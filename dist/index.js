@@ -42,6 +42,56 @@
     });
   };
 
+  // src/utils/buttonIconHover.ts
+  var DURATION = 0.5;
+  var EASE = "power2.out";
+  var ROTATION = 360;
+  var buttonIconHover = () => {
+    const buttons = Array.from(document.querySelectorAll(".button.is-link.is-icon"));
+    if (!buttons.length) return;
+    const isTouchDevice = window.matchMedia("(hover: none)").matches;
+    if (isTouchDevice) return;
+    buttons.forEach((button) => {
+      const square = button.querySelector(".button-square");
+      const textEl = Array.from(button.children).find(
+        (child) => child instanceof HTMLElement && !child.classList.contains("button-square")
+      );
+      if (!square || !textEl) return;
+      const text = textEl.textContent?.trim() ?? "";
+      if (!text) return;
+      textEl.textContent = "";
+      textEl.style.position = "relative";
+      textEl.style.overflow = "hidden";
+      textEl.style.display = "inline-block";
+      const original = document.createElement("span");
+      original.textContent = text;
+      original.style.display = "block";
+      const clone = document.createElement("span");
+      clone.textContent = text;
+      clone.setAttribute("aria-hidden", "true");
+      clone.style.display = "block";
+      clone.style.position = "absolute";
+      clone.style.top = "0";
+      clone.style.left = "0";
+      clone.style.width = "100%";
+      clone.style.pointerEvents = "none";
+      textEl.append(original, clone);
+      gsap.set(clone, { yPercent: 100 });
+      button.addEventListener("mouseenter", () => {
+        gsap.killTweensOf([original, clone, square]);
+        gsap.to(original, { yPercent: -100, duration: DURATION, ease: EASE });
+        gsap.to(clone, { yPercent: 0, duration: DURATION, ease: EASE });
+        gsap.to(square, { rotation: ROTATION, duration: DURATION, ease: EASE });
+      });
+      button.addEventListener("mouseleave", () => {
+        gsap.killTweensOf([original, clone, square]);
+        gsap.to(original, { yPercent: 0, duration: DURATION, ease: EASE });
+        gsap.to(clone, { yPercent: 100, duration: DURATION, ease: EASE });
+        gsap.to(square, { rotation: 0, duration: DURATION, ease: EASE });
+      });
+    });
+  };
+
   // src/utils/careersStackingCards.ts
   var careersStackingCards = () => {
     const sections = document.querySelectorAll(".benefit-card_component");
@@ -1046,8 +1096,8 @@
   };
 
   // src/utils/teamCardHover.ts
-  var DURATION = 0.45;
-  var EASE = "power2.inOut";
+  var DURATION2 = 0.45;
+  var EASE2 = "power2.inOut";
   var teamCardHover = () => {
     const cards = Array.from(document.querySelectorAll(".studio-team_card"));
     if (!cards.length) return;
@@ -1060,19 +1110,19 @@
       gsap.set(description, { autoAlpha: 0, yPercent: 20 });
       card.addEventListener("mouseenter", () => {
         gsap.killTweensOf(description);
-        gsap.to(description, { autoAlpha: 1, yPercent: 0, duration: DURATION, ease: EASE });
-        gsap.to(image, { scale: 1.1, duration: DURATION, ease: EASE });
+        gsap.to(description, { autoAlpha: 1, yPercent: 0, duration: DURATION2, ease: EASE2 });
+        gsap.to(image, { scale: 1.1, duration: DURATION2, ease: EASE2 });
       });
       card.addEventListener("mouseleave", () => {
         gsap.killTweensOf(description);
-        gsap.to(description, { autoAlpha: 0, yPercent: 20, duration: DURATION, ease: EASE });
-        gsap.to(image, { scale: 1, duration: DURATION, ease: EASE });
+        gsap.to(description, { autoAlpha: 0, yPercent: 20, duration: DURATION2, ease: EASE2 });
+        gsap.to(image, { scale: 1, duration: DURATION2, ease: EASE2 });
       });
     });
   };
 
   // src/utils/teamLeaders.ts
-  var DURATION2 = 0.5;
+  var DURATION3 = 0.5;
   function getRandomX() {
     const minX = window.innerWidth * 0.2;
     const maxX = window.innerWidth * 0.6;
@@ -1091,24 +1141,24 @@
         if (mobileMediaQuery.matches) return;
         const randomX = getRandomX();
         gsap.set(figure, { left: randomX });
-        gsap.to(figure, { autoAlpha: 1, duration: DURATION2, ease: "power2.out" });
+        gsap.to(figure, { autoAlpha: 1, duration: DURATION3, ease: "power2.out" });
       });
       item.addEventListener("mouseleave", () => {
         if (mobileMediaQuery.matches) return;
-        gsap.to(figure, { autoAlpha: 0, duration: DURATION2, ease: "power2.in" });
+        gsap.to(figure, { autoAlpha: 0, duration: DURATION3, ease: "power2.in" });
       });
       item.addEventListener("click", () => {
         if (!mobileMediaQuery.matches) return;
         if (activeMobileItem === figure) {
-          gsap.to(figure, { autoAlpha: 0, duration: DURATION2, ease: "power2.in" });
+          gsap.to(figure, { autoAlpha: 0, duration: DURATION3, ease: "power2.in" });
           activeMobileItem = null;
           return;
         }
         if (activeMobileItem) {
-          gsap.to(activeMobileItem, { autoAlpha: 0, duration: DURATION2, ease: "power2.in" });
+          gsap.to(activeMobileItem, { autoAlpha: 0, duration: DURATION3, ease: "power2.in" });
         }
         gsap.set(figure, { left: "auto", right: 16 });
-        gsap.to(figure, { autoAlpha: 1, duration: DURATION2, ease: "power2.out" });
+        gsap.to(figure, { autoAlpha: 1, duration: DURATION3, ease: "power2.out" });
         activeMobileItem = figure;
       });
     });
@@ -1225,6 +1275,7 @@
     swiperSliders();
     navToggle();
     navTheme();
+    buttonIconHover();
     teamCardHover();
     teamLeaders();
     worksCardHover();
