@@ -1,5 +1,12 @@
 # figma-to-webflow-pipeline
 
+## 1.0.4
+
+### Patch Changes
+
+- fix: add layered `ScrollTrigger.refresh()` hooks in `gsapSmoothScroll.ts` to defend against stale trigger positions from late image/asset loads. Previously on `/studio`, every `[scroll-text-reveal]` element below the principals section fired its SplitText line-reveal prematurely under slow-load conditions — because ScrollTrigger caches each trigger's `start`/`end` at creation and its built-in `autoRefreshEvents` (resize / load / DCL) don't cover DOM-driven height changes from late asset loads. Three redundant refresh hooks now cover the gaps: body `ResizeObserver`, `window.load`, and per-image `load` listeners (with the Safari `.complete && naturalWidth > 0` check). See `docs/solutions/integration-issues/scrolltrigger-stale-positions-late-image-loads.md` for the full diagnosis.
+- update: action client feedback site-wide (pending from prior session, rolled into this release — the v1.0.3 tag was cut but changeset-version / package-bump never ran for it, so shipping together).
+
 ## 1.0.2
 
 ### Patch Changes
