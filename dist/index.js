@@ -44,51 +44,63 @@
 
   // src/utils/careersStackingCards.ts
   var careersStackingCards = () => {
+    const wrapper = document.querySelector(".benefit-card_wrapper");
     const sections = document.querySelectorAll(".benefit-card_component");
-    if (sections.length === 0) return;
+    if (!wrapper || sections.length === 0) return;
     sections.forEach((section, index) => {
-      const marginBottom = index < sections.length - 1 ? "margin-bottom: 80vh;" : "";
-      section.style.cssText = `position: sticky; top: 0; z-index: ${index + 1}; ${marginBottom}`;
+      section.style.cssText = `top: 0; z-index: ${index + 1};`;
       const blackOverlay = document.createElement("div");
+      blackOverlay.classList.add("black-overlay");
       blackOverlay.style.cssText = "position: absolute; inset: 0; background: black; opacity: 0; pointer-events: none; z-index: 10;";
       section.appendChild(blackOverlay);
-    });
-    sections.forEach((section, index) => {
+      if (index === 0) return;
+      gsap.set(section, { yPercent: 100 });
       const figure = section.querySelector(".benefit-card_figure");
-      const blackOverlay = section.querySelector('div[style*="background: black"]');
       if (figure) {
+        gsap.set(figure, { clipPath: "inset(0% 0% 100% 0%)" });
         const image = figure.querySelector("img");
-        const sharedScrollTrigger = {
-          trigger: section,
-          start: "top 30%",
-          end: "top top"
-        };
-        gsap.fromTo(
-          figure,
-          { clipPath: "inset(0% 0% 100% 0%)" },
-          { clipPath: "inset(0% 0% 0% 0%)", ease: "none", scrollTrigger: sharedScrollTrigger }
+        if (image) gsap.set(image, { scale: 1.2 });
+      }
+      const textElements = section.querySelectorAll("h1, h2, h3, h4, h5, h6, p");
+      if (textElements.length) gsap.set(textElements, { autoAlpha: 0, y: 16 });
+    });
+    const tl = gsap.timeline();
+    const SEGMENT = 3;
+    sections.forEach((section, index) => {
+      if (index === 0) return;
+      const t = (index - 1) * SEGMENT;
+      const prevOverlay = sections[index - 1].querySelector(".black-overlay");
+      const figure = section.querySelector(".benefit-card_figure");
+      const image = figure?.querySelector("img");
+      const textElements = section.querySelectorAll("h1, h2, h3, h4, h5, h6, p");
+      if (prevOverlay) {
+        tl.to(prevOverlay, { opacity: 0.6, ease: "none", duration: 2 }, t + 1);
+      }
+      const slideStart = t + 1;
+      tl.to(section, { yPercent: 0, ease: "power2.inOut", duration: 2 }, slideStart);
+      const contentStart = slideStart + 1;
+      if (figure) {
+        tl.to(figure, { clipPath: "inset(0% 0% 0% 0%)", ease: "none", duration: 0.6 }, contentStart);
+      }
+      if (image) {
+        tl.to(image, { scale: 1, ease: "power4.out", duration: 0.6 }, contentStart);
+      }
+      if (textElements.length) {
+        tl.to(
+          textElements,
+          { autoAlpha: 1, y: 0, stagger: 0.06, ease: "power2.out", duration: 0.4 },
+          contentStart
         );
-        if (image) {
-          gsap.fromTo(
-            image,
-            { scale: 1.2 },
-            { scale: 1, ease: "power4.out", duration: 1, scrollTrigger: sharedScrollTrigger }
-          );
-        }
       }
-      if (index < sections.length - 1 && blackOverlay) {
-        const nextSection = sections[index + 1];
-        gsap.to(blackOverlay, {
-          opacity: 0.6,
-          ease: "none",
-          scrollTrigger: {
-            trigger: nextSection,
-            start: "top bottom",
-            end: "top top",
-            scrub: true
-          }
-        });
-      }
+    });
+    ScrollTrigger.create({
+      trigger: wrapper,
+      start: "top top",
+      end: `+=${(sections.length - 1) * SEGMENT * window.innerHeight * 0.4}`,
+      pin: true,
+      pinSpacing: true,
+      animation: tl,
+      scrub: true
     });
   };
 
