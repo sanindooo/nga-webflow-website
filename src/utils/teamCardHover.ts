@@ -9,10 +9,14 @@ export const teamCardHover = () => {
   const cards = Array.from(document.querySelectorAll<HTMLElement>('.studio-team_card'))
   if (!cards.length) return
 
+  const isTouchDevice = window.matchMedia('(hover: none)').matches
+
   cards.forEach((card) => {
     const description = card.querySelector<HTMLElement>('.studio-team_card-info p')
     const image = card.querySelector<HTMLElement>('.studio-team_card img')
     if (!description) return
+
+    if (isTouchDevice) return
 
     gsap.set(description, { autoAlpha: 0, yPercent: 20 })
 
