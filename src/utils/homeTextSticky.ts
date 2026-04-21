@@ -45,7 +45,7 @@ export const homeTextSticky = () => {
 
     ScrollTrigger.create({
       trigger: section,
-      start: 'top 5%',
+      start: 'top 10%',
       end: 'bottom top',
       pin: titleWrapper,
       pinSpacing: false,
