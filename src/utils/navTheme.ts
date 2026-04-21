@@ -15,6 +15,7 @@ const DARK_COLOR = '#012C72'
 
 export const navTheme = () => {
   const headerElement = document.querySelector<HTMLElement>('.header')
+  if (headerElement?.getAttribute('data-wf--main-nav--variant') === 'white-bg') return
   const logoWrapper = document.querySelector<HTMLElement>('.nav-custom_logo')
   const hamburgerToggle = document.querySelector<HTMLElement>('.nav-custom_toggle')
   const darkThemeSections = Array.from(
@@ -86,9 +87,7 @@ export const navTheme = () => {
       return 'linear-gradient(transparent, transparent)'
     }
 
-    const sorted = [...intervals].sort(
-      (intervalA, intervalB) => intervalA.start - intervalB.start,
-    )
+    const sorted = [...intervals].sort((intervalA, intervalB) => intervalA.start - intervalB.start)
     const stops: string[] = []
     let cursor = 0
 

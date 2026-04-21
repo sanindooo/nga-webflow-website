@@ -459,6 +459,142 @@
     });
   };
 
+  // src/utils/navTheme.ts
+  var DARK_COLOR = "#012C72";
+  var navTheme = () => {
+    const headerElement = document.querySelector(".header");
+    if (headerElement?.getAttribute("data-wf--main-nav--variant") === "white-bg") return;
+    const logoWrapper = document.querySelector(".nav-custom_logo");
+    const hamburgerToggle = document.querySelector(".nav-custom_toggle");
+    const darkThemeSections = Array.from(
+      document.querySelectorAll("[data-header-theme='dark']")
+    );
+    if (!headerElement || !logoWrapper || !hamburgerToggle) return;
+    if (darkThemeSections.length === 0) return;
+    const darkOverlay = document.createElement("div");
+    darkOverlay.setAttribute("aria-hidden", "true");
+    headerElement.classList.forEach((cls) => darkOverlay.classList.add(cls));
+    Object.assign(darkOverlay.style, {
+      position: "fixed",
+      top: "0",
+      left: "0",
+      right: "0",
+      height: `${headerElement.offsetHeight}px`,
+      pointerEvents: "none",
+      zIndex: "9999"
+    });
+    const logoClone = logoWrapper.cloneNode(true);
+    Object.assign(logoClone.style, {
+      position: "absolute",
+      margin: "0",
+      padding: "0",
+      color: DARK_COLOR
+    });
+    darkOverlay.appendChild(logoClone);
+    const toggleClone = hamburgerToggle.cloneNode(true);
+    Object.assign(toggleClone.style, {
+      position: "absolute",
+      margin: "0"
+    });
+    toggleClone.querySelectorAll(".nav-custom_line").forEach((line) => {
+      line.style.backgroundColor = DARK_COLOR;
+    });
+    darkOverlay.appendChild(toggleClone);
+    document.body.appendChild(darkOverlay);
+    let navHeight = headerElement.offsetHeight;
+    const syncClonePositions = () => {
+      navHeight = headerElement.offsetHeight;
+      darkOverlay.style.height = `${navHeight}px`;
+      const logoRect = logoWrapper.getBoundingClientRect();
+      Object.assign(logoClone.style, {
+        top: `${logoRect.top}px`,
+        left: `${logoRect.left}px`,
+        width: `${logoRect.width}px`,
+        height: `${logoRect.height}px`
+      });
+      const toggleRect = hamburgerToggle.getBoundingClientRect();
+      Object.assign(toggleClone.style, {
+        top: `${toggleRect.top}px`,
+        left: `${toggleRect.left}px`,
+        width: `${toggleRect.width}px`,
+        height: `${toggleRect.height}px`
+      });
+    };
+    const buildMaskGradient = (intervals) => {
+      if (intervals.length === 0) {
+        return "linear-gradient(transparent, transparent)";
+      }
+      const sorted = [...intervals].sort((intervalA, intervalB) => intervalA.start - intervalB.start);
+      const stops = [];
+      let cursor = 0;
+      for (const { start, end } of sorted) {
+        if (start > cursor) {
+          stops.push(`transparent ${cursor}px`, `transparent ${start}px`);
+        }
+        stops.push(`black ${start}px`, `black ${end}px`);
+        cursor = end;
+      }
+      if (cursor < navHeight) {
+        stops.push(`transparent ${cursor}px`, `transparent ${navHeight}px`);
+      }
+      return `linear-gradient(to bottom, ${stops.join(", ")})`;
+    };
+    let lastScrollY = -1;
+    let lastGradient = "";
+    const updateMask = () => {
+      if (headerElement.classList.contains("is-nav-open")) return;
+      const currentScrollY = window.scrollY;
+      if (currentScrollY === lastScrollY) return;
+      lastScrollY = currentScrollY;
+      const coverageIntervals = [];
+      for (const section of darkThemeSections) {
+        const rect = section.getBoundingClientRect();
+        const intervalStart = Math.max(0, Math.min(rect.top, navHeight));
+        const intervalEnd = Math.max(0, Math.min(rect.bottom, navHeight));
+        if (intervalEnd > intervalStart) {
+          coverageIntervals.push({ start: intervalStart, end: intervalEnd });
+        }
+      }
+      const gradient = buildMaskGradient(coverageIntervals);
+      if (gradient === lastGradient) return;
+      lastGradient = gradient;
+      darkOverlay.style.maskImage = gradient;
+      darkOverlay.style.webkitMaskImage = gradient;
+    };
+    const navOpenObserver = new MutationObserver(() => {
+      const isOpen = headerElement.classList.contains("is-nav-open");
+      if (isOpen) {
+        toggleClone.style.transition = "none";
+        toggleClone.style.opacity = "0";
+        toggleClone.style.display = "none";
+      } else {
+        toggleClone.style.display = "";
+        void toggleClone.offsetHeight;
+        toggleClone.style.transition = "opacity 0.4s ease";
+        toggleClone.style.opacity = "1";
+      }
+    });
+    navOpenObserver.observe(headerElement, {
+      attributes: true,
+      attributeFilter: ["class"]
+    });
+    syncClonePositions();
+    updateMask();
+    const tick = () => {
+      updateMask();
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+    window.addEventListener(
+      "resize",
+      () => {
+        syncClonePositions();
+        updateMask();
+      },
+      { passive: true }
+    );
+  };
+
   // src/utils/navToggle.ts
   var navToggle = () => {
     const toggle = document.querySelector('[data-nav="open"]');
@@ -1104,6 +1240,7 @@
     stickyFilter();
     swiperSliders();
     navToggle();
+    navTheme();
     teamCardHover();
     teamLeaders();
     worksCardHover();
