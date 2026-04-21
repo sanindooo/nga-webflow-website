@@ -71,7 +71,10 @@ export const navToggle = () => {
     timeline.to(
       header,
       {
-        backgroundColor: 'rgba(0,0,0,0)',
+        backgroundColor:
+          header.getAttribute('data-wf--main-nav--variant') === 'white-bg'
+            ? 'rgb(255,255,255)'
+            : 'rgba(250, 250, 250, 0)',
         backdropFilter: 'blur(0px)',
         duration: 0.35,
         ease: 'power2.in',

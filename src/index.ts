@@ -49,7 +49,7 @@ window.Webflow.push(() => {
   swiperSliders()
 
   navToggle()
-  navTheme()
+  // navTheme()
 
   teamCardHover()
   teamLeaders()
