@@ -39,9 +39,11 @@ export const careersStackingCards = () => {
 
   const tl = gsap.timeline()
 
-  // Each segment occupies 3 units: 1 unit of "hold" (nothing animates = user sees current card),
-  // then 2 units for the actual transition. The gap creates the delay without any dummy tweens.
+  // Each segment occupies 3 units: HOLD units of pause (user sees current card),
+  // then the remaining units for the actual transition.
+  // Smaller HOLD = transition kicks in sooner after pinning (less "dead scroll").
   const SEGMENT = 3
+  const HOLD = 0.4 // reduced from 1 so users see motion quickly after the pin
   sections.forEach((section, index) => {
     if (index === 0) return
 
@@ -53,22 +55,23 @@ export const careersStackingCards = () => {
 
     // Overlay fades in after the hold, during the slide
     if (prevOverlay) {
-      tl.to(prevOverlay, { opacity: 0.6, ease: 'none', duration: 2 }, t + 1)
+      tl.to(prevOverlay, { opacity: 0.6, ease: 'none', duration: 2 }, t + HOLD)
     }
 
-    // Slide starts after 1-unit hold
-    const slideStart = t + 1
+    // Slide starts after hold
+    const slideStart = t + HOLD
     tl.to(section, { yPercent: 0, ease: 'power2.inOut', duration: 2 }, slideStart)
 
     // Content animations start at 50% of the slide
     const contentStart = slideStart + 1
 
     if (figure) {
-      tl.to(figure, { clipPath: 'inset(0% 0% 0% 0%)', ease: 'none', duration: 0.6 }, contentStart)
+      // duration 1 (was 0.6) = slower clip-path reveal across more scroll travel
+      tl.to(figure, { clipPath: 'inset(0% 0% 0% 0%)', ease: 'none', duration: 1 }, contentStart)
     }
 
     if (image) {
-      tl.to(image, { scale: 1, ease: 'power4.out', duration: 0.6 }, contentStart)
+      tl.to(image, { scale: 1, ease: 'power4.out', duration: 1.2 }, contentStart)
     }
 
     if (textElements.length) {
