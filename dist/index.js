@@ -111,11 +111,12 @@
         const image = figure.querySelector("img");
         if (image) gsap.set(image, { scale: 1.2 });
       }
-      const textElements = section.querySelectorAll("h1, h2, h3, h4, h5, h6, p");
-      if (textElements.length) gsap.set(textElements, { autoAlpha: 0, y: 16 });
+      const textWrapper = section.querySelector(".benefit-card_meta");
+      gsap.set(textWrapper, { overflow: "hidden" });
+      gsap.set(textWrapper?.querySelectorAll("& > *"), { yPercent: 100 });
     });
     const tl = gsap.timeline();
-    const SEGMENT = 3;
+    const SEGMENT = 5;
     const HOLD = 0.4;
     sections.forEach((section, index) => {
       if (index === 0) return;
@@ -123,23 +124,23 @@
       const prevOverlay = sections[index - 1].querySelector(".black-overlay");
       const figure = section.querySelector(".benefit-card_figure");
       const image = figure?.querySelector("img");
-      const textElements = section.querySelectorAll("h1, h2, h3, h4, h5, h6, p");
+      const textWrapper = section.querySelector(".benefit-card_meta");
       if (prevOverlay) {
-        tl.to(prevOverlay, { opacity: 0.6, ease: "none", duration: 2 }, t + HOLD);
+        tl.to(prevOverlay, { opacity: 0.6, ease: "none", duration: SEGMENT }, t + HOLD);
       }
       const slideStart = t + HOLD;
-      tl.to(section, { yPercent: 0, ease: "power2.inOut", duration: 2 }, slideStart);
-      const contentStart = slideStart + 1;
+      tl.to(section, { yPercent: 0, ease: "power2.inOut", duration: SEGMENT }, slideStart);
+      const contentStart = slideStart + 3;
       if (figure) {
         tl.to(figure, { clipPath: "inset(0% 0% 0% 0%)", ease: "none", duration: 1 }, contentStart);
       }
       if (image) {
-        tl.to(image, { scale: 1, ease: "power4.out", duration: 1.2 }, contentStart);
+        tl.to(image, { scale: 1, ease: "power4.out", duration: 1 }, contentStart);
       }
-      if (textElements.length) {
+      if (textWrapper && textWrapper.children.length) {
         tl.to(
-          textElements,
-          { autoAlpha: 1, y: 0, stagger: 0.06, ease: "power2.out", duration: 0.4 },
+          textWrapper?.querySelectorAll("& > *"),
+          { yPercent: 0, stagger: 0.06, ease: "power2.out", duration: 0.6 },
           contentStart
         );
       }

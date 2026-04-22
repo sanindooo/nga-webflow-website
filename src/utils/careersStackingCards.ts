@@ -33,8 +33,11 @@ export const careersStackingCards = () => {
       if (image) gsap.set(image, { scale: 1.2 })
     }
 
-    const textElements = section.querySelectorAll<HTMLElement>('h1, h2, h3, h4, h5, h6, p')
-    if (textElements.length) gsap.set(textElements, { autoAlpha: 0, y: 16 })
+    const textWrapper = section.querySelector<HTMLElement>('.benefit-card_meta')
+    // const textElements = section.querySelectorAll<HTMLElement>('h1, h2, h3, h4, h5, h6, p')
+    gsap.set(textWrapper, { overflow: 'hidden' })
+
+    gsap.set(textWrapper?.querySelectorAll<HTMLElement>('& > *'), { yPercent: 100 })
   })
 
   const tl = gsap.timeline()
@@ -42,7 +45,7 @@ export const careersStackingCards = () => {
   // Each segment occupies 3 units: HOLD units of pause (user sees current card),
   // then the remaining units for the actual transition.
   // Smaller HOLD = transition kicks in sooner after pinning (less "dead scroll").
-  const SEGMENT = 3
+  const SEGMENT = 5
   const HOLD = 0.4 // reduced from 1 so users see motion quickly after the pin
   sections.forEach((section, index) => {
     if (index === 0) return
@@ -51,19 +54,20 @@ export const careersStackingCards = () => {
     const prevOverlay = sections[index - 1].querySelector<HTMLElement>('.black-overlay')
     const figure = section.querySelector<HTMLElement>('.benefit-card_figure')
     const image = figure?.querySelector<HTMLElement>('img')
-    const textElements = section.querySelectorAll<HTMLElement>('h1, h2, h3, h4, h5, h6, p')
+    // const textElements = section.querySelectorAll<HTMLElement>('h1, h2, h3, h4, h5, h6, p')
+    const textWrapper = section.querySelector<HTMLElement>('.benefit-card_meta')
 
     // Overlay fades in after the hold, during the slide
     if (prevOverlay) {
-      tl.to(prevOverlay, { opacity: 0.6, ease: 'none', duration: 2 }, t + HOLD)
+      tl.to(prevOverlay, { opacity: 0.6, ease: 'none', duration: SEGMENT }, t + HOLD)
     }
 
     // Slide starts after hold
     const slideStart = t + HOLD
-    tl.to(section, { yPercent: 0, ease: 'power2.inOut', duration: 2 }, slideStart)
+    tl.to(section, { yPercent: 0, ease: 'power2.inOut', duration: SEGMENT }, slideStart)
 
     // Content animations start at 50% of the slide
-    const contentStart = slideStart + 1
+    const contentStart = slideStart + 3
 
     if (figure) {
       // duration 1 (was 0.6) = slower clip-path reveal across more scroll travel
@@ -71,13 +75,13 @@ export const careersStackingCards = () => {
     }
 
     if (image) {
-      tl.to(image, { scale: 1, ease: 'power4.out', duration: 1.2 }, contentStart)
+      tl.to(image, { scale: 1, ease: 'power4.out', duration: 1 }, contentStart)
     }
 
-    if (textElements.length) {
+    if (textWrapper && textWrapper.children.length) {
       tl.to(
-        textElements,
-        { autoAlpha: 1, y: 0, stagger: 0.06, ease: 'power2.out', duration: 0.4 },
+        textWrapper?.querySelectorAll('& > *'),
+        { yPercent: 0, stagger: 0.06, ease: 'power2.out', duration: 0.6 },
         contentStart,
       )
     }
