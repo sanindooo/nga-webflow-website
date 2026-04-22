@@ -21,6 +21,9 @@ export const navTheme = () => {
   const darkThemeSections = Array.from(
     document.querySelectorAll<HTMLElement>("[data-header-theme='dark']"),
   )
+  const whiteThemeSections = Array.from(
+    document.querySelectorAll<HTMLElement>("[data-header-theme='white']"),
+  )
 
   if (!headerElement || !logoWrapper || !hamburgerToggle) return
   if (darkThemeSections.length === 0) return
@@ -82,6 +85,31 @@ export const navTheme = () => {
     })
   }
 
+  const subtractIntervals = (
+    darks: Array<{ start: number; end: number }>,
+    whites: Array<{ start: number; end: number }>,
+  ): Array<{ start: number; end: number }> => {
+    if (whites.length === 0) return darks
+    const result: Array<{ start: number; end: number }> = []
+    for (const dark of darks) {
+      let segments = [{ start: dark.start, end: dark.end }]
+      for (const white of whites) {
+        const next: Array<{ start: number; end: number }> = []
+        for (const seg of segments) {
+          if (white.end <= seg.start || white.start >= seg.end) {
+            next.push(seg)
+          } else {
+            if (white.start > seg.start) next.push({ start: seg.start, end: white.start })
+            if (white.end < seg.end) next.push({ start: white.end, end: seg.end })
+          }
+        }
+        segments = next
+      }
+      result.push(...segments)
+    }
+    return result
+  }
+
   const buildMaskGradient = (intervals: Array<{ start: number; end: number }>): string => {
     if (intervals.length === 0) {
       return 'linear-gradient(transparent, transparent)'
@@ -116,17 +144,27 @@ export const navTheme = () => {
     if (currentScrollY === lastScrollY) return
     lastScrollY = currentScrollY
 
-    const coverageIntervals: Array<{ start: number; end: number }> = []
-
+    const darkIntervals: Array<{ start: number; end: number }> = []
     for (const section of darkThemeSections) {
       const rect = section.getBoundingClientRect()
       const intervalStart = Math.max(0, Math.min(rect.top, navHeight))
       const intervalEnd = Math.max(0, Math.min(rect.bottom, navHeight))
       if (intervalEnd > intervalStart) {
-        coverageIntervals.push({ start: intervalStart, end: intervalEnd })
+        darkIntervals.push({ start: intervalStart, end: intervalEnd })
       }
     }
 
+    const whiteIntervals: Array<{ start: number; end: number }> = []
+    for (const section of whiteThemeSections) {
+      const rect = section.getBoundingClientRect()
+      const intervalStart = Math.max(0, Math.min(rect.top, navHeight))
+      const intervalEnd = Math.max(0, Math.min(rect.bottom, navHeight))
+      if (intervalEnd > intervalStart) {
+        whiteIntervals.push({ start: intervalStart, end: intervalEnd })
+      }
+    }
+
+    const coverageIntervals = subtractIntervals(darkIntervals, whiteIntervals)
     const gradient = buildMaskGradient(coverageIntervals)
 
     if (gradient === lastGradient) return
