@@ -1,5 +1,13 @@
 # figma-to-webflow-pipeline
 
+## 1.0.6
+
+### Patch Changes
+
+- fix: platform-specific ScrollTrigger refresh to prevent mobile scroll jank
+
+  Desktop uses immediate refresh for accurate animation timing. Mobile uses soft refresh that waits for scroll to end, preventing layout recalculation jank. Also adds ignoreMobileResize config to prevent refresh on address bar show/hide.
+
 ## 1.0.5
 
 ### Patch Changes

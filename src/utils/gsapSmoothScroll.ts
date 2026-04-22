@@ -12,6 +12,10 @@
  *      the final image that resolves after DOMContentLoaded.
  *   3. per-image load listener — catches lazy-loaded images individually so
  *      refresh fires as each finishes, not only after all complete.
+ *
+ * All refresh calls use "soft" mode: if the user is actively scrolling, we
+ * wait for scrollEnd before refreshing. This prevents scroll jank on mobile
+ * where layout recalculations mid-scroll cause visible stutter.
  */
 
 let lenisInstance: LenisInstance | null = null
@@ -34,7 +38,40 @@ export const gsapSmoothScroll = () => {
 
   gsap.ticker.lagSmoothing(0)
 
-  if (!ScrollTrigger.isTouch) {
+  ScrollTrigger.config({ ignoreMobileResize: true })
+
+  const isTouch = ScrollTrigger.isTouch
+
+  if (isTouch) {
+    const refreshTimeout = gsap.delayedCall(1, () => ScrollTrigger.refresh()).pause()
+    const onScrollEnd = () => {
+      ScrollTrigger.removeEventListener('scrollEnd', onScrollEnd)
+      refreshTimeout.restart(true)
+    }
+    const softRefresh = () => {
+      if (ScrollTrigger.isScrolling()) {
+        ScrollTrigger.addEventListener('scrollEnd', onScrollEnd)
+      } else {
+        refreshTimeout.restart(true)
+      }
+    }
+
+    let lastHeight = document.body.offsetHeight
+    const refreshOnBodyResize = new ResizeObserver(() => {
+      const height = document.body.offsetHeight
+      if (height === lastHeight) return
+      lastHeight = height
+      softRefresh()
+    })
+    refreshOnBodyResize.observe(document.body)
+
+    window.addEventListener('load', softRefresh, { once: true })
+
+    document.querySelectorAll('img').forEach((img) => {
+      if (img.complete && img.naturalWidth > 0) return
+      img.addEventListener('load', softRefresh, { once: true })
+    })
+  } else {
     let pending = false
     let lastHeight = document.body.offsetHeight
     const refreshOnBodyResize = new ResizeObserver(() => {

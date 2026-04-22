@@ -39,6 +39,12 @@ interface GsapMatchMedia {
   ) => void;
 }
 
+interface GsapDelayedCall {
+  pause: () => GsapDelayedCall;
+  restart: (includeDelay?: boolean) => GsapDelayedCall;
+  kill: () => void;
+}
+
 interface GsapInstance {
   registerPlugin: (plugin: unknown) => void;
   from: (target: Element | string, vars: Record<string, unknown>) => void;
@@ -56,15 +62,24 @@ interface GsapInstance {
   killTweensOf: (target: unknown) => void;
   timeline: (vars?: Record<string, unknown>) => GsapTimeline;
   matchMedia: () => GsapMatchMedia;
+  delayedCall: (delay: number, callback: () => void) => GsapDelayedCall;
   ticker: {
     add: (fn: (time: number) => void) => void;
     lagSmoothing: (threshold: number) => void;
   };
 }
 
+interface ScrollTriggerConfig {
+  ignoreMobileResize?: boolean;
+  autoRefreshEvents?: string;
+  limitCallbacks?: boolean;
+  syncInterval?: number;
+}
+
 interface ScrollTriggerStatic {
   update: () => void;
   refresh: (safe?: boolean) => void;
+  config: (options: ScrollTriggerConfig) => void;
   batch: (target: string, vars: Record<string, unknown>) => void;
   create: (vars: Record<string, unknown>) => void;
   isInViewport: (trigger: unknown) => boolean;
