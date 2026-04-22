@@ -6,10 +6,18 @@ export const worksCardHover = () => {
   const desktopMediaQuery = window.matchMedia('(min-width: 992px)')
   const cardItems = document.querySelectorAll<HTMLElement>('.works_list-item')
 
+  const isMobile = window.matchMedia('(max-width: 767px)').matches
+
   cardItems.forEach((card) => {
     const overlay = card.querySelector<HTMLElement>('.works_content-wrapper .overlay')
     const contentWrapper = card.querySelector<HTMLElement>('.works_content')
     const image = card.querySelector<HTMLElement>('img')
+    if (isMobile) {
+      gsap.set(contentWrapper, { autoAlpha: 1, y: 0 })
+      gsap.set(overlay, { autoAlpha: 1 })
+
+      return
+    }
 
     if (!overlay || !contentWrapper) return
 

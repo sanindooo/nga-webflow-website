@@ -116,6 +116,7 @@
     });
     const tl = gsap.timeline();
     const SEGMENT = 3;
+    const HOLD = 0.4;
     sections.forEach((section, index) => {
       if (index === 0) return;
       const t = (index - 1) * SEGMENT;
@@ -124,16 +125,16 @@
       const image = figure?.querySelector("img");
       const textElements = section.querySelectorAll("h1, h2, h3, h4, h5, h6, p");
       if (prevOverlay) {
-        tl.to(prevOverlay, { opacity: 0.6, ease: "none", duration: 2 }, t + 1);
+        tl.to(prevOverlay, { opacity: 0.6, ease: "none", duration: 2 }, t + HOLD);
       }
-      const slideStart = t + 1;
+      const slideStart = t + HOLD;
       tl.to(section, { yPercent: 0, ease: "power2.inOut", duration: 2 }, slideStart);
       const contentStart = slideStart + 1;
       if (figure) {
-        tl.to(figure, { clipPath: "inset(0% 0% 0% 0%)", ease: "none", duration: 0.6 }, contentStart);
+        tl.to(figure, { clipPath: "inset(0% 0% 0% 0%)", ease: "none", duration: 1 }, contentStart);
       }
       if (image) {
-        tl.to(image, { scale: 1, ease: "power4.out", duration: 0.6 }, contentStart);
+        tl.to(image, { scale: 1, ease: "power4.out", duration: 1.2 }, contentStart);
       }
       if (textElements.length) {
         tl.to(
@@ -1304,10 +1305,16 @@
   var worksCardHover = () => {
     const desktopMediaQuery = window.matchMedia("(min-width: 992px)");
     const cardItems = document.querySelectorAll(".works_list-item");
+    const isMobile = window.matchMedia("(max-width: 767px)").matches;
     cardItems.forEach((card) => {
       const overlay = card.querySelector(".works_content-wrapper .overlay");
       const contentWrapper = card.querySelector(".works_content");
       const image = card.querySelector("img");
+      if (isMobile) {
+        gsap.set(contentWrapper, { autoAlpha: 1, y: 0 });
+        gsap.set(overlay, { autoAlpha: 1 });
+        return;
+      }
       if (!overlay || !contentWrapper) return;
       gsap.set(overlay, { autoAlpha: 0 });
       gsap.set(contentWrapper, { autoAlpha: 0, y: -12 });
