@@ -68,6 +68,10 @@ interface ScrollTriggerStatic {
   batch: (target: string, vars: Record<string, unknown>) => void;
   create: (vars: Record<string, unknown>) => void;
   isInViewport: (trigger: unknown) => boolean;
+  isTouch: number;
+  isScrolling: () => boolean;
+  addEventListener: (type: string, callback: () => void) => void;
+  removeEventListener: (type: string, callback: () => void) => void;
 }
 
 declare const gsap: GsapInstance;

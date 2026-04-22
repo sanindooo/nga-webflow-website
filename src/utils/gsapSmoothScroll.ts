@@ -34,24 +34,26 @@ export const gsapSmoothScroll = () => {
 
   gsap.ticker.lagSmoothing(0)
 
-  let pending = false
-  let lastHeight = document.body.offsetHeight
-  const refreshOnBodyResize = new ResizeObserver(() => {
-    const height = document.body.offsetHeight
-    if (height === lastHeight || pending) return
-    lastHeight = height
-    pending = true
-    requestAnimationFrame(() => {
-      ScrollTrigger.refresh(true)
-      pending = false
+  if (!ScrollTrigger.isTouch) {
+    let pending = false
+    let lastHeight = document.body.offsetHeight
+    const refreshOnBodyResize = new ResizeObserver(() => {
+      const height = document.body.offsetHeight
+      if (height === lastHeight || pending) return
+      lastHeight = height
+      pending = true
+      requestAnimationFrame(() => {
+        ScrollTrigger.refresh(true)
+        pending = false
+      })
     })
-  })
-  refreshOnBodyResize.observe(document.body)
+    refreshOnBodyResize.observe(document.body)
 
-  window.addEventListener('load', () => ScrollTrigger.refresh(), { once: true })
+    window.addEventListener('load', () => ScrollTrigger.refresh(), { once: true })
 
-  document.querySelectorAll('img').forEach((img) => {
-    if (img.complete && img.naturalWidth > 0) return
-    img.addEventListener('load', () => ScrollTrigger.refresh(), { once: true })
-  })
+    document.querySelectorAll('img').forEach((img) => {
+      if (img.complete && img.naturalWidth > 0) return
+      img.addEventListener('load', () => ScrollTrigger.refresh(), { once: true })
+    })
+  }
 }
