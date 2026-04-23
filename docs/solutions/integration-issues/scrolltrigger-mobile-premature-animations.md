@@ -60,17 +60,25 @@ ScrollTrigger.normalizeScroll(true)
 
 ---
 
-## Not yet tried
+### Attempt 5: Disable Lenis on mobile
+**Date:** 2026-04-23
+**Commit:** `v1.0.9`
+**What:** Skip Lenis entirely on touch devices, use native scroll only.
+**Hypothesis:** Lenis intercepts scroll on mobile and may give ScrollTrigger inconsistent position data. Native scroll should be more reliable.
+**Result:** Scroll is smoother, but premature animations still occur in a narrower window (principals/associates section through to team members/administration). Issue partially improved but not resolved.
+**Status:** KEPT (smoother scroll is beneficial)
 
-### invalidateOnRefresh on individual ScrollTriggers
-`refresh()` recalculates start/end positions but not animation values. If SplitText's `y: '110%'` was captured against wrong layout, that value stays wrong even after refresh.
-```ts
-scrollTrigger: {
-  trigger: element,
-  start: 'top 80%',
-  invalidateOnRefresh: true,  // <-- add this
-}
-```
+### Attempt 6: invalidateOnRefresh on ScrollTriggers (testing)
+**Date:** 2026-04-23
+**Commit:** TBD
+**What:** Add `invalidateOnRefresh: true` to ScrollTrigger configs in `generalScrollTextReveal.ts`.
+**Hypothesis:** `refresh()` recalculates start/end positions but not animation values. The `y: '110%'` from-value was captured when layout was different; `invalidateOnRefresh` forces re-recording on each refresh.
+**Result:** TBD
+**Status:** IMPLEMENTED, AWAITING TEST
+
+---
+
+## Not yet tried
 
 ### Safe refresh parameter in touch branch
 Desktop uses `ScrollTrigger.refresh(true)` which waits for browser rendering. Touch branch currently uses `ScrollTrigger.refresh()` without the safe parameter.

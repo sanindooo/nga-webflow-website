@@ -1,5 +1,11 @@
 # figma-to-webflow-pipeline
 
+## 1.0.10
+
+### Patch Changes
+
+- fix: add invalidateOnRefresh to ScrollTrigger configs for text reveal
+
 ## 1.0.9
 
 ### Patch Changes

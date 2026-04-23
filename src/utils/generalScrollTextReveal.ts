@@ -38,6 +38,7 @@ export const generalScrollTextReveal = () => {
                     trigger: element,
                     start: 'top 80%',
                     end: 'bottom 20%',
+                    invalidateOnRefresh: true,
                   },
                 },
               )
@@ -62,6 +63,7 @@ export const generalScrollTextReveal = () => {
                   trigger: element,
                   start: 'top 80%',
                   end: 'bottom 20%',
+                  invalidateOnRefresh: true,
                 },
               },
             )
