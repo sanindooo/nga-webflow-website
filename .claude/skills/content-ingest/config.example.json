@@ -1,0 +1,77 @@
+{
+  "sourceRoot": "Content/CONTENT-2",
+  "backupRoot": "Content/CONTENT-2-originals",
+
+  "collections": {
+    "works":           "REPLACE_ME",
+    "news":            "REPLACE_ME",
+    "principals":      "REPLACE_ME",
+    "teams":           "REPLACE_ME",
+    "legalPartners":   "REPLACE_ME",
+    "consultants":     "REPLACE_ME",
+    "roles":           "REPLACE_ME",
+    "publications":    "REPLACE_ME",
+    "greetingCards":   "REPLACE_ME",
+    "heroSlides":      "REPLACE_ME",
+    "workCategories":  "REPLACE_ME",
+    "newsCategories":  "REPLACE_ME",
+    "countries":       "REPLACE_ME",
+    "awards":          "REPLACE_ME"
+  },
+
+  "categoryFolders": {
+    "01-URBAN DESIGN":                {"name": "Urban Design",              "itemId": "REPLACE_ME"},
+    "02-High-Rise":                   {"name": "High-Rise",                 "itemId": "REPLACE_ME"},
+    "03-Residential":                 {"name": "Residential",               "itemId": "REPLACE_ME"},
+    "04-Mixed-Use":                   {"name": "Mixed-Use",                 "itemId": "REPLACE_ME"},
+    "05-Corporate and Institutional": {"name": "Corporate & Institutional", "itemId": "REPLACE_ME"},
+    "06-Interior Design":             {"name": "Interior Design",           "itemId": "REPLACE_ME"}
+  },
+
+  "teamSubsections": {
+    "Team Leader":    "REPLACE_ME_OPTION_ID",
+    "Team Member":    "REPLACE_ME_OPTION_ID",
+    "Administration": "REPLACE_ME_OPTION_ID"
+  },
+
+  "countryAliases": {
+    "kingdom of saudi arabia": "Saudi Arabia",
+    "uae":                     "United Arab Emirates",
+    "usa":                     "United States of America",
+    "uk":                      "United Kingdom"
+  },
+
+  "forceUpperCase": ["CMA", "CGM", "YM", "MV", "AY", "AZ", "AUB", "IOEC", "BIM", "UK", "DC", "II", "III", "IV"],
+
+  "smallWords": ["a", "an", "and", "as", "at", "but", "by", "de", "del", "el", "en", "for", "in", "la", "le", "of", "on", "or", "the", "to", "via", "y"],
+
+  "nameOverrides": {
+    "_comment": "Keyed by slugified stripped folder name. Override when the client brand spelling differs from folder / docx spelling."
+  },
+
+  "imageResize": {
+    "maxMB": 4,
+    "longEdgePx": 2560,
+    "jpegQuality": 88,
+    "candidateLongEdges": [2560, 2200, 1920, 1600, 1400, 1200]
+  },
+
+  "heroSlides": {
+    "taglineSource": "docx-homepage-section",
+    "selectedProjects": ["Orise", "Doha Oasis", "Geode", "The House with Two Lives", "Lagoon Mansion", "Art Hub"]
+  },
+
+  "seo": {
+    "maxTitleChars": 75,
+    "maxDescriptionChars": 150,
+    "titleFallbackShortCategory": {
+      "Corporate & Institutional": "Institutional"
+    },
+    "descriptionTone": "Pull phrasing directly from the client-approved body copy. Slightly reword only for readability and add a soft pull-forward cue if budget permits (e.g. a clean closing phrase that invites click-through). Never paraphrase aggressively — the client signed off on their words, and the description is a rearrangement, not a rewrite."
+  },
+
+  "layoutTemplates": {
+    "strategy": "slug-hash-mod-3",
+    "templates": ["magazine", "editorial", "cinematic"]
+  }
+}

@@ -68,13 +68,13 @@ ScrollTrigger.normalizeScroll(true)
 **Result:** Scroll is smoother, but premature animations still occur in a narrower window (principals/associates section through to team members/administration). Issue partially improved but not resolved.
 **Status:** KEPT (smoother scroll is beneficial)
 
-### Attempt 6: invalidateOnRefresh on ScrollTriggers (testing)
+### Attempt 6: invalidateOnRefresh on ScrollTriggers
 **Date:** 2026-04-23
-**Commit:** TBD
+**Commit:** `v1.0.10` (reverted in v1.0.11)
 **What:** Add `invalidateOnRefresh: true` to ScrollTrigger configs in `generalScrollTextReveal.ts`.
 **Hypothesis:** `refresh()` recalculates start/end positions but not animation values. The `y: '110%'` from-value was captured when layout was different; `invalidateOnRefresh` forces re-recording on each refresh.
-**Result:** TBD
-**Status:** IMPLEMENTED, AWAITING TEST
+**Result:** FAILED — made it significantly worse. Animations that weren't bugging out before now showed visible text, then re-animated on scroll. The invalidation caused animations to re-trigger on every refresh event.
+**Status:** REVERTED
 
 ---
 

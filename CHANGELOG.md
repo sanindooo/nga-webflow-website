@@ -1,5 +1,11 @@
 # figma-to-webflow-pipeline
 
+## 1.0.12
+
+### Patch Changes
+
+- Defer ScrollTrigger-creating modules until eager images finish loading so start/end positions are measured against final layout. Follows Jack Doyle's recommended pattern; targets iOS Safari premature-animation bug where refresh-after-the-fact was insufficient.
+
 ## 1.0.11
 
 ### Patch Changes

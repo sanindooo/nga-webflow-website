@@ -38,15 +38,7 @@ window.Webflow ||= [] as unknown as WebflowQueue
 window.Webflow.push(() => {
   gsapSmoothScroll()
 
-  gsapBasicAnimations()
   heroTextReveal()
-  generalScrollTextReveal()
-  homeTextSticky()
-  publicationsGridFade()
-  randomImagesFadeIn()
-  careersStackingCards()
-  proccessSlider()
-  // stickyFilter()
   swiperSliders()
 
   navToggle()
@@ -66,4 +58,39 @@ window.Webflow.push(() => {
   viewSwitcher()
   cmsFilterLinks()
   filterActiveState()
+
+  // Defer ScrollTrigger creation until eager images finish loading so start/end
+  // positions are measured against final layout. Lazy images are skipped —
+  // their load event won't fire until they scroll into view.
+  waitForEagerImages(() => {
+    gsapBasicAnimations()
+    generalScrollTextReveal()
+    homeTextSticky()
+    publicationsGridFade()
+    randomImagesFadeIn()
+    careersStackingCards()
+    proccessSlider()
+    // stickyFilter()
+  })
 })
+
+const waitForEagerImages = (onReady: () => void) => {
+  const pending = Array.from(document.images).filter(
+    (img) => img.loading !== 'lazy' && !(img.complete && img.naturalWidth > 0),
+  )
+
+  if (pending.length === 0) {
+    onReady()
+    return
+  }
+
+  let remaining = pending.length
+  const done = () => {
+    if (--remaining === 0) onReady()
+  }
+
+  pending.forEach((img) => {
+    img.addEventListener('load', done, { once: true })
+    img.addEventListener('error', done, { once: true })
+  })
+}

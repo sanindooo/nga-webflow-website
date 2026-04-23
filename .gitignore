@@ -24,3 +24,7 @@ docs/examples/
 
 # Claude Code local settings (user-specific)
 .claude/settings.local.json
+.claude/scheduled_tasks.lock
+
+# Client content drops (local-only, ingested via content-ingest skill)
+Content/

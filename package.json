@@ -1,6 +1,6 @@
 {
   "name": "figma-to-webflow-pipeline",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "Automated Figma-to-Webflow pipeline with Claude Code, MCP, and Playwright visual testing",
   "type": "module",
   "main": "src/index.ts",
@@ -47,6 +47,7 @@
     "cross-env": "^10.1.0",
     "esbuild": "^0.27.4",
     "http-server": "^14.1.1",
+    "sharp": "^0.34.5",
     "typescript": "^5.9.3"
   }
 }
