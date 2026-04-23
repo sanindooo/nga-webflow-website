@@ -45,9 +45,9 @@ Lazy-loaded images cause layout shifts after ScrollTrigger has cached trigger po
 **Result:** Helped with scroll jank, didn't fix premature animations.
 **Why it failed:** Different problem — this prevents unwanted refreshes, but we need the refresh to actually work.
 
-### Attempt 4: normalizeScroll (testing)
+### Attempt 4: normalizeScroll
 **Date:** 2026-04-23
-**Commit:** TBD (pending test)
+**Commit:** `v1.0.7` (reverted in v1.0.8)
 **What:** Add `ScrollTrigger.normalizeScroll(true)` to normalize iOS Safari's erratic scroll position reporting.
 **Hypothesis:** iOS Safari's rubber-banding and address bar behavior cause ScrollTrigger to receive inconsistent scroll positions, making triggers fire at wrong times.
 **Code change:**
@@ -55,8 +55,8 @@ Lazy-loaded images cause layout shifts after ScrollTrigger has cached trigger po
 // src/utils/gsapSmoothScroll.ts line 42
 ScrollTrigger.normalizeScroll(true)
 ```
-**Result:** TBD — needs mobile testing
-**Status:** IMPLEMENTED, AWAITING TEST
+**Result:** FAILED — caused jittery scrolling on both desktop and mobile. `normalizeScroll` conflicts with Lenis smooth scrolling. Did not fix the premature animation issue.
+**Status:** REVERTED
 
 ---
 

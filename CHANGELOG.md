@@ -1,5 +1,11 @@
 # figma-to-webflow-pipeline
 
+## 1.0.8
+
+### Patch Changes
+
+- revert: remove normalizeScroll - caused jittery scrolling with Lenis
+
 ## 1.0.7
 
 ### Patch Changes

@@ -331,7 +331,6 @@
     });
     gsap.ticker.lagSmoothing(0);
     ScrollTrigger.config({ ignoreMobileResize: true });
-    ScrollTrigger.normalizeScroll(true);
     const isTouch = ScrollTrigger.isTouch;
     if (isTouch) {
       const refreshTimeout = gsap.delayedCall(1, () => ScrollTrigger.refresh()).pause();
