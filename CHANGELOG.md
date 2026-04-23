@@ -1,5 +1,11 @@
 # figma-to-webflow-pipeline
 
+## 1.0.7
+
+### Patch Changes
+
+- fix: add ScrollTrigger.normalizeScroll for mobile animation timing
+
 ## 1.0.6
 
 ### Patch Changes

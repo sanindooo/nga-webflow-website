@@ -39,6 +39,7 @@ export const gsapSmoothScroll = () => {
   gsap.ticker.lagSmoothing(0)
 
   ScrollTrigger.config({ ignoreMobileResize: true })
+  ScrollTrigger.normalizeScroll(true)
 
   const isTouch = ScrollTrigger.isTouch
 

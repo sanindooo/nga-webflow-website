@@ -80,6 +80,7 @@ interface ScrollTriggerStatic {
   update: () => void;
   refresh: (safe?: boolean) => void;
   config: (options: ScrollTriggerConfig) => void;
+  normalizeScroll: (enabled: boolean) => void;
   batch: (target: string, vars: Record<string, unknown>) => void;
   create: (vars: Record<string, unknown>) => void;
   isInViewport: (trigger: unknown) => boolean;
