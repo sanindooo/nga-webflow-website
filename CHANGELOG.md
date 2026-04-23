@@ -1,5 +1,11 @@
 # figma-to-webflow-pipeline
 
+## 1.0.11
+
+### Patch Changes
+
+- revert: remove invalidateOnRefresh - caused animations to re-trigger
+
 ## 1.0.10
 
 ### Patch Changes
