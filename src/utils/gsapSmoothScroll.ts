@@ -1,8 +1,9 @@
 /**
  * GSAP Smooth Scroll (Lenis)
  *
- * Initialises Lenis, drives it from GSAP's ticker, and exposes stop/start so
- * modals can freeze scroll while open.
+ * Desktop: Lenis smooth scrolling with GSAP ticker integration.
+ * Mobile: Native scroll only — touch devices already have smooth momentum
+ * scrolling, and Lenis can interfere with ScrollTrigger's position calculations.
  *
  * Layered defenses against stale ScrollTrigger positions from late layout
  * shifts (image loads, font swaps, CMS hydration, accordions):
@@ -12,10 +13,6 @@
  *      the final image that resolves after DOMContentLoaded.
  *   3. per-image load listener — catches lazy-loaded images individually so
  *      refresh fires as each finishes, not only after all complete.
- *
- * All refresh calls use "soft" mode: if the user is actively scrolling, we
- * wait for scrollEnd before refreshing. This prevents scroll jank on mobile
- * where layout recalculations mid-scroll cause visible stutter.
  */
 
 let lenisInstance: LenisInstance | null = null
@@ -24,54 +21,50 @@ export const stopSmoothScroll = () => lenisInstance?.stop()
 export const startSmoothScroll = () => lenisInstance?.start()
 
 export const gsapSmoothScroll = () => {
-  const lenis = new Lenis({
-    prevent: (node: HTMLElement) => node.getAttribute('data-prevent-lenis') === 'true',
-  })
-
-  lenisInstance = lenis
-
-  lenis.on('scroll', ScrollTrigger.update)
-
-  gsap.ticker.add((time: number) => {
-    lenis.raf(time * 1000)
-  })
-
-  gsap.ticker.lagSmoothing(0)
-
   ScrollTrigger.config({ ignoreMobileResize: true })
 
   const isTouch = ScrollTrigger.isTouch
 
   if (isTouch) {
-    const refreshTimeout = gsap.delayedCall(1, () => ScrollTrigger.refresh()).pause()
-    const onScrollEnd = () => {
-      ScrollTrigger.removeEventListener('scrollEnd', onScrollEnd)
-      refreshTimeout.restart(true)
-    }
-    const softRefresh = () => {
-      if (ScrollTrigger.isScrolling()) {
-        ScrollTrigger.addEventListener('scrollEnd', onScrollEnd)
-      } else {
-        refreshTimeout.restart(true)
-      }
-    }
+    // Mobile: skip Lenis, use native scroll. ScrollTrigger works with native
+    // scroll events directly — no special integration needed.
 
+    let pending = false
     let lastHeight = document.body.offsetHeight
     const refreshOnBodyResize = new ResizeObserver(() => {
       const height = document.body.offsetHeight
-      if (height === lastHeight) return
+      if (height === lastHeight || pending) return
       lastHeight = height
-      softRefresh()
+      pending = true
+      requestAnimationFrame(() => {
+        ScrollTrigger.refresh(true)
+        pending = false
+      })
     })
     refreshOnBodyResize.observe(document.body)
 
-    window.addEventListener('load', softRefresh, { once: true })
+    window.addEventListener('load', () => ScrollTrigger.refresh(true), { once: true })
 
     document.querySelectorAll('img').forEach((img) => {
       if (img.complete && img.naturalWidth > 0) return
-      img.addEventListener('load', softRefresh, { once: true })
+      img.addEventListener('load', () => ScrollTrigger.refresh(true), { once: true })
     })
   } else {
+    // Desktop: Lenis smooth scrolling
+    const lenis = new Lenis({
+      prevent: (node: HTMLElement) => node.getAttribute('data-prevent-lenis') === 'true',
+    })
+
+    lenisInstance = lenis
+
+    lenis.on('scroll', ScrollTrigger.update)
+
+    gsap.ticker.add((time: number) => {
+      lenis.raf(time * 1000)
+    })
+
+    gsap.ticker.lagSmoothing(0)
+
     let pending = false
     let lastHeight = document.body.offsetHeight
     const refreshOnBodyResize = new ResizeObserver(() => {

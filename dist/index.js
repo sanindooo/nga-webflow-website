@@ -321,44 +321,37 @@
   var stopSmoothScroll = () => lenisInstance?.stop();
   var startSmoothScroll = () => lenisInstance?.start();
   var gsapSmoothScroll = () => {
-    const lenis = new Lenis({
-      prevent: (node) => node.getAttribute("data-prevent-lenis") === "true"
-    });
-    lenisInstance = lenis;
-    lenis.on("scroll", ScrollTrigger.update);
-    gsap.ticker.add((time) => {
-      lenis.raf(time * 1e3);
-    });
-    gsap.ticker.lagSmoothing(0);
     ScrollTrigger.config({ ignoreMobileResize: true });
     const isTouch = ScrollTrigger.isTouch;
     if (isTouch) {
-      const refreshTimeout = gsap.delayedCall(1, () => ScrollTrigger.refresh()).pause();
-      const onScrollEnd = () => {
-        ScrollTrigger.removeEventListener("scrollEnd", onScrollEnd);
-        refreshTimeout.restart(true);
-      };
-      const softRefresh = () => {
-        if (ScrollTrigger.isScrolling()) {
-          ScrollTrigger.addEventListener("scrollEnd", onScrollEnd);
-        } else {
-          refreshTimeout.restart(true);
-        }
-      };
+      let pending = false;
       let lastHeight = document.body.offsetHeight;
       const refreshOnBodyResize = new ResizeObserver(() => {
         const height = document.body.offsetHeight;
-        if (height === lastHeight) return;
+        if (height === lastHeight || pending) return;
         lastHeight = height;
-        softRefresh();
+        pending = true;
+        requestAnimationFrame(() => {
+          ScrollTrigger.refresh(true);
+          pending = false;
+        });
       });
       refreshOnBodyResize.observe(document.body);
-      window.addEventListener("load", softRefresh, { once: true });
+      window.addEventListener("load", () => ScrollTrigger.refresh(true), { once: true });
       document.querySelectorAll("img").forEach((img) => {
         if (img.complete && img.naturalWidth > 0) return;
-        img.addEventListener("load", softRefresh, { once: true });
+        img.addEventListener("load", () => ScrollTrigger.refresh(true), { once: true });
       });
     } else {
+      const lenis = new Lenis({
+        prevent: (node) => node.getAttribute("data-prevent-lenis") === "true"
+      });
+      lenisInstance = lenis;
+      lenis.on("scroll", ScrollTrigger.update);
+      gsap.ticker.add((time) => {
+        lenis.raf(time * 1e3);
+      });
+      gsap.ticker.lagSmoothing(0);
       let pending = false;
       let lastHeight = document.body.offsetHeight;
       const refreshOnBodyResize = new ResizeObserver(() => {

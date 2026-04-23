@@ -1,5 +1,11 @@
 # figma-to-webflow-pipeline
 
+## 1.0.9
+
+### Patch Changes
+
+- fix: disable Lenis on mobile - use native scroll for accurate ScrollTrigger positions
+
 ## 1.0.8
 
 ### Patch Changes
