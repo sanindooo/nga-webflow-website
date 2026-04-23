@@ -1,5 +1,11 @@
 # figma-to-webflow-pipeline
 
+## 1.0.13
+
+### Patch Changes
+
+- Promote every `loading="lazy"` image to `eager` before gating ScrollTrigger creation, so the browser fetches all images upfront and the gate waits for all of them. Eliminates the iOS Safari race where mid-scroll lazy loads (particularly below-fold CMS team images on /studio) shifted layout after ScrollTrigger had cached start/end positions, causing reveals to fire at wrong scroll points. Trades initial bandwidth for deterministic layout.
+
 ## 1.0.12
 
 ### Patch Changes

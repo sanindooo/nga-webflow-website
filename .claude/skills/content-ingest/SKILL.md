@@ -395,6 +395,32 @@ Folders may say `Zeebox Guadeloupe` but the company body text calls itself
 `Zebox`. Use `nameOverrides` in config to force the correct brand spelling
 without losing the folder-based slug disambiguation.
 
+## Adapting to a new project
+
+The bundled scripts were written against the NGA site's IDs. Before running
+on a new project:
+
+1. **Copy the skill folder** to the new repo: `cp -r .claude/skills/content-ingest /new-repo/.claude/skills/`
+2. **Update `config.json`** with the new site's collection + category IDs (lookup from `docs/reference/webflow-ids.md` on the new project, or run `data_cms_tool → get_collection_list`).
+3. **Constants at the top of each script** need swapping — current state is that the scripts contain hardcoded IDs for readability; `config.json` is the future source of truth but scripts don't yet read from it. Per-script fields to update:
+   - `create-projects.mjs` — `PROJECTS_COLLECTION`, `CATEGORY_IDS`, `COUNTRY_IDS`
+   - `create-news.mjs` — `NEWS_COLLECTION`, `NEWS_CATEGORY_IDS`
+   - `create-team.mjs` — `PRINCIPALS`, `TEAMS`, `LEGAL_PARTNERS`, `CONSULTANTS`, `TEAM_CATEGORY` (option IDs)
+   - `update-principals.mjs` — `PRINCIPALS`, `PRINCIPAL_IDS` (roster-to-id map)
+   - `create-misc-cms.mjs` — `HERO_SLIDES`, `PUBLICATIONS`, `AWARDS`, Publications category option IDs
+   - `patch-admin-roles.mjs` — `ROLES`, `TEAMS`, `EXISTING_ROLES`, `ASSIGNMENTS`
+   - `patch-teams-roles.mjs` — `TEAMS`, `TEAM_MEMBER`, `ADMINISTRATION` option IDs
+   - `patch-remaining-fields.mjs` — `CONSULTANTS`, `HERO_SLIDES`, `HERO_SLIDE_TO_PROJECT`, `CONSULTANT_COUNTRY`
+   - `patch-category-heroes.mjs` — `CATEGORIES`, `CATEGORY_FLAGSHIP`
+   - `patch-project-layouts.mjs` — `WORKS` collection ID
+   - `patch-works-seo-v2.mjs` — `WORKS`, `DESCRIPTIONS` object (per-project client copy)
+   - `patch-news-seo.mjs` — `NEWS`, `SEO` object (per-project copy)
+4. **Skim the audit output first** (`content-ingest audit`) — if the client's folder structure doesn't match the NGA convention (`NN-CATEGORY/YYYY-Project/`), `build-projects-json.mjs` needs its walker updated.
+
+Future work: migrate the scripts to read every ID from `config.json` so a
+new project just needs the config filled in. For now treat the scripts as
+editable templates.
+
 ## Files produced per run
 
 - `docs/content-map.md` — audit report (Phase 1)

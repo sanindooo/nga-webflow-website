@@ -59,10 +59,20 @@ window.Webflow.push(() => {
   cmsFilterLinks()
   filterActiveState()
 
-  // Defer ScrollTrigger creation until eager images finish loading so start/end
-  // positions are measured against final layout. Lazy images are skipped —
-  // their load event won't fire until they scroll into view.
-  waitForEagerImages(() => {
+  // Promote every lazy image to eager so the browser fetches them now instead
+  // of on scroll. Mid-scroll lazy loads were shifting layout below the fold
+  // (e.g. team section on /studio) after ScrollTrigger had already cached
+  // start/end positions, causing reveals to fire at the wrong scroll points
+  // on iOS Safari. Trading bandwidth for deterministic layout.
+  document
+    .querySelectorAll<HTMLImageElement>('img[loading="lazy"]')
+    .forEach((img) => {
+      img.loading = 'eager'
+    })
+
+  // Defer ScrollTrigger creation until every image finishes loading so
+  // start/end positions are measured against the final, settled layout.
+  waitForAllImages(() => {
     gsapBasicAnimations()
     generalScrollTextReveal()
     homeTextSticky()
@@ -74,9 +84,9 @@ window.Webflow.push(() => {
   })
 })
 
-const waitForEagerImages = (onReady: () => void) => {
+const waitForAllImages = (onReady: () => void) => {
   const pending = Array.from(document.images).filter(
-    (img) => img.loading !== 'lazy' && !(img.complete && img.naturalWidth > 0),
+    (img) => !(img.complete && img.naturalWidth > 0),
   )
 
   if (pending.length === 0) {
