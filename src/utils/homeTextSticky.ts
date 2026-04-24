@@ -16,7 +16,10 @@ export const homeTextSticky = () => {
 
     gsap.set(section, { position: 'relative', zIndex: sectionIndex + 1 })
 
-    const split = new SplitText(titleWrapper.querySelector('h2')!, { types: 'words, lines' })
+    const split = new SplitText(titleWrapper.querySelector('h2')!, {
+      types: 'words, lines',
+      wordsClass: 'sticky-word',
+    })
     const arrow = titleWrapper.querySelector<HTMLElement>('.right-arrow_svg')
     gsap.set([split.lines, arrow?.parentElement], { overflow: 'hidden' })
     gsap.set([split.words, arrow], { y: '110%' })
@@ -57,5 +60,18 @@ export const homeTextSticky = () => {
       markers: false,
       animation: tl,
     })
+  })
+  const lastSection = sections[sections.length - 1]
+  const lastTitleWrapper = lastSection.querySelector<HTMLElement>('.sticky-text_header')
+  ScrollTrigger.create({
+    trigger: lastSection,
+    start: '50% top',
+    animation: gsap.to(lastTitleWrapper, {
+      opacity: 0,
+      duration: 1,
+    }),
+    // scrub: true,
+    markers: true,
+    toggleActions: 'play none none reverse',
   })
 }
