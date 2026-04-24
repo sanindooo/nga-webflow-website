@@ -1226,7 +1226,7 @@
   };
 
   // src/utils/teamLeaders.ts
-  var DURATION3 = 0.5;
+  var DURATION3 = 0.1;
   function getRandomX() {
     const minX = window.innerWidth * 0.2;
     const maxX = window.innerWidth * 0.6;
@@ -1247,9 +1247,10 @@
         gsap.set(figure, { left: randomX });
         gsap.to(figure, { autoAlpha: 1, duration: DURATION3, ease: "power2.out" });
       });
+      console.log("test");
       item.addEventListener("mouseleave", () => {
         if (mobileMediaQuery.matches) return;
-        gsap.to(figure, { autoAlpha: 0, duration: DURATION3, ease: "power2.in" });
+        gsap.to(figure, { autoAlpha: 0, duration: DURATION3, ease: "none" });
       });
       item.addEventListener("click", () => {
         if (!mobileMediaQuery.matches) return;

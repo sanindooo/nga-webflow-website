@@ -2,7 +2,7 @@
  * Team Leaders — hover/click floating figure with randomised positions.
  */
 
-const DURATION = 0.5
+const DURATION = 0.1
 
 function getRandomX(): number {
   const minX = window.innerWidth * 0.2
@@ -30,10 +30,10 @@ export const teamLeaders = () => {
       gsap.set(figure, { left: randomX })
       gsap.to(figure, { autoAlpha: 1, duration: DURATION, ease: 'power2.out' })
     })
-
+    console.log('test')
     item.addEventListener('mouseleave', () => {
       if (mobileMediaQuery.matches) return
-      gsap.to(figure, { autoAlpha: 0, duration: DURATION, ease: 'power2.in' })
+      gsap.to(figure, { autoAlpha: 0, duration: DURATION, ease: 'none' })
     })
 
     item.addEventListener('click', () => {
