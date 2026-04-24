@@ -1,12 +1,58 @@
 ---
-title: "ScrollTrigger mobile premature animations: ongoing investigation"
+title: "ScrollTrigger mobile premature animations: resolved by eager-promoting lazy images"
 date: "2026-04-23"
 category: "integration-issues"
-component: "src/utils/gsapSmoothScroll.ts"
+component: "src/index.ts"
 tags: [gsap, scrolltrigger, mobile, ios, safari, lazy-loading, images, layout-shift]
 severity: "high"
-status: "in-progress"
+status: "resolved"
+resolved_in: "v1.0.13"
 ---
+
+## Winning fix (v1.0.13)
+
+In `src/index.ts`, before gating ScrollTrigger creation, promote every
+`loading="lazy"` image to `eager` so the browser fetches them now instead of
+on scroll. Then wait for **all** images (not just originally-eager ones) to
+complete before creating any ScrollTrigger.
+
+```ts
+window.Webflow.push(() => {
+  gsapSmoothScroll()
+  // ...synchronous UI modules...
+
+  document
+    .querySelectorAll<HTMLImageElement>('img[loading="lazy"]')
+    .forEach((img) => { img.loading = 'eager' })
+
+  waitForAllImages(() => {
+    gsapBasicAnimations()
+    generalScrollTextReveal()
+    // ...other ScrollTrigger-creating modules...
+  })
+})
+```
+
+**Why this worked when nothing else did:** Every prior attempt (refresh
+hooks, soft refresh, normalizeScroll, disabling Lenis, invalidateOnRefresh)
+was reactive — trying to correct stale positions *after* lazy images
+shifted layout mid-scroll. On iOS Safari, `ScrollTrigger.refresh()` during
+an active momentum scroll is fundamentally unreliable. The only
+deterministic fix is to eliminate the layout shift entirely: force every
+image to load upfront, wait for them, then measure.
+
+**Trade-off:** ~all images download on first paint instead of on scroll.
+For a portfolio/studio site this is acceptable; Webflow's auto-AVIF and
+responsive sizes keep the bytes small. Would not scale to content-heavy
+sites with hundreds of images.
+
+**Diagnostic clue that cracked it:** user noticed the bug consistently
+started "around Mona" — a CMS team member below the fold on /studio. That
+pointed directly at lazy-loaded CMS images as the trigger, not a general
+iOS quirk.
+
+---
+
 
 # ScrollTrigger animations firing prematurely on mobile
 

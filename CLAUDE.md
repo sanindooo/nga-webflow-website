@@ -157,6 +157,18 @@ on `window`.
   scroll lock. For a deliberate, discrete content-size change (CMS filter,
   accordion expand), call `ScrollTrigger.refresh(true)` inline; it defers
   until momentum scroll settles.
+- **Lazy images + ScrollTrigger (mandatory pre-init):** Before creating any
+  ScrollTrigger, promote every `loading="lazy"` image to `eager`
+  (`img.loading = 'eager'`) and wait for every image to complete
+  (`img.complete && img.naturalWidth > 0`, with `load`+`error` listeners for
+  the rest). This is Jack Doyle's `handleLazyLoad({ lazy: false })` pattern
+  and the *only* deterministic fix for iOS Safari premature-animation bugs
+  caused by mid-scroll layout shifts. Reactive approaches
+  (`ScrollTrigger.refresh` hooks, `normalizeScroll`, `invalidateOnRefresh`)
+  cannot correct trigger positions once momentum scroll is in flight. See
+  `src/index.ts` for the implementation and
+  `docs/solutions/integration-issues/scrolltrigger-mobile-premature-animations.md`
+  for the full trail of six failed reactive attempts before landing this.
 
 **Deploy:** bump a changeset, tag, push. Live CDN URL:
 `https://cdn.jsdelivr.net/gh/sanindooo/nga-webflow-website@vX.Y.Z/dist/index.js`.
