@@ -9,53 +9,92 @@
 export const homeTextSticky = () => {
   const sections = Array.from(document.querySelectorAll<HTMLElement>('.section_sticky-text'))
   if (sections.length === 0) return
-
+  const isMobile = window.matchMedia('(max-width: 767px)').matches
   sections.forEach((section, sectionIndex) => {
     const titleWrapper = section.querySelector<HTMLElement>('.sticky-text_component')
     if (!titleWrapper) return
 
     gsap.set(section, { position: 'relative', zIndex: sectionIndex + 1 })
 
-    const split = new SplitText(titleWrapper.querySelector('h2')!, { types: 'words, lines' })
+    const split = new SplitText(titleWrapper.querySelector('h2')!, {
+      types: 'words, lines',
+      wordsClass: 'sticky-word',
+    })
     const arrow = titleWrapper.querySelector<HTMLElement>('.right-arrow_svg')
     gsap.set([split.lines, arrow?.parentElement], { overflow: 'hidden' })
     gsap.set([split.words, arrow], { y: '110%' })
 
-    let arrowVisible = false
+    if (isMobile) {
+      const tl = gsap.timeline()
 
-    titleWrapper.addEventListener('mouseenter', () => {
-      if (!arrowVisible) return
-      gsap.to(arrow, { y: '0%', duration: 0.4, ease: 'power2.out' })
-    })
+      tl.to(split.words, {
+        y: '0%',
+        stagger: 0.1,
+      }).to(
+        arrow,
+        {
+          y: '0%',
+          duration: 0.4,
+          ease: 'power2.out',
+        },
+        '>-0.2',
+      )
+      ScrollTrigger.create({
+        trigger: section,
+        start: 'top 65%',
+        end: 'bottom top',
+        markers: false,
+        animation: tl,
+      })
+    } else {
+      let arrowVisible = false
 
-    titleWrapper.addEventListener('mouseleave', () => {
-      if (!arrowVisible) return
-      gsap.to(arrow, { y: '110%', duration: 0.4, ease: 'power2.in' })
-    })
+      titleWrapper.addEventListener('mouseenter', () => {
+        if (!arrowVisible) return
+        gsap.to(arrow, { y: '0%', duration: 0.4, ease: 'power2.out' })
+      })
 
-    const tl = gsap.timeline()
+      titleWrapper.addEventListener('mouseleave', () => {
+        if (!arrowVisible) return
+        gsap.to(arrow, { y: '110%', duration: 0.4, ease: 'power2.in' })
+      })
 
-    tl.to(split.words, {
-      y: '0%',
-      stagger: 0.1,
-      onComplete: () => {
-        arrowVisible = true
-      },
-    })
+      const tl = gsap.timeline()
 
-    ScrollTrigger.create({
-      trigger: section,
-      start: 'top 10%',
-      end: 'bottom top',
-      pin: titleWrapper,
-      pinSpacing: false,
-    })
-    ScrollTrigger.create({
-      trigger: section,
-      start: 'top 2%',
-      end: 'bottom top',
-      markers: false,
-      animation: tl,
-    })
+      tl.to(split.words, {
+        y: '0%',
+        stagger: 0.1,
+        onComplete: () => {
+          arrowVisible = true
+        },
+      })
+      ScrollTrigger.create({
+        trigger: section,
+        start: 'top 10%',
+        end: 'bottom top',
+        pin: titleWrapper,
+        pinSpacing: false,
+      })
+      ScrollTrigger.create({
+        trigger: section,
+        start: 'top 2%',
+        end: 'bottom top',
+        markers: false,
+        animation: tl,
+      })
+    }
+  })
+  const lastSection = sections[sections.length - 1]
+  const lastTitleWrapper = lastSection.querySelector<HTMLElement>('.sticky-text_header')
+  ScrollTrigger.create({
+    trigger: lastSection,
+    start: '50% top',
+    animation: gsap.to(lastTitleWrapper, {
+      opacity: 0,
+      duration: 0.125,
+    }),
+    // scrub: true,
+    markers: false,
+    toggleActions: 'play none none reverse',
   })
 }
