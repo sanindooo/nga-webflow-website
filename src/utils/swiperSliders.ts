@@ -103,6 +103,10 @@ export const swiperSliders = () => {
         speed: 1000,
         slidesPerView: 1,
         grabCursor: true,
+        autoplay: {
+          delay: 3000,
+          disableOnInteraction: false,
+        },
         pagination: {
           el: pagination,
           clickable: true,
