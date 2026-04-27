@@ -21,6 +21,7 @@ function buildRowGroups(gridItems: HTMLElement[]) {
 export const publicationsGridFade = () => {
   const grids = document.querySelectorAll<HTMLElement>('.card-grid_grid')
   if (!grids.length) return
+  const isMobile = window.matchMedia('(max-width: 768px)').matches
 
   grids.forEach((grid) => {
     const gridItems = Array.from(grid.querySelectorAll<HTMLElement>('.card-grid_grid-item'))
@@ -35,8 +36,8 @@ export const publicationsGridFade = () => {
     const timeline = gsap.timeline({
       scrollTrigger: {
         trigger: grid,
-        start: 'top 50%',
-        end: `+=${scrollDistance}`,
+        start: isMobile ? 'top 75%' : 'top 50%',
+        end: isMobile ? 'end end ' : `+=${scrollDistance}`,
         scrub: true,
         markers: false,
       },
@@ -46,11 +47,7 @@ export const publicationsGridFade = () => {
       const rowStartPosition = rowIndex === 0 ? 0 : `>-0.2`
       rowItems.forEach((gridItem, itemIndex) => {
         const itemPosition = itemIndex === 0 ? rowStartPosition : '<0.15'
-        timeline.to(
-          gridItem,
-          { autoAlpha: 1, y: 0, duration: 1, ease: 'power2.out' },
-          itemPosition,
-        )
+        timeline.to(gridItem, { autoAlpha: 1, y: 0, duration: 1, ease: 'power2.out' }, itemPosition)
       })
     })
   })
