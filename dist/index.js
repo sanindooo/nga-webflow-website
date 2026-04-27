@@ -830,7 +830,9 @@
     const toggle = document.querySelector('[data-nav="open"]');
     const header = document.querySelector(".header");
     const menu = document.querySelector('[data-nav="menu"]');
-    const navLinks = document.querySelectorAll(".nav-custom_menu-link");
+    const navLinks = document.querySelectorAll(
+      ".nav-custom_menu-link, .nav-mobile_dropdown-link"
+    );
     const navList = document.querySelector(".nav-custom_list:not(.u-social-links)");
     const socialList = document.querySelector(".nav-custom_list.u-social-links");
     if (!toggle || !header) return;

@@ -10,7 +10,9 @@ export const navToggle = () => {
   const toggle = document.querySelector<HTMLElement>('[data-nav="open"]')
   const header = document.querySelector<HTMLElement>('.header')
   const menu = document.querySelector<HTMLElement>('[data-nav="menu"]')
-  const navLinks = document.querySelectorAll<HTMLAnchorElement>('.nav-custom_menu-link')
+  const navLinks = document.querySelectorAll<HTMLAnchorElement>(
+    '.nav-custom_menu-link, .nav-mobile_dropdown-link',
+  )
   const navList = document.querySelector<HTMLElement>('.nav-custom_list:not(.u-social-links)')
   const socialList = document.querySelector<HTMLElement>('.nav-custom_list.u-social-links')
 
