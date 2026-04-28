@@ -243,8 +243,33 @@
   var generalScrollTextReveal = () => {
     const textElements = document.querySelectorAll("[scroll-text-reveal]");
     if (textElements.length === 0) return;
+    textElements.forEach((element) => {
+      if (element.querySelector(".button-square")) {
+        element.style.overflow = "hidden";
+        gsap.set(element.children, { y: element.offsetHeight });
+      }
+    });
     document.fonts.ready.then(() => {
       textElements.forEach((element) => {
+        const scrollTrigger = {
+          trigger: element,
+          start: "top 80%",
+          end: "bottom 20%"
+        };
+        if (element.querySelector(".button-square")) {
+          gsap.fromTo(
+            element.children,
+            { y: element.offsetHeight },
+            {
+              y: 0,
+              duration: 0.75,
+              ease: "power4.out",
+              stagger: 0.05,
+              scrollTrigger
+            }
+          );
+          return;
+        }
         if (element.children.length > 0) {
           Array.from(element.children).forEach((child, index) => {
             new SplitText(child, {
@@ -261,11 +286,7 @@
                     ease: "power4.out",
                     stagger: 0.05,
                     delay: index * 0.75,
-                    scrollTrigger: {
-                      trigger: element,
-                      start: "top 80%",
-                      end: "bottom 20%"
-                    }
+                    scrollTrigger
                   }
                 );
               }
@@ -285,11 +306,7 @@
                   duration: 1,
                   ease: "power4.out",
                   stagger: 0.15,
-                  scrollTrigger: {
-                    trigger: element,
-                    start: "top 80%",
-                    end: "bottom 20%"
-                  }
+                  scrollTrigger
                 }
               );
             }
@@ -374,17 +391,21 @@
   };
 
   // src/utils/heroTextReveal.ts
-  var heroTextReveal = () => {
+  var heroTextReveal = (additionalSelectors = []) => {
     const heroText = document.querySelector(
       ".heading-style-h1.hero_title:not(.is-slider)"
     );
     if (!heroText) return;
+    const additionalElements = additionalSelectors.flatMap(
+      (selector) => Array.from(document.querySelectorAll(selector))
+    );
     new SplitText(heroText, {
       types: "words, lines",
       mask: "lines",
       autoSplit: true,
       onSplit: (self) => {
-        return gsap.fromTo(
+        const timeline = gsap.timeline();
+        timeline.fromTo(
           self.words,
           { y: "110%" },
           {
@@ -394,6 +415,21 @@
             stagger: 0.05
           }
         );
+        if (additionalElements.length) {
+          timeline.fromTo(
+            additionalElements,
+            { y: "110%", opacity: 0 },
+            {
+              y: "0%",
+              opacity: 1,
+              duration: 1,
+              ease: "power4.out",
+              stagger: 0.05
+            },
+            "-=0.6"
+          );
+        }
+        return timeline;
       }
     });
   };
@@ -794,7 +830,9 @@
     const toggle = document.querySelector('[data-nav="open"]');
     const header = document.querySelector(".header");
     const menu = document.querySelector('[data-nav="menu"]');
-    const navLinks = document.querySelectorAll(".nav-custom_menu-link");
+    const navLinks = document.querySelectorAll(
+      ".nav-custom_menu-link, .nav-mobile_dropdown-link"
+    );
     const navList = document.querySelector(".nav-custom_list:not(.u-social-links)");
     const socialList = document.querySelector(".nav-custom_list.u-social-links");
     if (!toggle || !header) return;
@@ -1186,6 +1224,10 @@
           slidesPerView: 1,
           centeredSlides: true,
           grabCursor: true,
+          autoplay: {
+            delay: 3e3,
+            disableOnInteraction: false
+          },
           navigation: {
             nextEl: nextButton,
             prevEl: prevButton
@@ -1427,7 +1469,7 @@
   window.Webflow ||= [];
   window.Webflow.push(() => {
     gsapSmoothScroll();
-    heroTextReveal();
+    heroTextReveal([".hero-open_modal"]);
     swiperSliders();
     navToggle();
     navTheme();

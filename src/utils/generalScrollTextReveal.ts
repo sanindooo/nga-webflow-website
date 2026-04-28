@@ -16,8 +16,40 @@ export const generalScrollTextReveal = () => {
   const textElements = document.querySelectorAll<HTMLElement>('[scroll-text-reveal]')
   if (textElements.length === 0) return
 
+  // Pre-hide buttons synchronously so they aren't visible during the gap
+  // before fonts.ready resolves. SplitText is skipped for buttons because its
+  // mask:'lines' wrappers would split buttonIconHover's original/clone spans
+  // into separate line masks and break the hover overlay.
+  textElements.forEach((element) => {
+    if (element.querySelector('.button-square')) {
+      element.style.overflow = 'hidden'
+      gsap.set(element.children, { y: element.offsetHeight })
+    }
+  })
+
   document.fonts.ready.then(() => {
     textElements.forEach((element) => {
+      const scrollTrigger = {
+        trigger: element,
+        start: 'top 80%',
+        end: 'bottom 20%',
+      }
+
+      if (element.querySelector('.button-square')) {
+        gsap.fromTo(
+          element.children,
+          { y: element.offsetHeight },
+          {
+            y: 0,
+            duration: 0.75,
+            ease: 'power4.out',
+            stagger: 0.05,
+            scrollTrigger,
+          },
+        )
+        return
+      }
+
       if (element.children.length > 0) {
         Array.from(element.children).forEach((child, index) => {
           new SplitText(child as HTMLElement, {
@@ -34,11 +66,7 @@ export const generalScrollTextReveal = () => {
                   ease: 'power4.out',
                   stagger: 0.05,
                   delay: index * 0.75,
-                  scrollTrigger: {
-                    trigger: element,
-                    start: 'top 80%',
-                    end: 'bottom 20%',
-                  },
+                  scrollTrigger,
                 },
               )
             },
@@ -58,11 +86,7 @@ export const generalScrollTextReveal = () => {
                 duration: 1,
                 ease: 'power4.out',
                 stagger: 0.15,
-                scrollTrigger: {
-                  trigger: element,
-                  start: 'top 80%',
-                  end: 'bottom 20%',
-                },
+                scrollTrigger,
               },
             )
           },

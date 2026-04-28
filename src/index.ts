@@ -38,7 +38,7 @@ window.Webflow ||= [] as unknown as WebflowQueue
 window.Webflow.push(() => {
   gsapSmoothScroll()
 
-  heroTextReveal()
+  heroTextReveal(['.hero-open_modal'])
   swiperSliders()
 
   navToggle()

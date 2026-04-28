@@ -69,6 +69,10 @@ export const swiperSliders = () => {
         slidesPerView: 1,
         centeredSlides: true,
         grabCursor: true,
+        autoplay: {
+          delay: 3000,
+          disableOnInteraction: false,
+        },
         navigation: {
           nextEl: nextButton,
           prevEl: prevButton,

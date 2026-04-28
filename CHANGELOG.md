@@ -1,5 +1,13 @@
 # figma-to-webflow-pipeline
 
+## 1.0.15
+
+### Patch Changes
+
+- Mobile nav dropdown links close the nav on click; default and split-text
+  sliders auto-play; general scroll reveal handles button blocks without
+  breaking icon hover; hero text reveal accepts additional element selectors.
+
 ## 1.0.14
 
 ### Patch Changes

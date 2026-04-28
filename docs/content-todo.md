@@ -3,7 +3,7 @@
 Action list for things the content pipeline could NOT automate. Organised by
 category. Cross-references `docs/content-map.md` for the full context.
 
-**Last updated:** 2026-04-23
+**Last updated:** 2026-04-27
 
 ## Ingestion summary — what was created
 
@@ -245,8 +245,66 @@ yet. When the review above is done and the Designer work (§3, §8) complete:
 2. Run `publish_collection_items` per collection (API) or bulk-publish in Editor
 3. `sites_publish` the whole site — use the `webflow-skills:safe-publish` skill
 
-## 12. Post-ingest enhancements
+## 12. Post-ingest enhancements — finalisation plan
 
-- `/asset-metadata` skill on all uploaded assets to auto-generate alt text + display names
-- `/update-seo` skill per static page + per CMS template page to generate SEO titles/descriptions
+Audited 2026-04-27. State of the two skill passes called out at ingest time:
+
+### 12.1 SEO — mostly done, one bug
+
+All 8 static pages already have SEO titles + descriptions (Home, Works, News,
+Studio, Process, Careers, Contact, Publications). Both CMS templates (Works,
+News) bind SEO from CMS fields. Works (46 items, see `assets/works-seo-patched.json`)
+and News (6 items, see `assets/news-seo-patched.json`) CMS items are SEO-patched.
+
+**Bug to fix:** `/works` page SEO description is a copy of the `/news` description
+("Latest news, awards, lectures, and publications…"). Needs a Works-specific
+description before publish.
+
+**Still missing:**
+- `/privacy` and `/privacy-policy-and-terms-of-service` style routes — see §2 (page doesn't exist yet, Designer required to create).
+- `/terms` — same.
+
+### 12.2 Asset metadata — the remaining big task
+
+`assets/content-manifest.json` shows **722 content assets** uploaded via REST
+on 2026-04-23. None have alt text or clean display names — they shipped with
+raw filenames (`751_PA~1.jpg`, `JO-COURT.jpg`, `BW for web.jpg`, etc.). On
+top of that, ~few hundred original Relume template + Figma export assets to
+audit (the Figma exports already have alt text in `assets/asset-manifest.json`,
+but verify it was applied to Webflow).
+
+**Proposed three-pass plan (run in order, stop after any pass):**
+
+1. **Audit pass (free).** List every Webflow asset, bucket by:
+   - (a) missing alt text
+   - (b) ugly auto-filename display name (regex `[A-Z]{2,}[0-9]+`, `~`, `IMG_`, etc.)
+   - (c) already clean
+   Output a JSON report under `assets/asset-audit-<date>.json` so the count is
+   visible before any vision calls fire.
+2. **Vision pass (paid).** Run `/asset-metadata` on buckets (a) + (b). Per
+   `feedback_alt_text_prompt.md`: under 200 chars, functional, not decorative.
+   Generates clean display names too. Batched with MD5 dedup. Estimate
+   ~$5–10 in Claude vision API + ~45 min wall time for ~700 assets.
+3. **Works SEO bug fix.** Rewrite `/works` page SEO description, re-publish
+   page metadata via `data_pages_tool.update_page_metadata`.
+
+After all three passes, log residual gaps below into a "Designer session"
+checklist and run `webflow-skills:safe-publish`.
+
+### 12.3 Designer-only items still pending (companion app required)
+
+These are blocked on having Webflow Designer + companion app open — the
+Data API can't reach them. Not blocked by the asset/SEO passes:
+
+- §2: Create `/privacy` and `/terms` pages (paste docx body into RichText element).
+- §3.1: Publications page intro paragraph swap.
+- §3.2: Process page values (5→4 decision) + 4 process steps text rewrite.
+- §3.3: Careers page — add card #01 "Inspiring space"; update empty-state copy.
+- §3.4: News page — Greeting Cards intro block.
+- §3.5: Studio page — tagline / intro / "Thirty years…" body / pull quote.
+- §3.6: Homepage — `About nga` paragraph inside component instance.
+- §8: Static page image-element assignments (Studio office photos, Process step photos, Studio team group photos, Careers split).
+
+### 12.4 Notes
+
 - Review Urban Design doc wording — folder says "urban planning" but the Category is `Urban Design`. All items mapped correctly to the `Urban Design` category via folder prefix; docx label ignored.
