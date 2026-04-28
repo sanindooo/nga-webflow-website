@@ -520,6 +520,35 @@
     });
   };
 
+  // src/utils/logoAnimation.ts
+  var logoAnimation = () => {
+    const wrapper = document.querySelector(".nav-brand_link");
+    const longLogo = document.querySelector(".nav-custom_logo.u-full");
+    const shortLogo = document.querySelector(".nav-custom_logo.u-icon");
+    if (!wrapper || !longLogo || !shortLogo) return;
+    gsap.set(wrapper, {
+      overflow: "hidden",
+      position: "relative",
+      display: "grid",
+      gridTemplateColumns: "1fr",
+      gridTemplateRows: "1fr",
+      padding: "4px 0"
+    });
+    gsap.set(longLogo, { display: "flex", yPercent: 0, gridArea: "1 / 1" });
+    gsap.set(shortLogo, { yPercent: 10, gridArea: "1 / 1" });
+    const tl = gsap.timeline();
+    tl.to(longLogo, { yPercent: -110, duration: 0.4, ease: "power2.inOut" }, 0).to(
+      shortLogo,
+      { yPercent: -100, duration: 0.4, ease: "power2.inOut" },
+      0
+    );
+    ScrollTrigger.create({
+      start: 100,
+      animation: tl,
+      toggleActions: "play none none reverse"
+    });
+  };
+
   // src/utils/modals.ts
   var FOCUSABLE_SELECTOR = [
     "a[href]",
@@ -674,7 +703,8 @@
     Object.assign(logoClone.style, {
       position: "absolute",
       margin: "0",
-      padding: "0",
+      padding: "9px 0 0",
+      overflow: "visible",
       color: DARK_COLOR
     });
     darkOverlay.appendChild(logoClone);
@@ -1473,6 +1503,7 @@
     swiperSliders();
     navToggle();
     navTheme();
+    logoAnimation();
     buttonIconHover();
     teamCardHover();
     teamLeaders();

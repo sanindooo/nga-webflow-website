@@ -19,6 +19,7 @@ import { gsapBasicAnimations } from '$utils/gsapBasicAnimations'
 import { gsapSmoothScroll } from '$utils/gsapSmoothScroll'
 import { heroTextReveal } from '$utils/heroTextReveal'
 import { homeTextSticky } from '$utils/homeTextSticky'
+import { logoAnimation } from '$utils/logoAnimation'
 import { modals } from '$utils/modals'
 import { navTheme } from '$utils/navTheme'
 import { navToggle } from '$utils/navToggle'
@@ -43,6 +44,7 @@ window.Webflow.push(() => {
 
   navToggle()
   navTheme()
+  logoAnimation()
 
   buttonIconHover()
   teamCardHover()

@@ -45,7 +45,8 @@ export const navTheme = () => {
   Object.assign(logoClone.style, {
     position: 'absolute',
     margin: '0',
-    padding: '0',
+    padding: '9px 0 0',
+    overflow: 'visible',
     color: DARK_COLOR,
   })
   darkOverlay.appendChild(logoClone)
