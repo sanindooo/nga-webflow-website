@@ -1,93 +1,74 @@
 /**
- * GSAP Smooth Scroll (Lenis)
+ * GSAP Smooth Scroll (ScrollSmoother)
  *
- * Desktop: Lenis smooth scrolling with GSAP ticker integration.
- * Mobile: Native scroll only — touch devices already have smooth momentum
- * scrolling, and Lenis can interfere with ScrollTrigger's position calculations.
+ * Replaces the previous Lenis-based smooth scroll. ScrollSmoother is GSAP's
+ * own smooth-scroll plugin and shares ScrollTrigger's internal scroll model —
+ * no separate cache, no `lenis.on('scroll', ScrollTrigger.update)` integration,
+ * no manual `lenis.resize()` sync. ScrollTrigger reads scroll position from
+ * ScrollSmoother directly.
  *
- * Primary defense against stale ScrollTrigger positions lives in `src/index.ts`:
- * lazy images are promoted to eager and every image is awaited before any
- * ScrollTrigger is created (Jack Doyle's `handleLazyLoad({ lazy: false })`).
+ * Auto-wrap mode: ScrollSmoother creates `<div id="smooth-wrapper">
+ * <div id="smooth-content">…</div></div>` around body content and applies
+ * `position: fixed` + `transform` to the wrapper. Body gets `overflow: hidden`.
+ * Side effect: any `position: fixed` element inside content (Webflow nav,
+ * w-webflow-badge, modal overlays) becomes fixed-to-content rather than
+ * fixed-to-viewport. Pin those via ScrollTrigger or restructure DOM if needed.
  *
- * The layered refresh hooks below are defense-in-depth for post-init layout
- * shifts that can't be gated upfront (late CMS hydration, font swaps,
- * accordion expand):
- *   1. body ResizeObserver — catches DOM-driven height changes invisible to
- *      ScrollTrigger's built-in autoRefreshEvents (resize / load / DCL).
- *   2. window.load — canonical "all external resources finished" hook.
- *   3. per-image load listener — catches any image that slips past the gate
- *      (e.g. CMS-injected after init).
+ * Touch (mobile): smoothTouch:false — native momentum scrolling preserved.
+ *
+ * Refresh hooks below catch post-init layout shifts that ScrollTrigger's
+ * built-in autoRefreshEvents don't cover (CMS hydration, font swaps,
+ * accordion expand) and bfcache restoration.
  */
 
-let lenisInstance: LenisInstance | null = null
+let smootherInstance: ScrollSmootherInstance | null = null
 
-export const stopSmoothScroll = () => lenisInstance?.stop()
-export const startSmoothScroll = () => lenisInstance?.start()
+export const stopSmoothScroll = () => smootherInstance?.paused(true)
+export const startSmoothScroll = () => smootherInstance?.paused(false)
+export const getSmoother = (): ScrollSmootherInstance | null => smootherInstance
 
 export const gsapSmoothScroll = () => {
   ScrollTrigger.config({ ignoreMobileResize: true })
 
-  const isTouch = ScrollTrigger.isTouch
+  // Defensive registration — CDN-loaded plugins usually auto-register, but
+  // calling registerPlugin is idempotent and prevents silent failures if the
+  // CDN load order shifts.
+  gsap.registerPlugin(ScrollSmoother)
 
-  if (isTouch) {
-    // Mobile: skip Lenis, use native scroll. ScrollTrigger works with native
-    // scroll events directly — no special integration needed.
+  smootherInstance = ScrollSmoother.create({
+    smooth: 1.2,
+    effects: true,
+    smoothTouch: false,
+    normalizeScroll: true,
+  })
 
-    let pending = false
-    let lastHeight = document.body.offsetHeight
-    const refreshOnBodyResize = new ResizeObserver(() => {
-      const height = document.body.offsetHeight
-      if (height === lastHeight || pending) return
-      lastHeight = height
-      pending = true
-      requestAnimationFrame(() => {
-        ScrollTrigger.refresh(true)
-        pending = false
-      })
+  // Body ResizeObserver — fires on DOM-driven height changes invisible to
+  // ScrollTrigger's built-in autoRefreshEvents (CMS hydration, accordion).
+  let pending = false
+  let lastHeight = document.body.offsetHeight
+  const refreshOnBodyResize = new ResizeObserver(() => {
+    const height = document.body.offsetHeight
+    if (height === lastHeight || pending) return
+    lastHeight = height
+    pending = true
+    requestAnimationFrame(() => {
+      ScrollTrigger.refresh(true)
+      pending = false
     })
-    refreshOnBodyResize.observe(document.body)
+  })
+  refreshOnBodyResize.observe(document.body)
 
-    window.addEventListener('load', () => ScrollTrigger.refresh(true), { once: true })
+  window.addEventListener('load', () => ScrollTrigger.refresh(true), { once: true })
 
-    document.querySelectorAll('img').forEach((img) => {
-      if (img.complete && img.naturalWidth > 0) return
-      img.addEventListener('load', () => ScrollTrigger.refresh(true), { once: true })
-    })
-  } else {
-    // Desktop: Lenis smooth scrolling
-    const lenis = new Lenis({
-      prevent: (node: HTMLElement) => node.getAttribute('data-prevent-lenis') === 'true',
-    })
+  document.querySelectorAll('img').forEach((img) => {
+    if (img.complete && img.naturalWidth > 0) return
+    img.addEventListener('load', () => ScrollTrigger.refresh(true), { once: true })
+  })
 
-    lenisInstance = lenis
-
-    lenis.on('scroll', ScrollTrigger.update)
-
-    gsap.ticker.add((time: number) => {
-      lenis.raf(time * 1000)
-    })
-
-    gsap.ticker.lagSmoothing(0)
-
-    let pending = false
-    let lastHeight = document.body.offsetHeight
-    const refreshOnBodyResize = new ResizeObserver(() => {
-      const height = document.body.offsetHeight
-      if (height === lastHeight || pending) return
-      lastHeight = height
-      pending = true
-      requestAnimationFrame(() => {
-        ScrollTrigger.refresh(true)
-        pending = false
-      })
-    })
-    refreshOnBodyResize.observe(document.body)
-
-    window.addEventListener('load', () => ScrollTrigger.refresh(), { once: true })
-
-    document.querySelectorAll('img').forEach((img) => {
-      if (img.complete && img.naturalWidth > 0) return
-      img.addEventListener('load', () => ScrollTrigger.refresh(), { once: true })
-    })
-  }
+  // bfcache restore (Safari/Chrome back-forward navigation). DOMContentLoaded
+  // and load do NOT re-fire on bfcache restore — only pageshow with
+  // event.persisted === true.
+  window.addEventListener('pageshow', (event) => {
+    if (event.persisted) ScrollTrigger.refresh(true)
+  })
 }

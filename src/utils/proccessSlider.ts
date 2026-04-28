@@ -120,5 +120,6 @@ export const proccessSlider = () => {
     animation: timeline,
     scrub: true,
     end: `+=${sections.length * SCROLL_PX_PER_SECTION}`,
+    invalidateOnRefresh: true,
   })
 }

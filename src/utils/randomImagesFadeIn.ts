@@ -66,6 +66,7 @@ export const randomImagesFadeIn = () => {
           pinSpacing: true,
           scrub: true,
           markers: false,
+          invalidateOnRefresh: true,
         },
       })
       sectionTimeline.to(titleSplit.words, {
