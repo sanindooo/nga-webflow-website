@@ -7,7 +7,19 @@ tags: [gsap, scrolltrigger, lenis, split-text, race-condition, image-loading, la
 severity: "high"
 root_cause: "ScrollTrigger caches each trigger's start/end pixel positions at creation time and only auto-refreshes on window resize / load / DOMContentLoaded. When an image (or any late-loading asset) finishes after ScrollTrigger has already measured, it pushes content below it downward — but the cached positions are now above the element, so the trigger fires early. Intermittent because it depends on whether the image finishes before or after measurement, which varies by network/cache state."
 date_resolved: "2026-04-21"
+superseded_by: "scrolltrigger-mobile-premature-animations.md (v1.0.13)"
 ---
+
+> **Update (v1.0.13):** The three-layer refresh pattern documented below is
+> correct and still shipped as defense-in-depth, but it is no longer the
+> primary fix. The reactive approach failed on iOS Safari where refresh
+> during momentum scroll is unreliable. The canonical first-line fix is now
+> to eager-promote every `loading="lazy"` image and wait for all images to
+> complete **before** creating any ScrollTrigger. See
+> [`scrolltrigger-mobile-premature-animations.md`](./scrolltrigger-mobile-premature-animations.md)
+> for the winning pattern. Reach for this doc's refresh layers only as
+> fallback for late-injected DOM (CMS filter hydration, accordions, font
+> swaps) that can't be gated upfront.
 
 # ScrollTrigger firing early on [scroll-text-reveal] below a specific section
 

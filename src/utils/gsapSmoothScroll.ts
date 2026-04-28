@@ -5,14 +5,18 @@
  * Mobile: Native scroll only — touch devices already have smooth momentum
  * scrolling, and Lenis can interfere with ScrollTrigger's position calculations.
  *
- * Layered defenses against stale ScrollTrigger positions from late layout
- * shifts (image loads, font swaps, CMS hydration, accordions):
+ * Primary defense against stale ScrollTrigger positions lives in `src/index.ts`:
+ * lazy images are promoted to eager and every image is awaited before any
+ * ScrollTrigger is created (Jack Doyle's `handleLazyLoad({ lazy: false })`).
+ *
+ * The layered refresh hooks below are defense-in-depth for post-init layout
+ * shifts that can't be gated upfront (late CMS hydration, font swaps,
+ * accordion expand):
  *   1. body ResizeObserver — catches DOM-driven height changes invisible to
  *      ScrollTrigger's built-in autoRefreshEvents (resize / load / DCL).
- *   2. window.load — canonical "all external resources finished" hook for
- *      the final image that resolves after DOMContentLoaded.
- *   3. per-image load listener — catches lazy-loaded images individually so
- *      refresh fires as each finishes, not only after all complete.
+ *   2. window.load — canonical "all external resources finished" hook.
+ *   3. per-image load listener — catches any image that slips past the gate
+ *      (e.g. CMS-injected after init).
  */
 
 let lenisInstance: LenisInstance | null = null
