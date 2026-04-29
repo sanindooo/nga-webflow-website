@@ -7,12 +7,17 @@
  * no manual `lenis.resize()` sync. ScrollTrigger reads scroll position from
  * ScrollSmoother directly.
  *
- * Auto-wrap mode: ScrollSmoother creates `<div id="smooth-wrapper">
- * <div id="smooth-content">…</div></div>` around body content and applies
- * `position: fixed` + `transform` to the wrapper. Body gets `overflow: hidden`.
- * Side effect: any `position: fixed` element inside content (Webflow nav,
- * w-webflow-badge, modal overlays) becomes fixed-to-content rather than
- * fixed-to-viewport. Pin those via ScrollTrigger or restructure DOM if needed.
+ * Explicit wrapper structure: every page in the Webflow template has a main
+ * wrapper carrying `id="smooth-content"`. ScrollSmoother finds it (rather
+ * than auto-wrapping the entire body), creates `#smooth-wrapper` around it,
+ * and applies `transform: translate3d(...)` to `#smooth-content` per frame.
+ * Anything that needs to stay fixed to the viewport (Webflow nav,
+ * w-webflow-badge, modal overlays) lives OUTSIDE `#smooth-content` as a
+ * sibling of `#smooth-wrapper`, so native `position: fixed` resolves
+ * against the viewport — no transformed-ancestor containing-block issue,
+ * no reparent utility needed. The `[data-pin]` utility (scrollPin.ts) is
+ * for elements that should stay inside `#smooth-content` and pin
+ * temporarily (sticky-within-parent or scroll-range-pinned).
  *
  * Touch (mobile): smoothTouch:false — native momentum scrolling preserved.
  *
@@ -23,8 +28,6 @@
 
 let smootherInstance: ScrollSmootherInstance | null = null
 
-export const stopSmoothScroll = () => smootherInstance?.paused(true)
-export const startSmoothScroll = () => smootherInstance?.paused(false)
 export const getSmoother = (): ScrollSmootherInstance | null => smootherInstance
 
 export const gsapSmoothScroll = () => {
@@ -42,21 +45,29 @@ export const gsapSmoothScroll = () => {
     normalizeScroll: true,
   })
 
-  // Body ResizeObserver — fires on DOM-driven height changes invisible to
+  // Content ResizeObserver — fires on DOM-driven height changes invisible to
   // ScrollTrigger's built-in autoRefreshEvents (CMS hydration, accordion).
-  let pending = false
-  let lastHeight = document.body.offsetHeight
-  const refreshOnBodyResize = new ResizeObserver(() => {
-    const height = document.body.offsetHeight
-    if (height === lastHeight || pending) return
-    lastHeight = height
-    pending = true
-    requestAnimationFrame(() => {
-      ScrollTrigger.refresh(true)
-      pending = false
+  // Must observe #smooth-content, not document.body: under ScrollSmoother
+  // the body has overflow: hidden and is height-locked to the viewport, so
+  // body.offsetHeight no longer reflects scrollable content height. Content
+  // height lives on the page's main wrapper (carrying id="smooth-content"
+  // in the Webflow template), which is what ScrollSmoother transforms.
+  const smoothContent = document.getElementById('smooth-content')
+  if (smoothContent) {
+    let pending = false
+    let lastHeight = smoothContent.offsetHeight
+    const refreshOnContentResize = new ResizeObserver(() => {
+      const height = smoothContent.offsetHeight
+      if (height === lastHeight || pending) return
+      lastHeight = height
+      pending = true
+      requestAnimationFrame(() => {
+        ScrollTrigger.refresh(true)
+        pending = false
+      })
     })
-  })
-  refreshOnBodyResize.observe(document.body)
+    refreshOnContentResize.observe(smoothContent)
+  }
 
   window.addEventListener('load', () => ScrollTrigger.refresh(true), { once: true })
 

@@ -33,9 +33,31 @@ The script does all of the heavy lifting:
 - Traps focus within the dialog while open
 - Closes on ESC, close button, or overlay click
 - Returns focus to the trigger on close
-- Locks body scroll and pauses Lenis smooth scroll
+
+The script does NOT pause ScrollSmoother or lock body scroll. Native scroll
+is already prevented by ScrollSmoother's `overflow: hidden` on body, and the
+overlay covers the page visually. If wheel-scroll-behind becomes a real
+issue in practice, add a `wheel`/`touchmove` `preventDefault` listener on
+the overlay element.
 
 You never touch JS for a new modal instance — just set the attributes below.
+
+## ScrollSmoother constraint — modal placement matters
+
+Under ScrollSmoother, `position: fixed` resolves against the transformed
+`#smooth-content` wrapper rather than the viewport. Modals must therefore
+live OUTSIDE `#smooth-content` for their `position: fixed; inset: 0` to
+cover the viewport correctly.
+
+| Modal type | Designer placement |
+|---|---|
+| **Static one-off** (e.g. video lightbox, hero "+ Project Info") | Place dialog as a sibling of the page's main wrapper (i.e. inside `page-wrapper` but outside `#smooth-content`) |
+| **CMS collection** (e.g. studio team modals) | Build a SECOND Collection List bound to the same CMS collection, sitting outside `#smooth-content`. It contains only the modals (one per item). The trigger card list stays inside `#smooth-content`. Slug-based ids on the dialogs pair with the trigger cards' `data-modal-open` values. |
+| **Global overlay** (`[data-modal-overlay]`) | Sibling of the main wrapper, outside `#smooth-content` |
+
+The trigger and the dialog do NOT need to be in the same DOM subtree. The
+script finds the dialog via `document.getElementById(modalId)` — they can
+live anywhere.
 
 ## Static attributes to set in Designer
 
@@ -73,9 +95,9 @@ be a link (CMS collection card, etc.), the script still works — it calls
 Close controls should be real `<button>` elements.
 
 ### On the overlay (optional, one per site)
-Place the overlay as a direct child of `<body>` so it isn't trapped inside any
-stacking context. Style it `position: fixed; inset: 0;` with a transition on
-opacity + pointer-events.
+Place the overlay outside `#smooth-content` (sibling of the page's main
+wrapper) so its `position: fixed; inset: 0` resolves against the viewport.
+Style it with a transition on opacity + pointer-events.
 
 | Attribute | Value |
 |---|---|
@@ -150,20 +172,32 @@ Id: pick anything unique. `video-demo`, `legal-disclaimer`, etc.
 ## Pattern 2 — CMS collection list (one dialog per item)
 
 Use when: each CMS item has its own dialog (e.g. principals, projects,
-testimonials). The dialog lives **inside** the CMS item so it inherits the
-item's bindable fields.
+testimonials). Two separate Collection Lists, both bound to the same CMS
+collection: the **trigger list** lives inside `#smooth-content` (where it
+visually belongs in the page flow); the **modal list** lives outside
+`#smooth-content` (so each dialog's `position: fixed` resolves to the
+viewport). Slug-based ids on the dialogs pair with the trigger cards'
+`data-modal-open` values, so each card opens its corresponding dialog
+regardless of DOM relationship.
 
 ```
-┌─ .cms-collection-wrapper   (DynamoWrapper)
-│  └─ .cms-list              (DynamoList)
-│     └─ .cms-item           (DynamoItem — repeats per CMS record)
-│        ├─ button.item_trigger   ← or a link, if CMS card is clickable
-│        │    data-modal-open = purple CMS binding → Slug
-│        │    aria-haspopup="dialog"
-│        │    aria-expanded="false"
-│        │    type="button"
-│        │
-│        └─ div.item_modal   ← [role="dialog"] wrapper
+INSIDE #smooth-content (the page's main scrollable area):
+
+┌─ .trigger-list-wrapper          (DynamoWrapper, bound to CMS collection)
+│  └─ .trigger-list               (DynamoList)
+│     └─ .trigger-list-item       (DynamoItem — repeats per CMS record)
+│        └─ button.item_trigger   ← or a link, if CMS card is clickable
+│             data-modal-open = purple CMS binding → Slug
+│             aria-haspopup="dialog"
+│             aria-expanded="false"
+│             type="button"
+
+OUTSIDE #smooth-content (sibling of the main wrapper):
+
+┌─ .modal-list-wrapper            (second DynamoWrapper, same CMS collection)
+│  └─ .modal-list                 (DynamoList)
+│     └─ .modal-list-item         (DynamoItem — repeats per CMS record)
+│        └─ div.item_modal        ← [role="dialog"] wrapper
 │             ID field (Settings panel) = purple CMS binding → Slug
 │             role="dialog"
 │             aria-modal="true"

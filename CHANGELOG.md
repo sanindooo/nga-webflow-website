@@ -1,5 +1,18 @@
 # figma-to-webflow-pipeline
 
+## 1.1.0
+
+### Minor Changes
+
+- ScrollTrigger stability + new declarative utilities.
+
+  - Fix premature animations on home news section via new `[data-eager]` attribute (`src/utils/eagerImages.ts`) — promotes lazy images to eager so layout shift settles before ScrollTrigger measures.
+  - Retarget `gsapSmoothScroll` body ResizeObserver at `#smooth-content` (body is height-locked under ScrollSmoother).
+  - New `[data-pin="fixed"]` / `[data-pin="sticky"]` declarative pin utility (`src/utils/scrollPin.ts`) — replaces CSS `position: fixed`/`sticky` for elements that need to remain inside `#smooth-content`. Responsive offsets, mobile disable, parent override.
+  - Simplify `modals.ts` — remove body-scroll-lock, ScrollSmoother pause, and DOM reparent. Modals must now live outside `#smooth-content` (static: sibling of main wrapper; CMS: second Collection List). Defer focus until open transition completes to avoid normalizeScroll scrolling the page to the focusable.
+  - Remove unused `startSmoothScroll` / `stopSmoothScroll` exports.
+  - Documentation: new `docs/reference/scroll-pin.md`, two new solution docs (`scrollsmoother-vs-lenis-cache-divergence.md`, `scrollsmoother-position-fixed-sticky-replacement.md`), updated `docs/reference/modal-setup.md`.
+
 ## 1.0.15
 
 ### Patch Changes
