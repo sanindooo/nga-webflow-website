@@ -118,9 +118,10 @@ class WebflowClient {
       throw new Error(`S3 upload failed (${s3Res.status}): ${await s3Res.text()}`)
     }
 
+    const assetEnvelope = presigned.asset || presigned
     return {
-      assetId: presigned.asset?._id || presigned.asset?.id,
-      hostedUrl: presigned.asset?.hostedUrl || presigned.asset?.url,
+      assetId: assetEnvelope.id || assetEnvelope._id,
+      hostedUrl: assetEnvelope.hostedUrl || assetEnvelope.url,
       displayName: fileName,
       fileHash: hash
     }

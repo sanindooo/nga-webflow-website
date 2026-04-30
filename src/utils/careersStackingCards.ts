@@ -90,10 +90,15 @@ export const careersStackingCards = () => {
   ScrollTrigger.create({
     trigger: wrapper,
     start: 'top top',
-    end: `+=${(sections.length - 1) * SEGMENT * window.innerHeight * 0.4}`,
+    // Function form so window.innerHeight is re-read on every refresh —
+    // viewport changes (Safari URL-bar collapse, devtools toggle, monitor
+    // scaling) leave a literal `end` numerically stale, which expresses as
+    // "can't scroll past the pin" once the actual layout no longer matches.
+    end: () => '+=' + (sections.length - 1) * SEGMENT * window.innerHeight * 0.4,
     pin: true,
     pinSpacing: true,
     animation: tl,
     scrub: true,
+    invalidateOnRefresh: true,
   })
 }

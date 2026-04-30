@@ -148,11 +148,16 @@
     ScrollTrigger.create({
       trigger: wrapper,
       start: "top top",
-      end: `+=${(sections.length - 1) * SEGMENT * window.innerHeight * 0.4}`,
+      // Function form so window.innerHeight is re-read on every refresh —
+      // viewport changes (Safari URL-bar collapse, devtools toggle, monitor
+      // scaling) leave a literal `end` numerically stale, which expresses as
+      // "can't scroll past the pin" once the actual layout no longer matches.
+      end: () => "+=" + (sections.length - 1) * SEGMENT * window.innerHeight * 0.4,
       pin: true,
       pinSpacing: true,
       animation: tl,
-      scrub: true
+      scrub: true,
+      invalidateOnRefresh: true
     });
   };
 
@@ -176,8 +181,217 @@
     yearElement.textContent = String((/* @__PURE__ */ new Date()).getFullYear());
   };
 
+  // src/utils/gsapSmoothScroll.ts
+  var smootherInstance = null;
+  var getSmoother = () => smootherInstance;
+  var stopSmoothScroll = () => smootherInstance?.paused(true);
+  var startSmoothScroll = () => smootherInstance?.paused(false);
+  var gsapSmoothScroll = () => {
+    ScrollTrigger.config({ ignoreMobileResize: true });
+    gsap.registerPlugin(ScrollSmoother);
+    smootherInstance = ScrollSmoother.create({
+      smooth: 1.2,
+      effects: true,
+      smoothTouch: false,
+      normalizeScroll: true
+    });
+    const smoothContent = document.getElementById("smooth-content");
+    if (smoothContent) {
+      let pending = false;
+      let lastHeight = smoothContent.offsetHeight;
+      const refreshOnContentResize = new ResizeObserver(() => {
+        const height = smoothContent.offsetHeight;
+        if (height === lastHeight || pending) return;
+        lastHeight = height;
+        pending = true;
+        requestAnimationFrame(() => {
+          ScrollTrigger.refresh(true);
+          pending = false;
+        });
+      });
+      refreshOnContentResize.observe(smoothContent);
+    }
+    window.addEventListener("load", () => ScrollTrigger.refresh(true), { once: true });
+    document.querySelectorAll("img").forEach((img) => {
+      if (img.complete && img.naturalWidth > 0) return;
+      img.addEventListener("load", () => ScrollTrigger.refresh(true), { once: true });
+    });
+    window.addEventListener("pageshow", (event) => {
+      if (event.persisted) ScrollTrigger.refresh(true);
+    });
+  };
+
+  // src/utils/debugOverlay.ts
+  var REFRESH_LOG_CAP = 20;
+  var SHIFT_LOG_CAP = 50;
+  var PANEL_REFRESH_HZ = 4;
+  var debugOverlay = () => {
+    if (new URLSearchParams(location.search).get("debug") !== "1") return;
+    const refreshLog = [];
+    const shiftLog = [];
+    ScrollTrigger.addEventListener("refreshInit", () => {
+      refreshLog.push({
+        type: "refreshInit",
+        timestamp: performance.now(),
+        isScrolling: ScrollTrigger.isScrolling()
+      });
+      if (refreshLog.length > REFRESH_LOG_CAP) refreshLog.shift();
+    });
+    ScrollTrigger.addEventListener("refresh", () => {
+      refreshLog.push({
+        type: "refresh",
+        timestamp: performance.now(),
+        isScrolling: ScrollTrigger.isScrolling()
+      });
+      if (refreshLog.length > REFRESH_LOG_CAP) refreshLog.shift();
+    });
+    const supportsLayoutShift = typeof PerformanceObserver !== "undefined" && PerformanceObserver.supportedEntryTypes?.includes("layout-shift");
+    if (supportsLayoutShift) {
+      new PerformanceObserver((list) => {
+        for (const entry of list.getEntries()) {
+          const shift = entry;
+          if (shift.hadRecentInput) continue;
+          const node = shift.sources?.[0]?.node;
+          const target = node ? `${node.tagName.toLowerCase()}${node.className ? "." + node.className.split(/\s+/)[0] : ""}` : "?";
+          shiftLog.push({
+            timestamp: performance.now(),
+            value: shift.value,
+            target
+          });
+          if (shiftLog.length > SHIFT_LOG_CAP) shiftLog.shift();
+        }
+      }).observe({ type: "layout-shift", buffered: true });
+    }
+    const panel = document.createElement("div");
+    panel.id = "st-debug-overlay";
+    panel.style.cssText = [
+      "position:fixed",
+      "top:0.5rem",
+      "right:0.5rem",
+      "z-index:999999",
+      "font:11px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace",
+      "background:rgba(0,0,0,0.85)",
+      "color:#fff",
+      "padding:0.75rem",
+      "max-width:24rem",
+      "max-height:80vh",
+      "overflow:auto",
+      "border-radius:0.25rem",
+      "pointer-events:auto",
+      "white-space:nowrap"
+    ].join(";");
+    document.body.appendChild(panel);
+    const pendingImages = () => Array.from(document.images).filter(
+      (image) => !(image.complete && image.naturalWidth > 0)
+    ).length;
+    const formatNumber = (value, decimals = 0) => Number.isFinite(value) ? value.toFixed(decimals) : "\u2013";
+    const renderTriggers = () => {
+      const triggers = ScrollTrigger.getAll();
+      const rows = triggers.map((trigger) => {
+        const id = trigger.vars.id ?? (typeof trigger.trigger === "string" ? trigger.trigger : trigger.trigger?.tagName.toLowerCase() ?? "?");
+        const isPinned = !!trigger.pin;
+        const isScrubbed = !!trigger.vars.scrub;
+        return [
+          id.slice(0, 22).padEnd(22),
+          formatNumber(trigger.start).padStart(6),
+          formatNumber(trigger.end).padStart(6),
+          formatNumber(trigger.progress, 3).padStart(5),
+          trigger.isActive ? "\u25CF" : " ",
+          isPinned ? "P" : " ",
+          isScrubbed ? "S" : " "
+        ].join(" ");
+      }).join("\n");
+      return `<b>ScrollTriggers (${triggers.length})</b>
+<small>id                     start    end  prog  A P S</small>
+${rows || "(none)"}`;
+    };
+    const renderSmoother = () => {
+      const smoother = getSmoother();
+      if (!smoother) return "<b>ScrollSmoother</b> (not active)";
+      return `<b>ScrollSmoother</b>
+scrollTop    ${formatNumber(smoother.scrollTop(), 1)}
+velocity     ${formatNumber(smoother.getVelocity(), 2)}
+progress     ${formatNumber(smoother.progress, 3)}
+paused       ${smoother.paused()}`;
+    };
+    const renderImages = () => `<b>Images pending</b> ${pendingImages()}`;
+    const renderDocument = () => {
+      const scrollHeight = document.documentElement.scrollHeight;
+      const viewport = window.innerHeight;
+      const maxScroll = scrollHeight - viewport;
+      const smoother = getSmoother();
+      const currentScroll = smoother ? smoother.scrollTop() : window.scrollY;
+      const remaining = maxScroll - currentScroll;
+      const bodyOverflow = getComputedStyle(document.body).overflow;
+      const htmlOverflow = getComputedStyle(document.documentElement).overflow;
+      const pinSpacers = document.querySelectorAll(".pin-spacer").length;
+      const wrapper = document.querySelector("#smooth-wrapper");
+      const content = document.querySelector("#smooth-content");
+      return [
+        "<b>Document</b>",
+        `scrollHeight   ${scrollHeight}`,
+        `viewport       ${viewport}`,
+        `maxScroll      ${maxScroll}`,
+        `remaining      ${formatNumber(remaining, 0)}`,
+        `body overflow  ${bodyOverflow}`,
+        `html overflow  ${htmlOverflow}`,
+        `pin-spacers    ${pinSpacers}`,
+        `smooth-wrapper ${wrapper ? "present" : "MISSING"}`,
+        `smooth-content ${content ? "present" : "MISSING"}`
+      ].join("\n");
+    };
+    const renderRefreshLog = () => {
+      if (refreshLog.length === 0) return "<b>Refresh log</b> (none yet)";
+      const rows = refreshLog.slice(-REFRESH_LOG_CAP).map(
+        (entry) => `${entry.type.padEnd(12)} t=${formatNumber(entry.timestamp)}ms ${entry.isScrolling ? "SCROLLING" : ""}`
+      ).join("\n");
+      return `<b>Refresh log</b>
+${rows}`;
+    };
+    const renderShiftLog = () => {
+      if (!supportsLayoutShift) return "<b>Layout shifts</b> (no support)";
+      if (shiftLog.length === 0) return "<b>Layout shifts</b> (none)";
+      const total = shiftLog.reduce((sum, entry) => sum + entry.value, 0);
+      const rows = shiftLog.slice(-10).map((entry) => `${formatNumber(entry.value, 4)} ${entry.target}`).join("\n");
+      return `<b>Layout shifts</b> total=${formatNumber(total, 4)}
+${rows}`;
+    };
+    const render = () => {
+      panel.innerHTML = [
+        renderTriggers(),
+        renderSmoother(),
+        renderDocument(),
+        renderImages(),
+        renderRefreshLog(),
+        renderShiftLog()
+      ].map((section) => `<pre style="margin:0 0 0.5rem;white-space:pre">${section}</pre>`).join("");
+    };
+    render();
+    setInterval(render, 1e3 / PANEL_REFRESH_HZ);
+  };
+
+  // src/utils/eagerImages.ts
+  var eagerImages = () => {
+    document.querySelectorAll("[data-eager]").forEach((element) => {
+      if (element instanceof HTMLImageElement && element.loading === "lazy") {
+        element.loading = "eager";
+      }
+      element.querySelectorAll('img[loading="lazy"]').forEach((image) => {
+        image.loading = "eager";
+      });
+    });
+  };
+
   // src/utils/filterActiveState.ts
   var ACTIVE_CLASS = "fs-cmsfilter_active";
+  var attachImageRefreshListener = (image) => {
+    if (image.complete && image.naturalWidth > 0) return;
+    image.addEventListener("load", () => ScrollTrigger.refresh(true), { once: true });
+  };
+  var refreshAfterCmsHydration = () => {
+    ScrollTrigger.sort();
+    ScrollTrigger.refresh(true);
+  };
   function syncActiveStates(filterForm, clearWrapper) {
     const hasChecked = filterForm.querySelector('input[type="checkbox"]:checked') !== null;
     if (clearWrapper) {
@@ -211,15 +425,36 @@
     const fsAttributes = window.fsAttributes ??= [];
     fsAttributes.push([
       "cmsfilter",
-      () => {
+      (filterInstances) => {
         filterForms.forEach((filterForm) => {
           const clearWrapper = filterForm.querySelector(
             '[fs-cmsfilter-element="clear"]'
           )?.parentElement;
           syncActiveStates(filterForm, clearWrapper);
         });
+        filterInstances?.forEach((instance) => {
+          instance.listInstance?.on("renderitems", () => {
+            instance.listInstance.items.forEach((item) => {
+              item.element.querySelectorAll("img").forEach(attachImageRefreshListener);
+            });
+            refreshAfterCmsHydration();
+          });
+        });
       }
     ]);
+    document.querySelectorAll('[fs-cmsfilter-element="list"]').forEach((listEl) => {
+      let pending = false;
+      const observer = new MutationObserver(() => {
+        if (pending) return;
+        pending = true;
+        requestAnimationFrame(() => {
+          listEl.querySelectorAll("img").forEach(attachImageRefreshListener);
+          refreshAfterCmsHydration();
+          pending = false;
+        });
+      });
+      observer.observe(listEl, { childList: true, subtree: false });
+    });
   };
 
   // src/utils/generalImageHover.ts
@@ -313,7 +548,7 @@
           });
         }
       });
-      requestAnimationFrame(() => ScrollTrigger.refresh());
+      requestAnimationFrame(() => ScrollTrigger.refresh(true));
     });
   };
 
@@ -331,63 +566,6 @@
       end: "bottom 20%",
       onEnter: (batch) => gsap.to(batch, { opacity: 1, duration: 1 })
     });
-  };
-
-  // src/utils/gsapSmoothScroll.ts
-  var lenisInstance = null;
-  var stopSmoothScroll = () => lenisInstance?.stop();
-  var startSmoothScroll = () => lenisInstance?.start();
-  var gsapSmoothScroll = () => {
-    ScrollTrigger.config({ ignoreMobileResize: true });
-    const isTouch = ScrollTrigger.isTouch;
-    if (isTouch) {
-      let pending = false;
-      let lastHeight = document.body.offsetHeight;
-      const refreshOnBodyResize = new ResizeObserver(() => {
-        const height = document.body.offsetHeight;
-        if (height === lastHeight || pending) return;
-        lastHeight = height;
-        pending = true;
-        requestAnimationFrame(() => {
-          ScrollTrigger.refresh(true);
-          pending = false;
-        });
-      });
-      refreshOnBodyResize.observe(document.body);
-      window.addEventListener("load", () => ScrollTrigger.refresh(true), { once: true });
-      document.querySelectorAll("img").forEach((img) => {
-        if (img.complete && img.naturalWidth > 0) return;
-        img.addEventListener("load", () => ScrollTrigger.refresh(true), { once: true });
-      });
-    } else {
-      const lenis = new Lenis({
-        prevent: (node) => node.getAttribute("data-prevent-lenis") === "true"
-      });
-      lenisInstance = lenis;
-      lenis.on("scroll", ScrollTrigger.update);
-      gsap.ticker.add((time) => {
-        lenis.raf(time * 1e3);
-      });
-      gsap.ticker.lagSmoothing(0);
-      let pending = false;
-      let lastHeight = document.body.offsetHeight;
-      const refreshOnBodyResize = new ResizeObserver(() => {
-        const height = document.body.offsetHeight;
-        if (height === lastHeight || pending) return;
-        lastHeight = height;
-        pending = true;
-        requestAnimationFrame(() => {
-          ScrollTrigger.refresh(true);
-          pending = false;
-        });
-      });
-      refreshOnBodyResize.observe(document.body);
-      window.addEventListener("load", () => ScrollTrigger.refresh(), { once: true });
-      document.querySelectorAll("img").forEach((img) => {
-        if (img.complete && img.naturalWidth > 0) return;
-        img.addEventListener("load", () => ScrollTrigger.refresh(), { once: true });
-      });
-    }
   };
 
   // src/utils/heroTextReveal.ts
@@ -566,7 +744,6 @@
     const overlayElement = document.querySelector("[data-modal-overlay]");
     let activeModal = null;
     let activeTrigger = null;
-    let savedScrollY = 0;
     modalElements.forEach((modal) => {
       if (!modal.id) return;
       const titleElement = modal.querySelector("h1, h2, h3, h4, h5, h6");
@@ -599,15 +776,31 @@
         overlayElement.classList.add("is-open");
         overlayElement.setAttribute("aria-hidden", "false");
       }
-      savedScrollY = window.scrollY;
-      document.body.style.top = `-${savedScrollY}px`;
-      document.body.classList.add("no-scroll");
       stopSmoothScroll();
-      requestAnimationFrame(() => {
+      focusAfterTransition(modal);
+    }
+    function focusAfterTransition(modal) {
+      const computed = getComputedStyle(modal);
+      const duration = parseSecondsList(computed.transitionDuration);
+      const delay = parseSecondsList(computed.transitionDelay);
+      const waitMs = Math.max(50, (duration + delay) * 1e3 + 50);
+      window.setTimeout(() => {
+        if (activeModal !== modal) return;
         const focusable = getFocusableElements(modal);
         const firstFocusable = focusable[0] ?? modal;
         firstFocusable.focus({ preventScroll: true });
-      });
+      }, waitMs);
+    }
+    function parseSecondsList(value) {
+      return Math.max(
+        0,
+        ...value.split(",").map((v) => {
+          const trimmed = v.trim();
+          if (trimmed.endsWith("ms")) return parseFloat(trimmed) / 1e3;
+          if (trimmed.endsWith("s")) return parseFloat(trimmed);
+          return 0;
+        })
+      );
     }
     function closeModal() {
       if (!activeModal) return;
@@ -620,9 +813,6 @@
         overlayElement.classList.remove("is-open");
         overlayElement.setAttribute("aria-hidden", "true");
       }
-      document.body.classList.remove("no-scroll");
-      document.body.style.top = "";
-      window.scrollTo(0, savedScrollY);
       startSmoothScroll();
       trigger?.focus({ preventScroll: true });
       activeModal = null;
@@ -1085,7 +1275,8 @@
       markers: false,
       animation: timeline,
       scrub: true,
-      end: `+=${sections.length * SCROLL_PX_PER_SECTION}`
+      end: `+=${sections.length * SCROLL_PX_PER_SECTION}`,
+      invalidateOnRefresh: true
     });
   };
 
@@ -1182,7 +1373,8 @@
             pin: true,
             pinSpacing: true,
             scrub: true,
-            markers: false
+            markers: false,
+            invalidateOnRefresh: true
           }
         });
         sectionTimeline.to(titleSplit.words, {
@@ -1197,6 +1389,122 @@
           );
         });
       }
+    });
+  };
+
+  // src/utils/scrollPin.ts
+  var BREAKPOINT = "(max-width: 991px)";
+  var scrollPin = () => {
+    const elements = document.querySelectorAll("[data-pin]");
+    if (!elements.length) return;
+    const mql = window.matchMedia(BREAKPOINT);
+    elements.forEach((element) => {
+      const config = readConfig(element);
+      if (!config) return;
+      let trigger = null;
+      const apply = () => {
+        if (trigger) {
+          trigger.kill(true);
+          trigger = null;
+        }
+        clearOffsets(element);
+        const isMobile = mql.matches;
+        if (isMobile && config.disableOnMobile) return;
+        const offsets = mergeOffsets(isMobile ? config.mobile : {}, config.desktop);
+        applyOffsets(element, offsets);
+        trigger = createTrigger(element, config, offsets);
+      };
+      apply();
+      mql.addEventListener("change", apply);
+    });
+  };
+  var readConfig = (element) => {
+    const type = element.getAttribute("data-pin");
+    if (type !== "fixed" && type !== "sticky") {
+      console.warn(`[scrollPin] data-pin="${type}" is invalid \u2014 must be "fixed" or "sticky"`, element);
+      return null;
+    }
+    const get = (key, mobile = false) => {
+      const value = element.getAttribute(mobile ? `data-pin-mobile-${key}` : `data-pin-${key}`);
+      return value === null ? void 0 : value;
+    };
+    return {
+      type,
+      desktop: {
+        top: get("top"),
+        left: get("left"),
+        right: get("right"),
+        bottom: get("bottom"),
+        z: get("z")
+      },
+      mobile: {
+        top: get("top", true),
+        left: get("left", true),
+        right: get("right", true),
+        bottom: get("bottom", true),
+        z: get("z", true)
+      },
+      disableOnMobile: element.hasAttribute("data-pin-disable-mobile"),
+      parentSelector: get("parent"),
+      startStr: get("start"),
+      endStr: get("end")
+    };
+  };
+  var mergeOffsets = (primary, fallback) => ({
+    top: primary.top ?? fallback.top,
+    left: primary.left ?? fallback.left,
+    right: primary.right ?? fallback.right,
+    bottom: primary.bottom ?? fallback.bottom,
+    z: primary.z ?? fallback.z
+  });
+  var hasAnyOffset = (offsets) => offsets.top !== void 0 || offsets.left !== void 0 || offsets.right !== void 0 || offsets.bottom !== void 0;
+  var applyOffsets = (element, offsets) => {
+    if (hasAnyOffset(offsets)) {
+      element.style.position = "relative";
+    }
+    element.style.top = withUnit(offsets.top);
+    element.style.left = withUnit(offsets.left);
+    element.style.right = withUnit(offsets.right);
+    element.style.bottom = withUnit(offsets.bottom);
+    element.style.zIndex = offsets.z ?? "";
+  };
+  var clearOffsets = (element) => {
+    element.style.position = "";
+    element.style.top = "";
+    element.style.left = "";
+    element.style.right = "";
+    element.style.bottom = "";
+    element.style.zIndex = "";
+  };
+  var withUnit = (value) => {
+    if (value === void 0 || value === "") return "";
+    return /^-?\d+(\.\d+)?$/.test(value) ? `${value}px` : value;
+  };
+  var createTrigger = (element, config, offsets) => {
+    const startStr = config.startStr ?? `top ${withUnit(offsets.top) || "0px"}`;
+    if (config.type === "fixed") {
+      return ScrollTrigger.create({
+        trigger: element,
+        start: startStr,
+        end: config.endStr ?? "max",
+        pin: true,
+        pinSpacing: false,
+        invalidateOnRefresh: true
+      });
+    }
+    const parent = config.parentSelector ? element.closest(config.parentSelector) ?? element.parentElement : element.parentElement;
+    if (!parent) {
+      console.warn("[scrollPin] sticky element has no parent \u2014 skipping", element);
+      return null;
+    }
+    return ScrollTrigger.create({
+      trigger: element,
+      start: startStr,
+      endTrigger: parent,
+      end: "bottom bottom",
+      pin: true,
+      pinSpacing: false,
+      invalidateOnRefresh: true
     });
   };
 
@@ -1500,7 +1808,10 @@
   // src/index.ts
   window.Webflow ||= [];
   window.Webflow.push(() => {
+    eagerImages();
+    debugOverlay();
     gsapSmoothScroll();
+    scrollPin();
     heroTextReveal([".hero-open_modal"]);
     swiperSliders();
     navToggle();
@@ -1519,35 +1830,13 @@
     viewSwitcher();
     cmsFilterLinks();
     filterActiveState();
-    document.querySelectorAll('img[loading="lazy"]').forEach((img) => {
-      img.loading = "eager";
-    });
-    waitForAllImages(() => {
-      gsapBasicAnimations();
-      generalScrollTextReveal();
-      homeTextSticky();
-      publicationsGridFade();
-      randomImagesFadeIn();
-      careersStackingCards();
-      proccessSlider();
-    });
+    gsapBasicAnimations();
+    generalScrollTextReveal();
+    homeTextSticky();
+    publicationsGridFade();
+    randomImagesFadeIn();
+    careersStackingCards();
+    proccessSlider();
   });
-  var waitForAllImages = (onReady) => {
-    const pending = Array.from(document.images).filter(
-      (img) => !(img.complete && img.naturalWidth > 0)
-    );
-    if (pending.length === 0) {
-      onReady();
-      return;
-    }
-    let remaining = pending.length;
-    const done = () => {
-      if (--remaining === 0) onReady();
-    };
-    pending.forEach((img) => {
-      img.addEventListener("load", done, { once: true });
-      img.addEventListener("error", done, { once: true });
-    });
-  };
 })();
 //# sourceMappingURL=index.js.map
