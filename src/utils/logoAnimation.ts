@@ -13,7 +13,8 @@ export const logoAnimation = () => {
   const shortLogo = document.querySelector<HTMLElement>('.nav-custom_logo.u-icon')
 
   if (!wrapper || !longLogo || !shortLogo) return
-
+  const isMobile = window.matchMedia('(max-width: 767px)').matches
+  if (isMobile) return
   // Clip both logos to the wrapper bounds
   gsap.set(wrapper, {
     overflow: 'hidden',

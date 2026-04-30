@@ -526,6 +526,8 @@
     const longLogo = document.querySelector(".nav-custom_logo.u-full");
     const shortLogo = document.querySelector(".nav-custom_logo.u-icon");
     if (!wrapper || !longLogo || !shortLogo) return;
+    const isMobile = window.matchMedia("(max-width: 767px)").matches;
+    if (isMobile) return;
     gsap.set(wrapper, {
       overflow: "hidden",
       position: "relative",
