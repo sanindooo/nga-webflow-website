@@ -1,5 +1,11 @@
 # figma-to-webflow-pipeline
 
+## 1.1.3
+
+### Patch Changes
+
+- Add nav animation (logo animation enabled on desktop, disabled on mobile).
+
 ## 1.1.2
 
 ### Patch Changes
