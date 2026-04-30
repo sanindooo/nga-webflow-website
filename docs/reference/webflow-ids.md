@@ -43,6 +43,16 @@ Quick-lookup for site, page, collection, and field IDs to avoid redundant API/MC
 | Publications | `69c2160184f6875b5af9be2e` | Publications page items (Monograph / Works option) |
 | Greeting Cards | `69c21602e1d0bea9a19b0853` | News page Greeting Cards |
 
+## Key CMS Fields (Greeting Cards)
+
+| Field | Slug | Type |
+|---|---|---|
+| Card Image | `card-image` | Image |
+| URL | `url` | Link |
+| Name | `name` | PlainText (required) |
+| Slug | `slug` | PlainText (required) |
+| Date | `date` | Number (year, integer, optional) |
+
 ## Key CMS Fields (Hero Slides)
 
 | Field | Slug | Type |
@@ -63,6 +73,20 @@ Quick-lookup for site, page, collection, and field IDs to avoid redundant API/MC
 | Body | `body` | RichText |
 | SEO Meta Title | `seo-meta-title` | PlainText |
 | SEO Meta Description | `seo-meta-description` | PlainText |
+
+## Key CMS Fields (Awards)
+
+| Field | Slug | Type | Required |
+|---|---|---|---|
+| Name | `name` | PlainText | ✓ |
+| Slug | `slug` | PlainText | ✓ |
+| Year | `year` | PlainText | ✓ |
+| Award Name | `award-name` | PlainText | ✓ |
+| Project | `project` | PlainText | ✓ |
+| Award Logo | `award-logo` | Image | – |
+| Featured | `featured` | Switch (logo layout vs compact text row) | – |
+| Link URL | `link-url` | Link | – |
+| Sort Order | `sort-order` | Number (integer, 1 = top) | ✓ |
 
 ## Key CMS Fields (Projects)
 

@@ -76,24 +76,45 @@ interface ScrollTriggerConfig {
   syncInterval?: number;
 }
 
+interface ScrollTriggerInstance {
+  vars: Record<string, unknown>;
+  trigger?: HTMLElement | string | null;
+  pin?: HTMLElement | null;
+  start: number;
+  end: number;
+  progress: number;
+  isActive: boolean;
+  scroll: () => number;
+  getVelocity: () => number;
+  kill: (reset?: boolean) => void;
+}
+
 interface ScrollTriggerStatic {
   update: () => void;
   refresh: (safe?: boolean) => void;
+  sort: (
+    func?: (a: ScrollTriggerInstance, b: ScrollTriggerInstance) => number,
+  ) => ScrollTriggerInstance[];
   config: (options: ScrollTriggerConfig) => void;
+  defaults: (vars: Record<string, unknown>) => void;
   normalizeScroll: (enabled: boolean) => void;
   batch: (target: string, vars: Record<string, unknown>) => void;
-  create: (vars: Record<string, unknown>) => void;
+  create: (vars: Record<string, unknown>) => ScrollTriggerInstance;
+  getAll: () => ScrollTriggerInstance[];
   isInViewport: (trigger: unknown) => boolean;
   isTouch: number;
   isScrolling: () => boolean;
-  addEventListener: (type: string, callback: () => void) => void;
+  addEventListener: (
+    type: 'refresh' | 'refreshInit' | 'scrollStart' | 'scrollEnd' | 'matchMedia' | 'revert',
+    callback: () => void,
+  ) => void;
   removeEventListener: (type: string, callback: () => void) => void;
 }
 
 declare const gsap: GsapInstance;
 declare const ScrollTrigger: ScrollTriggerStatic;
 
-// -- Lenis --
+// -- Lenis (deprecated; kept for backward compat with archived code paths) --
 
 interface LenisInstance {
   on: (event: string, callback: () => void) => void;
@@ -101,6 +122,10 @@ interface LenisInstance {
   resize: () => void;
   stop: () => void;
   start: () => void;
+  scroll: number;
+  targetScroll: number;
+  velocity: number;
+  isScrolling: boolean;
 }
 
 interface LenisConstructor {
@@ -108,6 +133,28 @@ interface LenisConstructor {
 }
 
 declare const Lenis: LenisConstructor;
+
+// -- ScrollSmoother (GSAP) --
+
+interface ScrollSmootherInstance {
+  paused: (paused?: boolean) => boolean;
+  scrollTop: (value?: number) => number;
+  scrollTo: (target: unknown, smooth?: boolean) => void;
+  refresh: (safe?: boolean) => void;
+  kill: () => void;
+  getVelocity: () => number;
+  offset: (target?: HTMLElement | string) => number;
+  progress: number;
+  smooth: (value?: number) => number;
+}
+
+interface ScrollSmootherStatic {
+  create: (vars?: Record<string, unknown>) => ScrollSmootherInstance;
+  get: () => ScrollSmootherInstance | undefined;
+  refresh: () => void;
+}
+
+declare const ScrollSmoother: ScrollSmootherStatic;
 
 // -- SplitText (GSAP 3.13+) --
 
@@ -122,6 +169,9 @@ interface SplitTextOptions {
   type?: string;
   mask?: string;
   autoSplit?: boolean;
+  wordsClass?: string;
+  linesClass?: string;
+  charsClass?: string;
   onSplit?: (self: SplitTypeInstance) => unknown;
 }
 

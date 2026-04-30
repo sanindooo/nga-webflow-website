@@ -10,6 +10,24 @@
  *
  * Open state is expressed via the `is-open` class — CSS handles visibility,
  * animation, and easing via Webflow combo classes.
+ *
+ * ScrollSmoother constraint: the dialog and overlay must live OUTSIDE
+ * `#smooth-content` in Designer, otherwise their `position: fixed` resolves
+ * against the transformed content layer instead of the viewport. For static
+ * modals, place them as a sibling of the page's main wrapper. For CMS-bound
+ * modals, render them via a second Collection List that lives outside the
+ * main wrapper (the trigger card list stays inside, the modal list is its
+ * own sibling list — both bound to the same collection, slug-based ids
+ * pair them via `data-modal-open`).
+ *
+ * Page-scroll lock: ScrollSmoother is paused on open and resumed on close
+ * (GSAP-documented modal pattern). This halts page scrolling AND releases
+ * the modal's overflow-y:auto for native wheel/touch handling. No body
+ * styles or scrollTo are touched — under normalizeScroll those interfere
+ * with the smoother's own state.
+ *
+ * Focus management is unaffected by DOM placement: the script finds modals
+ * via `getElementById`, so triggers and dialogs can live anywhere.
  */
 
 import { startSmoothScroll, stopSmoothScroll } from '$utils/gsapSmoothScroll'
@@ -31,7 +49,6 @@ export const modals = () => {
 
   let activeModal: HTMLElement | null = null
   let activeTrigger: HTMLElement | null = null
-  let savedScrollY = 0
 
   modalElements.forEach((modal) => {
     if (!modal.id) return
@@ -73,16 +90,44 @@ export const modals = () => {
       overlayElement.setAttribute('aria-hidden', 'false')
     }
 
-    savedScrollY = window.scrollY
-    document.body.style.top = `-${savedScrollY}px`
-    document.body.classList.add('no-scroll')
+    // GSAP-documented modal pattern: pausing the smoother halts page scrolling
+    // (including normalizeScroll's wheel/touch interception) AND releases the
+    // modal's overflow-y:auto for native scroll handling on every device.
     stopSmoothScroll()
 
-    requestAnimationFrame(() => {
+    // Defer focus until the open transition has finished. Focusing while the
+    // modal is mid-slide leaves the focusable below the viewport edge — under
+    // ScrollSmoother with normalizeScroll: true, the browser's focus-into-view
+    // request bypasses preventScroll:true and ScrollSmoother actually scrolls
+    // the page (verified via debug overlay showing scrollTop jumping from 0
+    // to ~the trigger's Y position). Deferring puts the focusable inside the
+    // viewport before focus runs, so there's nothing to scroll into view.
+    focusAfterTransition(modal)
+  }
+
+  function focusAfterTransition(modal: HTMLElement) {
+    const computed = getComputedStyle(modal)
+    const duration = parseSecondsList(computed.transitionDuration)
+    const delay = parseSecondsList(computed.transitionDelay)
+    const waitMs = Math.max(50, (duration + delay) * 1000 + 50)
+    window.setTimeout(() => {
+      if (activeModal !== modal) return
       const focusable = getFocusableElements(modal)
       const firstFocusable = focusable[0] ?? modal
       firstFocusable.focus({ preventScroll: true })
-    })
+    }, waitMs)
+  }
+
+  function parseSecondsList(value: string): number {
+    return Math.max(
+      0,
+      ...value.split(',').map((v) => {
+        const trimmed = v.trim()
+        if (trimmed.endsWith('ms')) return parseFloat(trimmed) / 1000
+        if (trimmed.endsWith('s')) return parseFloat(trimmed)
+        return 0
+      }),
+    )
   }
 
   function closeModal() {
@@ -100,9 +145,6 @@ export const modals = () => {
       overlayElement.setAttribute('aria-hidden', 'true')
     }
 
-    document.body.classList.remove('no-scroll')
-    document.body.style.top = ''
-    window.scrollTo(0, savedScrollY)
     startSmoothScroll()
 
     trigger?.focus({ preventScroll: true })

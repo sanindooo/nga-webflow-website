@@ -93,6 +93,6 @@ export const generalScrollTextReveal = () => {
         })
       }
     })
-    requestAnimationFrame(() => ScrollTrigger.refresh())
+    requestAnimationFrame(() => ScrollTrigger.refresh(true))
   })
 }

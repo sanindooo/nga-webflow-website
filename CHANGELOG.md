@@ -1,5 +1,38 @@
 # figma-to-webflow-pipeline
 
+## 1.1.2
+
+### Patch Changes
+
+- Modal scroll lock now uses GSAP's documented `smoother.paused(true)` pattern.
+
+  Replaces the wheel/touchmove `stopPropagation` blocker shipped in v1.1.1 — which worked for `wheel` events on macOS but not iOS touch (iOS picks the scroll target at `touchstart` and `normalizeScroll` was still active). `paused(true)` halts ScrollSmoother entirely (including its `normalizeScroll` event capture), which both stops the page from scrolling AND releases the modal's `overflow-y: auto` for native wheel/touch handling on every device.
+
+  `startSmoothScroll` / `stopSmoothScroll` re-exported from `gsapSmoothScroll.ts`. Critical: do NOT pair these with the legacy `body.style.top = -scrollY` body-scroll-lock — under `normalizeScroll`, `window.scrollY` returns the smoother's scroll value and applying it as a body offset double-shifts the page (this is what caused the open-shift bug we hit two days ago).
+
+  Net: `modals.ts` lost ~25 lines of event-blocker code, `gsapSmoothScroll.ts` gained ~10 lines (helpers + the body-style.top warning comment).
+
+## 1.1.1
+
+### Patch Changes
+
+- Fix modal internal scrolling under ScrollSmoother.
+
+  `modals.ts` now stops `wheel` and `touchmove` from bubbling out of the open modal/overlay subtree to the window. Without this, ScrollSmoother's `normalizeScroll: true` listeners at the document level consume those events and scroll the page underneath instead of letting the modal's `overflow-y: auto` container handle them. The browser's native scroll handler runs against the deepest scrollable ancestor before propagation matters, so modal-internal scrolling works correctly. Listeners are added on open and removed on close, paired by stable function reference. Mode-agnostic — works on both desktop and mobile, regardless of viewport size.
+
+## 1.1.0
+
+### Minor Changes
+
+- ScrollTrigger stability + new declarative utilities.
+
+  - Fix premature animations on home news section via new `[data-eager]` attribute (`src/utils/eagerImages.ts`) — promotes lazy images to eager so layout shift settles before ScrollTrigger measures.
+  - Retarget `gsapSmoothScroll` body ResizeObserver at `#smooth-content` (body is height-locked under ScrollSmoother).
+  - New `[data-pin="fixed"]` / `[data-pin="sticky"]` declarative pin utility (`src/utils/scrollPin.ts`) — replaces CSS `position: fixed`/`sticky` for elements that need to remain inside `#smooth-content`. Responsive offsets, mobile disable, parent override.
+  - Simplify `modals.ts` — remove body-scroll-lock, ScrollSmoother pause, and DOM reparent. Modals must now live outside `#smooth-content` (static: sibling of main wrapper; CMS: second Collection List). Defer focus until open transition completes to avoid normalizeScroll scrolling the page to the focusable.
+  - Remove unused `startSmoothScroll` / `stopSmoothScroll` exports.
+  - Documentation: new `docs/reference/scroll-pin.md`, two new solution docs (`scrollsmoother-vs-lenis-cache-divergence.md`, `scrollsmoother-position-fixed-sticky-replacement.md`), updated `docs/reference/modal-setup.md`.
+
 ## 1.0.15
 
 ### Patch Changes
