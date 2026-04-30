@@ -1,5 +1,13 @@
 # figma-to-webflow-pipeline
 
+## 1.1.1
+
+### Patch Changes
+
+- Fix modal internal scrolling under ScrollSmoother.
+
+  `modals.ts` now stops `wheel` and `touchmove` from bubbling out of the open modal/overlay subtree to the window. Without this, ScrollSmoother's `normalizeScroll: true` listeners at the document level consume those events and scroll the page underneath instead of letting the modal's `overflow-y: auto` container handle them. The browser's native scroll handler runs against the deepest scrollable ancestor before propagation matters, so modal-internal scrolling works correctly. Listeners are added on open and removed on close, paired by stable function reference. Mode-agnostic — works on both desktop and mobile, regardless of viewport size.
+
 ## 1.1.0
 
 ### Minor Changes
