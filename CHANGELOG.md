@@ -1,5 +1,17 @@
 # figma-to-webflow-pipeline
 
+## 1.1.2
+
+### Patch Changes
+
+- Modal scroll lock now uses GSAP's documented `smoother.paused(true)` pattern.
+
+  Replaces the wheel/touchmove `stopPropagation` blocker shipped in v1.1.1 — which worked for `wheel` events on macOS but not iOS touch (iOS picks the scroll target at `touchstart` and `normalizeScroll` was still active). `paused(true)` halts ScrollSmoother entirely (including its `normalizeScroll` event capture), which both stops the page from scrolling AND releases the modal's `overflow-y: auto` for native wheel/touch handling on every device.
+
+  `startSmoothScroll` / `stopSmoothScroll` re-exported from `gsapSmoothScroll.ts`. Critical: do NOT pair these with the legacy `body.style.top = -scrollY` body-scroll-lock — under `normalizeScroll`, `window.scrollY` returns the smoother's scroll value and applying it as a body offset double-shifts the page (this is what caused the open-shift bug we hit two days ago).
+
+  Net: `modals.ts` lost ~25 lines of event-blocker code, `gsapSmoothScroll.ts` gained ~10 lines (helpers + the body-style.top warning comment).
+
 ## 1.1.1
 
 ### Patch Changes

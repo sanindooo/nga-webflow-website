@@ -20,9 +20,17 @@
  * own sibling list — both bound to the same collection, slug-based ids
  * pair them via `data-modal-open`).
  *
+ * Page-scroll lock: ScrollSmoother is paused on open and resumed on close
+ * (GSAP-documented modal pattern). This halts page scrolling AND releases
+ * the modal's overflow-y:auto for native wheel/touch handling. No body
+ * styles or scrollTo are touched — under normalizeScroll those interfere
+ * with the smoother's own state.
+ *
  * Focus management is unaffected by DOM placement: the script finds modals
  * via `getElementById`, so triggers and dialogs can live anywhere.
  */
+
+import { startSmoothScroll, stopSmoothScroll } from '$utils/gsapSmoothScroll'
 
 const FOCUSABLE_SELECTOR = [
   'a[href]',
@@ -66,26 +74,6 @@ export const modals = () => {
     )
   }
 
-  // Stop wheel/touchmove from bubbling out of the open modal/overlay subtree
-  // to the window — otherwise ScrollSmoother's normalizeScroll listeners at
-  // the document level consume those events and scroll the page underneath
-  // instead of letting the modal's overflow:auto container handle them. The
-  // browser's native scroll handler runs against the deepest scrollable
-  // ancestor BEFORE propagation matters, so modal-internal scrolling still
-  // works correctly. We only block further bubbling, not the default action.
-  // Same listener instance for add and remove so removeEventListener pairs.
-  const stopBubble = (event: Event) => event.stopPropagation()
-
-  function attachScrollGuard(element: HTMLElement) {
-    element.addEventListener('wheel', stopBubble, { passive: true })
-    element.addEventListener('touchmove', stopBubble, { passive: true })
-  }
-
-  function detachScrollGuard(element: HTMLElement) {
-    element.removeEventListener('wheel', stopBubble)
-    element.removeEventListener('touchmove', stopBubble)
-  }
-
   function openModal(modal: HTMLElement, trigger: HTMLElement) {
     if (activeModal) closeModal()
 
@@ -95,14 +83,17 @@ export const modals = () => {
     modal.classList.add('is-open')
     modal.setAttribute('aria-hidden', 'false')
     trigger.setAttribute('aria-expanded', 'true')
-    attachScrollGuard(modal)
 
     const overlayEnabled = overlayElement && !modal.hasAttribute('data-modal-no-overlay')
     if (overlayEnabled) {
       overlayElement.classList.add('is-open')
       overlayElement.setAttribute('aria-hidden', 'false')
-      attachScrollGuard(overlayElement)
     }
+
+    // GSAP-documented modal pattern: pausing the smoother halts page scrolling
+    // (including normalizeScroll's wheel/touch interception) AND releases the
+    // modal's overflow-y:auto for native scroll handling on every device.
+    stopSmoothScroll()
 
     // Defer focus until the open transition has finished. Focusing while the
     // modal is mid-slide leaves the focusable below the viewport edge — under
@@ -148,13 +139,13 @@ export const modals = () => {
     modal.classList.remove('is-open')
     modal.setAttribute('aria-hidden', 'true')
     trigger?.setAttribute('aria-expanded', 'false')
-    detachScrollGuard(modal)
 
     if (overlayElement) {
       overlayElement.classList.remove('is-open')
       overlayElement.setAttribute('aria-hidden', 'true')
-      detachScrollGuard(overlayElement)
     }
+
+    startSmoothScroll()
 
     trigger?.focus({ preventScroll: true })
 

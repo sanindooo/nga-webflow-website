@@ -30,6 +30,16 @@ let smootherInstance: ScrollSmootherInstance | null = null
 
 export const getSmoother = (): ScrollSmootherInstance | null => smootherInstance
 
+// Pause/resume the smoother. Used by modals.ts to halt page scrolling while
+// a modal is open — when paused, ScrollSmoother (including its normalizeScroll
+// event handlers) stops processing scroll events entirely, releasing the
+// modal's overflow-y:auto to handle native wheel/touch scrolling. This is the
+// GSAP-documented modal pattern. Do NOT combine with body.style.top / a
+// `no-scroll` body class — under normalizeScroll, window.scrollY returns the
+// smoother's value and applying it as a body offset double-shifts the page.
+export const stopSmoothScroll = () => smootherInstance?.paused(true)
+export const startSmoothScroll = () => smootherInstance?.paused(false)
+
 export const gsapSmoothScroll = () => {
   ScrollTrigger.config({ ignoreMobileResize: true })
 
