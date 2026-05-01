@@ -17,7 +17,7 @@ export const logoAnimation = () => {
   if (isMobile) return
   // Clip both logos to the wrapper bounds
   gsap.set(wrapper, {
-    overflow: 'hidden',
+    overflow: 'clip',
     position: 'relative',
     display: 'grid',
     gridTemplateColumns: '1fr',

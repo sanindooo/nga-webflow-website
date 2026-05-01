@@ -707,7 +707,7 @@ ${rows}`;
     const isMobile = window.matchMedia("(max-width: 767px)").matches;
     if (isMobile) return;
     gsap.set(wrapper, {
-      overflow: "hidden",
+      overflow: "clip",
       position: "relative",
       display: "grid",
       gridTemplateColumns: "1fr",
