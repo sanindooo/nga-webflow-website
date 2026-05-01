@@ -9,7 +9,7 @@
 export const homeTextSticky = () => {
   const sections = Array.from(document.querySelectorAll<HTMLElement>('.section_sticky-text'))
   if (sections.length === 0) return
-  const isMobile = window.matchMedia('(max-width: 767px)').matches
+  const isTouchDevice = window.matchMedia('(hover: none)').matches
   sections.forEach((section, sectionIndex) => {
     const titleWrapper = section.querySelector<HTMLElement>('.sticky-text_component')
     if (!titleWrapper) return
@@ -24,7 +24,7 @@ export const homeTextSticky = () => {
     gsap.set([split.lines, arrow?.parentElement], { overflow: 'hidden' })
     gsap.set([split.words, arrow], { y: '110%' })
 
-    if (isMobile) {
+    if (isTouchDevice) {
       const tl = gsap.timeline()
 
       tl.to(split.words, {

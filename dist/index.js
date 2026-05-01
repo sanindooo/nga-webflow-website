@@ -616,7 +616,7 @@ ${rows}`;
   var homeTextSticky = () => {
     const sections = Array.from(document.querySelectorAll(".section_sticky-text"));
     if (sections.length === 0) return;
-    const isMobile = window.matchMedia("(max-width: 767px)").matches;
+    const isTouchDevice = window.matchMedia("(hover: none)").matches;
     sections.forEach((section, sectionIndex) => {
       const titleWrapper = section.querySelector(".sticky-text_component");
       if (!titleWrapper) return;
@@ -628,7 +628,7 @@ ${rows}`;
       const arrow = titleWrapper.querySelector(".right-arrow_svg");
       gsap.set([split.lines, arrow?.parentElement], { overflow: "hidden" });
       gsap.set([split.words, arrow], { y: "110%" });
-      if (isMobile) {
+      if (isTouchDevice) {
         const tl = gsap.timeline();
         tl.to(split.words, {
           y: "0%",
