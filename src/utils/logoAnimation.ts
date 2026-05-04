@@ -8,6 +8,9 @@
  */
 
 export const logoAnimation = () => {
+  const header = document.querySelector<HTMLElement>('.header')
+  // if (header?.getAttribute('data-wf--main-nav--variant') === 'white-bg') return
+
   const wrapper = document.querySelector<HTMLElement>('.nav-brand_link')
   const longLogo = document.querySelector<HTMLElement>('.nav-custom_logo.u-full')
   const shortLogo = document.querySelector<HTMLElement>('.nav-custom_logo.u-icon')
@@ -19,15 +22,15 @@ export const logoAnimation = () => {
   gsap.set(wrapper, {
     overflow: 'clip',
     position: 'relative',
-    display: 'grid',
-    gridTemplateColumns: '1fr',
-    gridTemplateRows: '1fr',
-    padding: '4px 0',
+    // display: 'grid',
+    // gridTemplateColumns: '1fr',
+    // gridTemplateRows: '1fr',
+    // padding: '4px 0',
   })
 
   // Long logo starts visible; short logo parked above, ready to enter
-  gsap.set(longLogo, { display: 'flex', yPercent: 0, gridArea: '1 / 1' })
-  gsap.set(shortLogo, { yPercent: 10, gridArea: '1 / 1' })
+  // gsap.set(longLogo, { display: 'flex', yPercent: 0, gridArea: '1 / 1' })
+  // gsap.set(shortLogo, { yPercent: 10, gridArea: '1 / 1' })
 
   const tl = gsap.timeline()
   tl.to(longLogo, { yPercent: -110, duration: 0.4, ease: 'power2.inOut' }, 0).to(
