@@ -1,5 +1,13 @@
 # figma-to-webflow-pipeline
 
+## 1.1.4
+
+### Patch Changes
+
+- client feedback
+- update: client feedback
+- client feedback
+
 ## 1.1.3
 
 ### Patch Changes
