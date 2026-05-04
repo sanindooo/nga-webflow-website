@@ -1,5 +1,11 @@
 # figma-to-webflow-pipeline
 
+## 1.1.7
+
+### Patch Changes
+
+- fix: faulty tag label
+
 ## 1.1.6
 
 ### Patch Changes
