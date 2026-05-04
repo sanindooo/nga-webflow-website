@@ -73,6 +73,8 @@ Quick-lookup for site, page, collection, and field IDs to avoid redundant API/MC
 | Body | `body` | RichText |
 | SEO Meta Title | `seo-meta-title` | PlainText |
 | SEO Meta Description | `seo-meta-description` | PlainText |
+| Download Link | `download-link` | File |
+| External Link | `external-link` | Link (styled CTA button alongside Download Link) |
 
 ## Key CMS Fields (Awards)
 
@@ -128,6 +130,7 @@ Quick-lookup for site, page, collection, and field IDs to avoid redundant API/MC
 | Lectures/Awards | `69d5001cb5f848cea07f5c0d` | `lectures-awards` |
 | Latest News | `69ea72acf2ede26d557a1b70` | `latest-news` |
 | Awards | `69ea72adc050c31f563b3563` | `awards` |
+| Press | `69f4ccb9f8fd608205937743` | `press` |
 
 ## Works Category Items (seeded)
 

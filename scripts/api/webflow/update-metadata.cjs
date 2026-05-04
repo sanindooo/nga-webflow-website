@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const { WebflowClient } = require('../lib/webflow-client')
+const { WebflowClient } = require('../lib/webflow-client.cjs')
 
 async function main () {
   const dryRun = process.argv.includes('--dry-run')

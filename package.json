@@ -21,11 +21,11 @@
     "typecheck": "tsc --noEmit",
     "release": "changeset publish",
     "export-assets": "node scripts/api/figma/export-assets.js",
-    "upload-assets": "node scripts/api/webflow/upload-assets.js",
-    "update-metadata": "node scripts/api/webflow/update-metadata.js",
-    "extract-styles": "node scripts/api/figma/extract-styles.js",
-    "update-seo": "node scripts/api/webflow/update-seo.js",
-    "parse-copy": "node scripts/api/webflow/parse-copy.js"
+    "upload-assets": "node scripts/api/webflow/upload-assets.cjs",
+    "update-metadata": "node scripts/api/webflow/update-metadata.cjs",
+    "update-seo": "node scripts/api/webflow/update-seo.cjs",
+    "parse-copy": "node scripts/api/webflow/parse-copy.cjs",
+    "upload-press": "node scripts/api/webflow/upload-press-pdfs.cjs"
   },
   "keywords": [
     "webflow",

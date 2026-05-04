@@ -4,8 +4,8 @@ const { createHash } = require('node:crypto')
 const { readFile, stat, copyFile, unlink } = require('node:fs/promises')
 const { join } = require('node:path')
 const { execSync } = require('node:child_process')
-const { WebflowClient } = require('../lib/webflow-client')
-const manifest = require('../lib/manifest')
+const { WebflowClient } = require('../lib/webflow-client.cjs')
+const manifest = require('../lib/manifest.cjs')
 
 const ASSETS_DIR = join(__dirname, '..', '..', '..', 'assets')
 const MAX_SIZE = 4 * 1024 * 1024 // 4MB
