@@ -700,10 +700,7 @@ ${rows}`;
 
   // src/utils/logoAnimation.ts
   var logoAnimation = () => {
-<<<<<<< HEAD
-=======
     const header = document.querySelector(".header");
->>>>>>> 7a550bf90ea87f08e21b94db4602434bc227ee88
     const wrapper = document.querySelector(".nav-brand_link");
     const longLogo = document.querySelector(".nav-custom_logo.u-full");
     const shortLogo = document.querySelector(".nav-custom_logo.u-icon");
@@ -712,23 +709,12 @@ ${rows}`;
     if (isMobile) return;
     gsap.set(wrapper, {
       overflow: "clip",
-<<<<<<< HEAD
-      position: "relative",
-      display: "grid",
-      gridTemplateColumns: "1fr",
-      gridTemplateRows: "1fr",
-      padding: "4px 0"
-    });
-    gsap.set(longLogo, { display: "flex", yPercent: 0, gridArea: "1 / 1" });
-    gsap.set(shortLogo, { yPercent: 10, gridArea: "1 / 1" });
-=======
       position: "relative"
       // display: 'grid',
       // gridTemplateColumns: '1fr',
       // gridTemplateRows: '1fr',
       // padding: '4px 0',
     });
->>>>>>> 7a550bf90ea87f08e21b94db4602434bc227ee88
     const tl = gsap.timeline();
     tl.to(longLogo, { yPercent: -110, duration: 0.4, ease: "power2.inOut" }, 0).to(
       shortLogo,
@@ -882,11 +868,7 @@ ${rows}`;
   var navTheme = () => {
     const headerElement = document.querySelector(".header");
     if (headerElement?.getAttribute("data-wf--main-nav--variant") === "white-bg") return;
-<<<<<<< HEAD
-    const logoWrapper = document.querySelector(".nav-custom_logo");
-=======
     const logoWrapper = document.querySelector(".nav-brand_link");
->>>>>>> 7a550bf90ea87f08e21b94db4602434bc227ee88
     const hamburgerToggle = document.querySelector(".nav-custom_toggle");
     const darkThemeSections = Array.from(
       document.querySelectorAll("[data-header-theme='dark']")
@@ -911,14 +893,6 @@ ${rows}`;
     const logoClone = logoWrapper.cloneNode(true);
     Object.assign(logoClone.style, {
       position: "absolute",
-<<<<<<< HEAD
-      margin: "0",
-      padding: "9px 0 0",
-      overflow: "visible",
-      color: DARK_COLOR
-    });
-    darkOverlay.appendChild(logoClone);
-=======
       overflow: "clip",
       color: DARK_COLOR
     });
@@ -929,7 +903,6 @@ ${rows}`;
     const cloneIcon = logoClone.querySelector(".nav-custom_logo.u-icon");
     if (cloneFull) cloneFull.style.color = DARK_COLOR;
     if (cloneIcon) cloneIcon.style.color = DARK_COLOR;
->>>>>>> 7a550bf90ea87f08e21b94db4602434bc227ee88
     const toggleClone = hamburgerToggle.cloneNode(true);
     Object.assign(toggleClone.style, {
       position: "absolute",
@@ -999,19 +972,9 @@ ${rows}`;
       }
       return `linear-gradient(to bottom, ${stops.join(", ")})`;
     };
-<<<<<<< HEAD
-    let lastScrollY = -1;
     let lastGradient = "";
     const updateMask = () => {
       if (headerElement.classList.contains("is-nav-open")) return;
-      const currentScrollY = window.scrollY;
-      if (currentScrollY === lastScrollY) return;
-      lastScrollY = currentScrollY;
-=======
-    let lastGradient = "";
-    const updateMask = () => {
-      if (headerElement.classList.contains("is-nav-open")) return;
->>>>>>> 7a550bf90ea87f08e21b94db4602434bc227ee88
       const darkIntervals = [];
       for (const section of darkThemeSections) {
         const rect = section.getBoundingClientRect();
@@ -1068,16 +1031,12 @@ ${rows}`;
     });
     syncClonePositions();
     updateMask();
-<<<<<<< HEAD
-    const tick = () => {
-=======
     const syncLogoTransforms = () => {
       if (realFull && cloneFull) cloneFull.style.transform = realFull.style.transform;
       if (realIcon && cloneIcon) cloneIcon.style.transform = realIcon.style.transform;
     };
     const tick = () => {
       syncLogoTransforms();
->>>>>>> 7a550bf90ea87f08e21b94db4602434bc227ee88
       updateMask();
       requestAnimationFrame(tick);
     };
@@ -1843,13 +1802,8 @@ ${rows}`;
     heroTextReveal([".hero-open_modal"]);
     swiperSliders();
     navToggle();
-<<<<<<< HEAD
-    navTheme();
-    logoAnimation();
-=======
     logoAnimation();
     navTheme();
->>>>>>> 7a550bf90ea87f08e21b94db4602434bc227ee88
     buttonIconHover();
     teamCardHover();
     teamLeaders();
