@@ -53,8 +53,8 @@ window.Webflow.push(() => {
   swiperSliders()
 
   navToggle()
+  logoAnimation() // must run before navTheme so the clone captures gsap.set initial styles
   navTheme()
-  logoAnimation()
 
   buttonIconHover()
   teamCardHover()

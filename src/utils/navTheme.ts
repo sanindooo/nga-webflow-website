@@ -16,7 +16,7 @@ const DARK_COLOR = '#012C72'
 export const navTheme = () => {
   const headerElement = document.querySelector<HTMLElement>('.header')
   if (headerElement?.getAttribute('data-wf--main-nav--variant') === 'white-bg') return
-  const logoWrapper = document.querySelector<HTMLElement>('.nav-custom_logo')
+  const logoWrapper = document.querySelector<HTMLElement>('.nav-brand_link')
   const hamburgerToggle = document.querySelector<HTMLElement>('.nav-custom_toggle')
   const darkThemeSections = Array.from(
     document.querySelectorAll<HTMLElement>("[data-header-theme='dark']"),
@@ -42,14 +42,23 @@ export const navTheme = () => {
   })
 
   const logoClone = logoWrapper.cloneNode(true) as HTMLElement
+  // Absolutely positioned so it sits exactly over the real logo via getBoundingClientRect
   Object.assign(logoClone.style, {
     position: 'absolute',
-    margin: '0',
-    padding: '9px 0 0',
-    overflow: 'visible',
+    overflow: 'clip',
     color: DARK_COLOR,
   })
   darkOverlay.appendChild(logoClone)
+
+  // Refs for both logo versions — needed to mirror GSAP transforms every rAF tick
+  const realFull = logoWrapper.querySelector<HTMLElement>('.nav-custom_logo.u-full')
+  const realIcon = logoWrapper.querySelector<HTMLElement>('.nav-custom_logo.u-icon')
+  const cloneFull = logoClone.querySelector<HTMLElement>('.nav-custom_logo.u-full')
+  const cloneIcon = logoClone.querySelector<HTMLElement>('.nav-custom_logo.u-icon')
+
+  // Set dark color directly on each child — CSS class rules could override parent color
+  if (cloneFull) cloneFull.style.color = DARK_COLOR
+  if (cloneIcon) cloneIcon.style.color = DARK_COLOR
 
   const toggleClone = hamburgerToggle.cloneNode(true) as HTMLElement
   Object.assign(toggleClone.style, {
@@ -135,15 +144,10 @@ export const navTheme = () => {
     return `linear-gradient(to bottom, ${stops.join(', ')})`
   }
 
-  let lastScrollY = -1
   let lastGradient = ''
 
   const updateMask = () => {
     if (headerElement.classList.contains('is-nav-open')) return
-
-    const currentScrollY = window.scrollY
-    if (currentScrollY === lastScrollY) return
-    lastScrollY = currentScrollY
 
     const darkIntervals: Array<{ start: number; end: number }> = []
     for (const section of darkThemeSections) {
@@ -213,7 +217,15 @@ export const navTheme = () => {
   syncClonePositions()
   updateMask()
 
+  // Mirror GSAP inline transforms from real logo children to clone children every
+  // frame so logoAnimation's swap is always in sync with the dark overlay.
+  const syncLogoTransforms = () => {
+    if (realFull && cloneFull) cloneFull.style.transform = realFull.style.transform
+    if (realIcon && cloneIcon) cloneIcon.style.transform = realIcon.style.transform
+  }
+
   const tick = () => {
+    syncLogoTransforms()
     updateMask()
     requestAnimationFrame(tick)
   }
