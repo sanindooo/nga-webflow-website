@@ -6,6 +6,8 @@
  * background fades back to transparent.
  */
 
+import { startSmoothScroll, stopSmoothScroll } from '$utils/gsapSmoothScroll'
+
 export const navToggle = () => {
   const toggle = document.querySelector<HTMLElement>('[data-nav="open"]')
   const header = document.querySelector<HTMLElement>('.header')
@@ -27,6 +29,7 @@ export const navToggle = () => {
 
   const open = () => {
     header.classList.add('is-nav-open')
+    stopSmoothScroll()
     gsap.to(header, {
       backgroundColor:
         header.getAttribute('data-wf--main-nav--variant') === 'white-bg'
@@ -65,6 +68,7 @@ export const navToggle = () => {
     const timeline = gsap.timeline({
       onComplete: () => {
         header.classList.remove('is-nav-open')
+        startSmoothScroll()
         isAnimating = false
       },
     })

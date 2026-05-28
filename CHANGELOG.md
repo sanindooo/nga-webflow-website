@@ -1,5 +1,12 @@
 # figma-to-webflow-pipeline
 
+## 1.1.8
+
+### Patch Changes
+
+- increase hero slider from 3 to 5s
+- client feedback batch: enable nested scroll in ScrollSmoother, fix mobile menu scroll under normalizeScroll, add project info button with footer hide and image color detection, add footer sticky text animation with mobile fallback
+
 ## 1.1.7
 
 ### Patch Changes

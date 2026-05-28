@@ -52,7 +52,7 @@ export const gsapSmoothScroll = () => {
     smooth: 1.2,
     effects: true,
     smoothTouch: false,
-    normalizeScroll: true,
+    normalizeScroll: { allowNestedScroll: true },
   })
 
   // Content ResizeObserver — fires on DOM-driven height changes invisible to

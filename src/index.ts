@@ -15,6 +15,7 @@ import { currentYear } from '$utils/currentYear'
 import { debugOverlay } from '$utils/debugOverlay'
 import { eagerImages } from '$utils/eagerImages'
 import { filterActiveState } from '$utils/filterActiveState'
+import { footerTextSticky } from '$utils/footerTextSticky'
 import { generalImageHover } from '$utils/generalImageHover'
 import { generalScrollTextReveal } from '$utils/generalScrollTextReveal'
 import { gsapBasicAnimations } from '$utils/gsapBasicAnimations'
@@ -25,6 +26,7 @@ import { logoAnimation } from '$utils/logoAnimation'
 import { modals } from '$utils/modals'
 import { navTheme } from '$utils/navTheme'
 import { navToggle } from '$utils/navToggle'
+import { projectInfoButton } from '$utils/projectInfoButton'
 import { officeCardTabs } from '$utils/officeCardTabs'
 import { proccessSlider } from '$utils/proccessSlider'
 import { publicationsGridFade } from '$utils/publicationsGridFade'
@@ -55,6 +57,7 @@ window.Webflow.push(() => {
   navToggle()
   logoAnimation() // must run before navTheme so the clone captures gsap.set initial styles
   navTheme()
+  projectInfoButton()
 
   buttonIconHover()
   teamCardHover()
@@ -74,6 +77,7 @@ window.Webflow.push(() => {
   gsapBasicAnimations()
   generalScrollTextReveal()
   homeTextSticky()
+  footerTextSticky()
   publicationsGridFade()
   randomImagesFadeIn()
   careersStackingCards()

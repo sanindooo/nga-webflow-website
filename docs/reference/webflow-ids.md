@@ -4,8 +4,9 @@ Quick-lookup for site, page, collection, and field IDs to avoid redundant API/MC
 
 ## Site
 
-- **NGA Website**: `69be96472fedf400438234fd`
-- **URL**: `nga-website-bc5fa0.webflow.io`
+- **Copy of NGA Website**: `69f8a84868fb1946b71566b3`
+- **URL**: `nga-website-bc5fa0-994047fa404867590ea3.webflow.io`
+- ~~**NGA Website (old)**: `69be96472fedf400438234fd`~~ (duplicated site — IDs below are stale)
 
 ## Pages
 
@@ -142,3 +143,26 @@ Quick-lookup for site, page, collection, and field IDs to avoid redundant API/MC
 | Mixed-Use | `69d3914aaee6eb59178cbe37` | `mixed-use` |
 | Corporate & Institutional | `69d3914aaee6eb59178cbe39` | `corporate-institutional` |
 | Interior Design | `69d3914aaee6eb59178cbe3b` | `interior-design` |
+
+---
+
+## Duplicated Site IDs (Copy of NGA Website)
+
+**Site ID:** `69f8a84868fb1946b71566b3`
+
+| Collection | New ID |
+|---|---|
+| Works | `69f8a84868fb1946b71566bf` |
+| News | `69f8a84868fb1946b71566dc` |
+| Principals | `69f8a84868fb1946b7156708` |
+| Teams | `69f8a84868fb1946b7156728` |
+| Awards | `69f8a84868fb1946b715674c` |
+| Legal Partners | `69f8a84868fb1946b7156775` |
+| Consultants | `69f8a84868fb1946b715679d` |
+| Roles | `69f8a84868fb1946b71567c4` |
+| Publications | `69f8a84868fb1946b71567da` |
+| Greeting Cards | `69f8a84868fb1946b71567fc` |
+| Works Categories | `69f8a84868fb1946b7156812` |
+| News Categories | `69f8a84868fb1946b7156828` |
+| Hero Slides | `69f8a84868fb1946b7156841` |
+| Countries | `69f8a84868fb1946b715685a` |
