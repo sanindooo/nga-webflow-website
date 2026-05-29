@@ -12,58 +12,55 @@ export const footerTextSticky = () => {
 
   const mm = gsap.matchMedia()
 
-  mm.add(
-    { isDesktop: '(min-width: 481px)', isMobile: '(max-width: 480px)' },
-    (context) => {
-      const { isMobile } = context.conditions
+  mm.add({ isDesktop: '(min-width: 481px)', isMobile: '(max-width: 480px)' }, (context) => {
+    const { isMobile } = context.conditions
 
-      if (isMobile) {
-        const targets = [heading, ...links]
-        gsap.set(targets, { opacity: 0, y: 20 })
-        ScrollTrigger.create({
-          trigger: section,
-          start: 'top 80%',
-          animation: gsap.to(targets, {
-            opacity: 1,
-            y: 0,
-            duration: 0.6,
-            stagger: 0.1,
-            ease: 'power2.out',
-          }),
-        })
-        return
-      }
-
-      const split = new SplitText(heading, {
-        types: 'words, lines',
-        wordsClass: 'sticky-word',
-      })
-
-      gsap.set(split.lines, { overflow: 'hidden' })
-      gsap.set(split.words, { y: '110%' })
-      gsap.set(links, { opacity: 0, y: 20 })
-
-      const tl = gsap.timeline()
-      tl.to(split.words, { y: '0%', stagger: 0.1 }).to(
-        links,
-        { opacity: 1, y: 0, duration: 0.4, stagger: 0.1, ease: 'power2.out' },
-        '>-0.2',
-      )
-
+    if (isMobile) {
+      const targets = [heading, ...links]
+      gsap.set(targets, { opacity: 0, y: 20 })
       ScrollTrigger.create({
         trigger: section,
-        start: 'top 10%',
-        end: 'bottom top',
-        pin: component,
-        pinSpacing: false,
+        start: 'top 80%',
+        animation: gsap.to(targets, {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          stagger: 0.1,
+          ease: 'power2.out',
+        }),
       })
+      return
+    }
 
-      ScrollTrigger.create({
-        trigger: section,
-        start: 'top 2%',
-        end: 'bottom top',
-        animation: tl,
-      })
-    },
-  )
+    const split = new SplitText(heading, {
+      types: 'words, lines',
+      wordsClass: 'sticky-word',
+    })
+
+    gsap.set(split.lines, { overflow: 'hidden' })
+    gsap.set(split.words, { y: '110%' })
+    gsap.set(links, { opacity: 0, y: 20 })
+
+    const tl = gsap.timeline()
+    tl.to(split.words, { y: '0%', stagger: 0.1 }).to(
+      links,
+      { opacity: 1, y: 0, duration: 0.4, stagger: 0.1, ease: 'power2.out' },
+      '>-0.2',
+    )
+
+    ScrollTrigger.create({
+      trigger: section,
+      start: 'top 7%',
+      end: 'bottom top',
+      pin: component,
+      pinSpacing: false,
+    })
+
+    ScrollTrigger.create({
+      trigger: section,
+      start: 'top 2%',
+      end: 'bottom top',
+      animation: tl,
+    })
+  })
 }
