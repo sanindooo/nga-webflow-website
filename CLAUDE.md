@@ -119,6 +119,7 @@ bin/
 dist/
 └── index.js                 ← committed build output; jsDelivr serves this at the tag
 .changeset/                  ← changeset versioning
+docs/solutions/              ← documented solutions (bugs, conventions, patterns), organized by category with YAML frontmatter (module, tags, problem_type)
 ```
 
 - `pnpm run build` — production bundle (minified IIFE)

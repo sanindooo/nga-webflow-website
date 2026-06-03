@@ -180,32 +180,34 @@ export const navTheme = () => {
       gradient
   }
 
-  const isMobile = () => window.matchMedia('(max-width: 767px)').matches
-
   const navOpenObserver = new MutationObserver(() => {
     const isOpen = headerElement.classList.contains('is-nav-open')
     if (isOpen) {
       toggleClone.style.transition = 'none'
       toggleClone.style.opacity = '0'
       toggleClone.style.display = 'none'
-      // hide the logo clone as well
-      if (isMobile()) {
-        logoClone.style.transition = 'none'
-        logoClone.style.opacity = '0'
-        logoClone.style.display = 'none'
-      }
+      logoClone.style.transition = 'none'
+      logoClone.style.opacity = '0'
+      logoClone.style.display = 'none'
     } else {
+      // Recompute the mask BEFORE revealing the clone, otherwise its first
+      // painted frame uses the stale mask from before nav-open and flashes.
+      lastGradient = ''
+      updateMask()
+
+      // Logo clone snaps in — no fade. The clone exists only to recolor the
+      // real logo through the mask; any opacity transition exposes the real
+      // logo's transitioning color underneath and produces a white flash.
+      logoClone.style.transition = 'none'
+      logoClone.style.display = ''
+      logoClone.style.opacity = '1'
+
+      // Hamburger clone keeps its short fade — it sits over the transforming
+      // hamburger lines and the fade reads as part of the same motion.
       toggleClone.style.display = ''
       void toggleClone.offsetHeight
       toggleClone.style.transition = 'opacity 0.4s ease'
       toggleClone.style.opacity = '1'
-      // show the logo clone as well
-      if (isMobile()) {
-        logoClone.style.display = ''
-        void logoClone.offsetHeight
-        logoClone.style.transition = 'opacity 0.4s ease'
-        logoClone.style.opacity = '1'
-      }
     }
   })
 

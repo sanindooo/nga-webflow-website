@@ -20,6 +20,7 @@ import { generalImageHover } from '$utils/generalImageHover'
 import { generalScrollTextReveal } from '$utils/generalScrollTextReveal'
 import { gsapBasicAnimations } from '$utils/gsapBasicAnimations'
 import { gsapSmoothScroll } from '$utils/gsapSmoothScroll'
+import { heroBackgroundVideo } from '$utils/heroBackgroundVideo'
 import { heroTextReveal } from '$utils/heroTextReveal'
 import { homeTextSticky } from '$utils/homeTextSticky'
 import { logoAnimation } from '$utils/logoAnimation'
@@ -51,6 +52,7 @@ window.Webflow.push(() => {
   gsapSmoothScroll()
   scrollPin()
 
+  heroBackgroundVideo()
   heroTextReveal(['.hero-open_modal'])
   swiperSliders()
 

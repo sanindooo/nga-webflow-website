@@ -1,5 +1,17 @@
 # figma-to-webflow-pipeline
 
+## 1.1.10
+
+### Patch Changes
+
+- - feat: hero background video module (`heroBackgroundVideo.ts`) — auto-detects YouTube or Vimeo from the `[data-hero-video]` URL, builds the right embed URL with background-mode params, and fades a poster image out once playback actually begins (postMessage handshake, with a 4s safety timeout)
+  - feat: `Hero Video` field added to Works CMS (Webflow Data API)
+  - fix: project-info button colour rule no longer mis-fires on `Left + Left` narrow image pairs (removed broken `alignedCount >= 2` compensation that was masking a CSS attribute-selector case bug)
+  - fix: nav scroll-lock now mobile-only — desktop nav opens without locking page scroll
+  - fix: `navTheme` logo clone now hides on every viewport when the nav opens, not just mobile — eliminates the dark-blue clone overlaying the real logo on pages with `data-header-theme="dark"` sections (e.g. publications)
+  - fix: `navTheme` logo clone snaps in on nav close instead of fading — removes the white flash caused by the real logo's colour transition showing through the half-transparent clone. Mask is force-refreshed before reveal so the clone never paints with a stale mask
+  - docs: corrected `webflow-ids.md` (active site is the original workspace, not the duplicate) and added the new `hero-video` field
+
 ## 1.1.8
 
 ### Patch Changes

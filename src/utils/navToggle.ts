@@ -26,10 +26,16 @@ export const navToggle = () => {
   if (menu) toggle.setAttribute('aria-controls', menu.id || 'nav-menu')
 
   let isAnimating = false
+  let scrollWasStopped = false
+
+  const isMobile = () => window.matchMedia('(max-width: 767px)').matches
 
   const open = () => {
     header.classList.add('is-nav-open')
-    stopSmoothScroll()
+    if (isMobile()) {
+      stopSmoothScroll()
+      scrollWasStopped = true
+    }
     gsap.to(header, {
       backgroundColor:
         header.getAttribute('data-wf--main-nav--variant') === 'white-bg'
@@ -68,7 +74,10 @@ export const navToggle = () => {
     const timeline = gsap.timeline({
       onComplete: () => {
         header.classList.remove('is-nav-open')
-        startSmoothScroll()
+        if (scrollWasStopped) {
+          startSmoothScroll()
+          scrollWasStopped = false
+        }
         isAnimating = false
       },
     })

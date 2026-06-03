@@ -4,9 +4,9 @@ Quick-lookup for site, page, collection, and field IDs to avoid redundant API/MC
 
 ## Site
 
-- **Copy of NGA Website**: `69f8a84868fb1946b71566b3`
-- **URL**: `nga-website-bc5fa0-994047fa404867590ea3.webflow.io`
-- ~~**NGA Website (old)**: `69be96472fedf400438234fd`~~ (duplicated site — IDs below are stale)
+- **NGA Website (active — Omar's workspace)**: `69be96472fedf400438234fd`
+- **URL**: `nga-website-bc5fa0.webflow.io`
+- ~~**Copy of NGA Website**: `69f8a84868fb1946b71566b3`~~ (working duplicate — token has no access; IDs in "Duplicated Site IDs" section unused)
 
 ## Pages
 
@@ -43,6 +43,20 @@ Quick-lookup for site, page, collection, and field IDs to avoid redundant API/MC
 | Roles | `69c1416e722721b63cafda6f` | Careers roles + referenced by Teams |
 | Publications | `69c2160184f6875b5af9be2e` | Publications page items (Monograph / Works option) |
 | Greeting Cards | `69c21602e1d0bea9a19b0853` | News page Greeting Cards |
+
+## Key CMS Fields (Principals)
+
+| Field | Slug | Type |
+|---|---|---|
+| Name | `name` | PlainText (required) |
+| Slug | `slug` | PlainText (required) |
+| Title | `title` | PlainText (role/position) |
+| Photo | `photo` | Image |
+| Email | `email` | Email |
+| Description | `description` | RichText (bio only) |
+| Education | `education` | PlainText |
+| Association | `association` | PlainText |
+| Sort Order | `sort-order` | Number |
 
 ## Key CMS Fields (Greeting Cards)
 
@@ -102,6 +116,7 @@ Quick-lookup for site, page, collection, and field IDs to avoid redundant API/MC
 | Year | `year` | PlainText |
 | Area | `area` | RichText |
 | Description | `description` | RichText |
+| Hero Video | `hero-video` | VideoLink (YouTube/Vimeo/Loom oEmbed) |
 | Interactive Map URL | `interactive-map-url` | Link |
 | ~~Location~~ | `location` | PlainText (deprecated — delete in Designer) |
 | ~~Country (deprecated)~~ | `country` | PlainText (deprecated — delete in Designer) |

@@ -39,16 +39,11 @@ export const projectInfoButton = () => {
       return
     }
 
-    let alignedCount = 0
     let anyCoversRight = false
 
     for (const figure of activeFigures) {
-      const alignment = figure.getAttribute('data-alignment') || 'Default'
-      if (alignment !== 'Default') alignedCount++
       if (coversRight(figure)) anyCoversRight = true
     }
-
-    if (alignedCount >= 2) anyCoversRight = true
 
     button.classList.toggle('is-dark', !anyCoversRight)
   }
