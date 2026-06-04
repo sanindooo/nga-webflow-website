@@ -28,7 +28,7 @@ export const navToggle = () => {
   let isAnimating = false
   let scrollWasStopped = false
 
-  const isMobile = () => window.matchMedia('(max-width: 767px)').matches
+  const isMobile = () => window.matchMedia('(max-width: 991px)').matches
 
   const open = () => {
     header.classList.add('is-nav-open')

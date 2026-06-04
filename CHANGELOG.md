@@ -1,5 +1,11 @@
 # figma-to-webflow-pipeline
 
+## 1.1.11
+
+### Patch Changes
+
+- Shift the mobile-nav threshold from 767px up to 991px so tablets get the full-screen overlay instead of a cramped inline desktop nav. Mirrors every nav-related style from the Mobile Landscape breakpoint to Tablet in the Webflow Designer, bumps the `isMobile` matchMedia check in `navToggle.ts` to match, and wraps `logoAnimation` in `gsap.matchMedia({ isDesktop: '(min-width: 992px)' }, …)` so resizing across the 992 boundary at runtime sets up and tears down the wordmark/icon swap cleanly without needing a page refresh.
+
 ## 1.1.10
 
 ### Patch Changes
