@@ -1,3 +1,12 @@
+# Claude Instructions — NGA Architects (Webflow)
+
+## Client Context
+This repo is a Studio Circa (Omar) white-label project, built by Granite Marketing.
+- For all SC projects, shared conventions, and client context:
+  READ ~/granite/clients/studio-circa/CLAUDE.md
+- For approved tech stack and libraries:
+  READ ~/granite/knowledge/tech-conventions.md
+
 # Webflow Automation Pipeline
 
 This project automates Figma-to-Webflow website building with visual verification via Playwright.
