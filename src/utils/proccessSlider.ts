@@ -8,6 +8,9 @@
 const TRANSITION_DURATION = 0.45
 const HOLD_DURATION = 1.5
 const SCROLL_PX_PER_SECTION = 600
+// Extra pinned scroll after the last transition so the final slide can be read
+// before the section unpins. Adds one section's worth of runway.
+const FINAL_HOLD_SCROLL_PX = SCROLL_PX_PER_SECTION
 
 const getTitle = (section: HTMLElement) =>
   section.querySelector<HTMLElement>('h3.benefit-card_title')
@@ -113,13 +116,17 @@ export const proccessSlider = () => {
       )
   })
 
+  // The loop only places a hold *before* each transition, so without this the
+  // timeline ends the moment the last slide lands and the pin releases immediately.
+  timeline.to({}, { duration: HOLD_DURATION })
+
   ScrollTrigger.create({
     trigger: wrapper,
     pin: true,
     markers: false,
     animation: timeline,
     scrub: true,
-    end: `+=${sections.length * SCROLL_PX_PER_SECTION}`,
+    end: `+=${sections.length * SCROLL_PX_PER_SECTION + FINAL_HOLD_SCROLL_PX}`,
     invalidateOnRefresh: true,
   })
 }

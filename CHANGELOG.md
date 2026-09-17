@@ -1,5 +1,12 @@
 # figma-to-webflow-pipeline
 
+## 1.1.13
+
+### Patch Changes
+
+- Add a trailing hold to the pinned process slider so the final slide can be read before the section unpins. The timeline loop only placed a hold before each transition, so the pin released the instant the last slide landed. Appends an empty `HOLD_DURATION` tween after the last transition and extends the ScrollTrigger `end` by one section's worth of scroll (`FINAL_HOLD_SCROLL_PX`) so earlier steps keep their existing pacing.
+- 899cf87: final updates
+
 ## 1.1.11
 
 ### Patch Changes
