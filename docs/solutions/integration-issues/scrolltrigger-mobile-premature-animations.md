@@ -7,6 +7,7 @@ tags: [gsap, scrolltrigger, mobile, ios, safari, lazy-loading, images, layout-sh
 severity: "high"
 status: "resolved-with-followup"
 resolved_in: "v1.0.13"
+last_refreshed: "2026-09-17"
 followup_investigation: "2026-04-27 — eager-promote causing client-perceived slowness; bundle-only optimisations insufficient, see 'Performance follow-up' section"
 ---
 
@@ -62,8 +63,13 @@ Tested variants on `https://nga-website-bc5fa0.webflow.io/studio` and `/works`:
 
 5. **The real /works problem is image weight (53.8 MB transferred).**
    49 work-card thumbnails averaging 1.1 MB each, several over 4 MB. Zero
-   `srcset` on the entire page (template renders plain `<img src>` with
-   no responsive sizes). On simulated 4G, no JS can compensate for that.
+   `srcset` on the entire page. The cause is not the template: Webflow only
+   generates responsive variants for images uploaded through the Designer or
+   Editor, and every CMS image on this site was written through the Data API
+   (originally at import, and again on 2026-09-17 when the alt-text run
+   re-imported all of them). See
+   [webflow-cms-image-alt-reimport-srcset-loss.md](webflow-cms-image-alt-reimport-srcset-loss.md).
+   On simulated 4G, no JS can compensate for that.
 
 ### Lighthouse vs reality
 
@@ -111,11 +117,15 @@ addressed in tandem.
 Fixes /works CLS from 0.674 → ~0. Inherently re-secures the iOS
 premature-animation guard for /works (no shift means no bug).
 
-**P1 — image weight, ~30 min** (Webflow Designer):
-Re-bind the works thumbnail to use Webflow's native CMS image picker
-(provides `srcset` + `sizes` + `width` + `height` automatically), or
-replace 1.7–4 MB source uploads with ~300–500 KB versions. This is the
-*real* fix for /works — turns a 53.8 MB page into a few MB.
+**P1 — image weight** (Webflow Editor, manual):
+Re-binding the works thumbnail to the native CMS image picker does *not*
+restore `srcset`: variants are decided at upload, and API-imported images
+never get them. The only routes are re-uploading each image through the
+Editor (and re-entering its alt, since an API write would re-import again)
+or accepting the weight. On 2026-09-17 the client chose to keep the
+untouched originals for their large-screen review, so this is currently
+accepted, not fixed. See
+[webflow-cms-image-alt-reimport-srcset-loss.md](webflow-cms-image-alt-reimport-srcset-loss.md).
 
 **P2 — head scripts, ~5 min** (Webflow Site Settings → Custom Code → Head):
 Add `defer` to `<script>` tags for Swiper, jQuery, Lenis. ~1.5s FCP win

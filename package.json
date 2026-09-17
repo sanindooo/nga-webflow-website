@@ -23,6 +23,11 @@
     "export-assets": "node scripts/api/figma/export-assets.js",
     "upload-assets": "node scripts/api/webflow/upload-assets.cjs",
     "update-metadata": "node scripts/api/webflow/update-metadata.cjs",
+    "alt:inventory": "node scripts/api/anthropic/build-alt-inventory.mjs",
+    "alt:generate": "node scripts/api/anthropic/generate-alt-text.mjs",
+    "alt:payload": "node scripts/api/anthropic/build-apply-payload.mjs",
+    "alt:apply": "node scripts/api/webflow/apply-alt-text.cjs",
+    "alt:verify": "node scripts/api/anthropic/verify-live-alt.mjs",
     "update-seo": "node scripts/api/webflow/update-seo.cjs",
     "parse-copy": "node scripts/api/webflow/parse-copy.cjs",
     "upload-press": "node scripts/api/webflow/upload-press-pdfs.cjs"
@@ -41,6 +46,7 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@anthropic-ai/sdk": "^0.126.0",
     "@changesets/changelog-git": "^0.2.1",
     "@changesets/cli": "^2.31.0",
     "@playwright/test": "^1.58.2",
