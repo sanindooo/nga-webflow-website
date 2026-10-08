@@ -1,5 +1,11 @@
 # figma-to-webflow-pipeline
 
+## 1.1.15
+
+### Patch Changes
+
+- Works and News category filters are now single-select. The filter highlight and the "All" state work with radio buttons as well as checkboxes, and "All" correctly shows as active again after clearing a selection.
+
 ## 1.1.14
 
 ### Patch Changes
