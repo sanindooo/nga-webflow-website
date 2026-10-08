@@ -120,6 +120,34 @@ Quick-lookup for site, page, collection, and field IDs to avoid redundant API/MC
 | Interactive Map URL | `interactive-map-url` | Link |
 | ~~Location~~ | `location` | PlainText (deprecated — delete in Designer) |
 | ~~Country (deprecated)~~ | `country` | PlainText (deprecated — delete in Designer) |
+| Sort Order | `sort-order` | Number (homepage featured order) |
+| Image N - Settings | `image-N---settings` | Option (16 values, see `gallery-layouts.md`) |
+| Image N - Order | `image-N---order` | Number (integer, 1 = first) |
+
+### Gallery field IDs (created 2026-10-08)
+
+| Slot | Settings field ID | Order field ID |
+|---|---|---|
+| 1 | `eda870c7f93454671d82250a7697c2f7` | `417c94db8b5e4b6a84c94389a3b496fa` |
+| 2 | `bd31ebdee3feefd8db97c4a5278a1e21` | `758b22928f2691b6c3fa52e14f80dfd6` |
+| 3 | `c5d1f648c89444a39c7e428dd5182706` | `54563e767f8254a4a1be860b73888f37` |
+| 4 | `ee3881cbd95b9594b59fd5e7668ce8e4` | `4c18aaae11c98d6acf168c99e9fa4259` |
+| 5 | `a5d6635feb317d014a7373d0f30fd26c` | `8eae14117ed30e19845bc21b5530d4c2` |
+| 6 | `6d6c59101fee4f7d2ec583183fa626bf` | `dbad932a1549af7db4f7eaffc82fea40` |
+| 7 | `c130e155ceffc3806f18e33899f3538b` | `5d610680aad84e003fa4bd1f45a4d553` |
+| 8 | `59d2a54181dccdf0c472e6955c0601db` | `e7d6596c262a15ce4b0e258be363ef59` |
+| 9 | `066ff8e5c122ed7a6121abe5a68771dc` | `ec3ec2c6c18531248a2a33390c2b4a93` |
+| 10 | `01d776e85b7ad2e49fa27c104a873506` | `18adff110a98183709e036bf7a69dd4e` |
+| 11 | `13e44985821b40494edb407d0711afb5` | `bd7b775ea0cb1b16027481a0917911f5` |
+| 12 | `1f5f909fd006cd75fdf5b96e50be8cbd` | `0a56b2077ef0e5e5611cb70632cd3e50` |
+
+The old `image-N---layout-*` and `image-N---alignment` fields were deleted on 2026-10-08.
+
+### Gallery Designer element IDs
+
+- Works Template `dynamic-image_item` figures (slot 1-12, page component `69bfbc30efadacd9ad9e3d80`): `ab221405-6f64-0c59-1d0b-70840ecd9eb7`, `86c86cc1-14d0-16d8-dea0-a7a71c05fd24`, `035867de-573c-d3ff-a958-0c5d5e00bdb3`, `0dad5b9f-430c-dd89-117f-fce65fc90fde`, `c5230987-cf31-49df-0844-8c664fbadc20`, `f35502de-ac65-2686-4aa0-8217b206a8ad`, `e1041174-70d5-e107-af6b-c823c3d4e527`, `23676b0e-b95f-bf3c-f8dc-0a976bd3a926`, `305f793b-eab9-17ef-7a9e-60359f67b211`, `5a2da629-a87a-cd39-fceb-f3862590ee15`, `c6f72a2b-a2e6-e471-6dc9-ea10430e185e`, `49af1eff-81e1-012c-37e2-342ca9a48ab5`
+- Custom Layout component (gallery CSS embed): `daaf7843-1da1-9a73-442f-95d6172b4428`
+- Works Settings guide page: `6a037ddf3dadcc6de2878b15` (`/works-settings`, draft)
 
 ## Country Items (seeded)
 

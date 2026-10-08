@@ -26,11 +26,13 @@ export const projectInfoButton = () => {
     return rect.top + rect.height / 2
   }
 
+  // data-layout holds space-separated tokens from "Image N - Settings",
+  // e.g. "w-1/2 full-height right". data-alignment is the pre-2026-10 markup,
+  // kept so this bundle also works against the last published template.
   const coversRight = (figure: HTMLElement): boolean => {
-    const layout = figure.getAttribute('data-layout') || ''
-    if (layout.startsWith('w-full')) return true
-    const alignment = figure.getAttribute('data-alignment') || 'Default'
-    return alignment === 'Right'
+    const layoutTokens = (figure.getAttribute('data-layout') || '').split(/\s+/)
+    if (layoutTokens.includes('w-full') || layoutTokens.includes('right')) return true
+    return figure.getAttribute('data-alignment')?.toLowerCase() === 'right'
   }
 
   const evaluate = () => {

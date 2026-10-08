@@ -1,66 +1,102 @@
 # Gallery Layout System
 
-Dynamic image gallery for the Works CMS template page. Layout and alignment are controlled per-image via CMS Option fields, applied by CSS attribute selectors (no JavaScript).
+Dynamic image gallery for the Works CMS template page. Each image's size, alignment and position are set per slot in the CMS and applied by CSS attribute selectors (no JavaScript for layout).
 
 ## CMS Fields (per image slot, 1-12)
 
-Each image slot has 3 fields:
-
-| Field | Type | Purpose |
-|---|---|---|
-| Image N | Image | The gallery image |
-| Image N - Layout | Option | Width + height preset |
-| Image N - Alignment | Option | Horizontal alignment |
-
-### Layout Options (9 total)
-
-| Option | flex-basis | aspect-ratio | Pairs with |
+| Field | Slug | Type | Purpose |
 |---|---|---|---|
-| Full Width | 100% | 16/9 | Solo row |
-| Full Width — Tall | 100% | 3/2 | Solo row |
-| Extra Large — Tall | calc(75% - 0.5rem) | 3/4 | Solo row (~25% whitespace) |
-| Large | calc(66% - 0.5rem) | 4/3 | Small |
-| Large — Tall | calc(66% - 0.5rem) | 3/4 | Small — Tall |
-| Half | calc(50% - 0.5rem) | 4/3 | Half |
-| Half — Tall | calc(50% - 0.5rem) | 3/4 | Half — Tall |
-| Small | calc(34% - 0.5rem) | 4/3 | Large |
-| Small — Tall | calc(34% - 0.5rem) | 3/4 | Large — Tall |
+| Image N | `image-N` | Image | The gallery image |
+| Image N - Settings | `image-N---settings` | Option | Width, aspect ratio and alignment in one value |
+| Image N - Order | `image-N---order` | Number (integer) | Display position, 1 shows first |
 
-### Alignment Options (3 total)
+Field IDs are cached in `webflow-ids.md`. Until 2026-10-08 each slot had separate `Layout` and `Alignment` Option fields; they were merged into Settings to stay under Webflow's 60-field limit (plan: `docs/plans/2026-10-08-001-feat-works-image-sort-order-plan.md`).
 
-| Option | Effect |
-|---|---|
-| Default | Left-aligned (flex-start) |
-| Left | Left-aligned (explicit) |
-| Right | `margin-left: auto` — pushes image right |
+### Settings values (16)
 
-Alignment only matters when an image is **solo in its row** (unpaired). Paired images fill the row, so alignment has no visible effect.
+A value is space-separated tokens: one width, plus optional `full-height`, `extended` and `right`.
+
+| Value | flex-basis | aspect-ratio | Right version |
+|---|---|---|---|
+| `w-full` | 100% | 16/9 | none |
+| `w-full full-height` | 100% | 3/2 | none |
+| `w-3/4 extended` | calc(75% - 0.5rem) | 3/4 | `w-3/4 extended right` |
+| `w-2/3` | calc(66% - 0.5rem) | 4/3 | `w-2/3 right` |
+| `w-2/3 full-height` | calc(66% - 0.5rem) | 3/4 | `w-2/3 full-height right` |
+| `w-1/2` | calc(50% - 0.5rem) | 4/3 | `w-1/2 right` |
+| `w-1/2 full-height` | calc(50% - 0.5rem) | 3/4 | `w-1/2 full-height right` |
+| `w-1/3` | calc(34% - 0.5rem) | 4/3 | `w-1/3 right` |
+| `w-1/3 full-height` | calc(34% - 0.5rem) | 3/4 | `w-1/3 full-height right` |
+
+Full-width values have no right version: `margin-left: auto` on a 100% item has no visible effect.
+
+`right` adds `margin-left: auto`, so it only shows when an image is alone in its row. Paired images fill the row.
+
+### Order
+
+- `data-order="1"` to `"12"` maps to CSS `order: 1` to `12`, at all breakpoints (the container is flex on mobile too).
+- Images with no order get `order: 13`, so they go last, in slot order. Equal orders also keep slot order.
+- `order` is visual only: screen readers and the Webflow lightbox's next/previous follow slot (DOM) order.
 
 ## Row Pairing Rules
 
-The container uses `display: flex; flex-wrap: wrap; gap: 1rem`. Any two images whose widths total ~100% form a row:
+The container uses `display: flex; flex-wrap: wrap; gap: 1rem` (1.25rem below 768px, from the class style). Any images whose widths total about 100% form a row:
 
-- Small (34%) + Large (66%) = 100%
-- Half (50%) + Half (50%) = 100%
-- Full Width (100%) = solo row
-- Large (66%) alone = solo row with 34% whitespace (use alignment to position)
+- `w-1/3` + `w-2/3` = 100%
+- `w-1/2` + `w-1/2` = 100%
+- `w-full` = solo row
+- `w-2/3` or `w-3/4 extended` alone = solo row with whitespace (use a `right` value to push it right)
+
+Pairing follows the display order, so changing Order can change which images share a row.
 
 ## CSS Implementation
 
-Layouts are applied via CSS attribute selectors on `data-layout` and `data-alignment` attributes. The CSS is embedded as a `<style>` block on the CMS template page or in site-level custom code. No JavaScript is used.
+The CSS lives in the **Custom Layout** component (an HTML Embed, class `custom-layout`), placed on the Works Template and the Works Settings guide page. It matches tokens with `~=`, so `[data-layout~='w-1/2']` covers `w-1/2`, `w-1/2 full-height` and `w-1/2 right`.
+
+```css
+.dynamic-image_item { order: 13; }
+.dynamic-image_item[data-order='1'] { order: 1; }
+/* ... through 12 */
+
+@media (min-width: 768px) {
+  .dynamic-image_component { display: flex; flex-wrap: wrap; gap: 1rem; }
+  .dynamic-image_item { overflow: hidden; }
+  .dynamic-image_image { width: 100%; height: 100%; object-fit: cover; }
+
+  [data-layout~='w-full'] { flex-basis: 100%; aspect-ratio: 16/9; max-height: calc(100vh - 2rem); }
+  [data-layout~='w-2/3'] { flex-basis: calc(66% - 0.5rem); aspect-ratio: 4/3; max-height: calc(100vh - 2rem); }
+  [data-layout~='w-1/2'] { flex-basis: calc(50% - 0.5rem); aspect-ratio: 4/3; max-height: calc(100vh - 2rem); }
+  [data-layout~='w-1/3'] { flex-basis: calc(34% - 0.5rem); aspect-ratio: 4/3; max-height: calc(100vh - 2rem); }
+
+  [data-layout~='full-height'] { aspect-ratio: 3/4; }
+  [data-layout~='w-full'][data-layout~='full-height'] { aspect-ratio: 3/2; }
+  [data-layout~='extended'] { flex-basis: calc(75% - 0.5rem); aspect-ratio: 3/4; }
+
+  [data-layout~='right'] { margin-left: auto; }
+
+  .dynamic-image_item:not([data-layout]),
+  .dynamic-image_item[data-layout=''] { display: none; }
+}
+```
+
+Verified on 2026-10-08: all 36 old Layout x Alignment combinations compute identical flex-basis, aspect-ratio, max-height and margin under the new CSS with their mapped Settings value.
 
 ## Webflow Template Wiring
 
-Each `dynamic-image_item` element needs two custom attributes bound to CMS fields:
+Each of the 12 `dynamic-image_item` figures on the Works Template has:
 
-- `data-layout` → bound to "Image N - Layout"
-- `data-alignment` → bound to "Image N - Alignment"
+- `data-layout` bound to `Image N - Settings`
+- `data-order` bound to `Image N - Order`
+- Figure 3 also has a static `data-header-theme="dark"`.
 
-## Adding/Modifying Layout Options
+`src/utils/projectInfoButton.ts` reads `data-layout`: a `w-full` or `right` token means the image covers the right side, so the info button stays light.
 
-The Webflow Data API **cannot** modify existing Option field option lists. To add a new layout option:
+## Adding or Changing Settings Options
 
-1. Delete the affected "Image N - Layout" field(s) in Webflow Designer
-2. Recreate via API with the updated option list (use `create_collection_option_field`)
-3. Re-bind `data-layout` attributes in the template
-4. Add the new CSS rule for the new `data-layout` value
+The Webflow Data API cannot edit an existing Option field's option list. To add a value:
+
+1. Add the option to all 12 Settings fields in the CMS settings (Designer), in the same position, or
+2. Recreate the fields via API: unbind `data-layout` on the figures, delete the fields, recreate with the new list (`scripts/api/webflow/migrate-gallery-settings.mjs` holds the list), rebind, then re-run the migration from a fresh snapshot.
+3. Add CSS for any new token.
+
+Webflow refuses to delete a field that is still bound to an element (409 "currently being used in bindings"), so always unbind first.
