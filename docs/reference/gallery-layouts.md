@@ -21,12 +21,12 @@ A value is space-separated tokens: one width, plus optional `full-height`, `exte
 | `w-full` | 100% | 16/9 | none |
 | `w-full full-height` | 100% | 3/2 | none |
 | `w-3/4 extended` | calc(75% - 0.5rem) | 3/4 | `w-3/4 extended right` |
-| `w-2/3` | calc(66% - 0.5rem) | 4/3 | `w-2/3 right` |
-| `w-2/3 full-height` | calc(66% - 0.5rem) | 3/4 | `w-2/3 full-height right` |
+| `w-2/3` | calc((100% - 2rem) / 3 * 2 + 1rem) | 4/3 | `w-2/3 right` |
+| `w-2/3 full-height` | calc((100% - 2rem) / 3 * 2 + 1rem) | 3/4 | `w-2/3 full-height right` |
 | `w-1/2` | calc(50% - 0.5rem) | 4/3 | `w-1/2 right` |
 | `w-1/2 full-height` | calc(50% - 0.5rem) | 3/4 | `w-1/2 full-height right` |
-| `w-1/3` | calc(34% - 0.5rem) | 4/3 | `w-1/3 right` |
-| `w-1/3 full-height` | calc(34% - 0.5rem) | 3/4 | `w-1/3 full-height right` |
+| `w-1/3` | calc((100% - 2rem) / 3) | 4/3 | `w-1/3 right` |
+| `w-1/3 full-height` | calc((100% - 2rem) / 3) | 3/4 | `w-1/3 full-height right` |
 
 Full-width values have no right version: `margin-left: auto` on a 100% item has no visible effect.
 
@@ -43,6 +43,7 @@ Full-width values have no right version: `margin-left: auto` on a 100% item has 
 The container uses `display: flex; flex-wrap: wrap; gap: 1rem` (1.25rem below 768px, from the class style). Any images whose widths total about 100% form a row:
 
 - `w-1/3` + `w-2/3` = 100%
+- Two `w-1/3` side by side line up exactly with one `w-2/3` above or below (true thirds, gap included). Before 2026-10-08 thirds were 34% / 66%, so two thirds overshot a two-thirds image by about 37px at 1440px.
 - `w-1/2` + `w-1/2` = 100%
 - `w-full` = solo row
 - `w-2/3` or `w-3/4 extended` alone = solo row with whitespace (use a `right` value to push it right)
@@ -64,9 +65,9 @@ The CSS lives in the **Custom Layout** component (an HTML Embed, class `custom-l
   .dynamic-image_image { width: 100%; height: 100%; object-fit: cover; }
 
   [data-layout~='w-full'] { flex-basis: 100%; aspect-ratio: 16/9; max-height: calc(100vh - 2rem); }
-  [data-layout~='w-2/3'] { flex-basis: calc(66% - 0.5rem); aspect-ratio: 4/3; max-height: calc(100vh - 2rem); }
+  [data-layout~='w-2/3'] { flex-basis: calc((100% - 2rem) / 3 * 2 + 1rem); aspect-ratio: 4/3; max-height: calc(100vh - 2rem); }
   [data-layout~='w-1/2'] { flex-basis: calc(50% - 0.5rem); aspect-ratio: 4/3; max-height: calc(100vh - 2rem); }
-  [data-layout~='w-1/3'] { flex-basis: calc(34% - 0.5rem); aspect-ratio: 4/3; max-height: calc(100vh - 2rem); }
+  [data-layout~='w-1/3'] { flex-basis: calc((100% - 2rem) / 3); aspect-ratio: 4/3; max-height: calc(100vh - 2rem); }
 
   [data-layout~='full-height'] { aspect-ratio: 3/4; }
   [data-layout~='w-full'][data-layout~='full-height'] { aspect-ratio: 3/2; }
