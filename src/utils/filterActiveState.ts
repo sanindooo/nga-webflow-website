@@ -2,7 +2,8 @@
  * Filter Active State
  *
  * Promotes fs-cmsfilter_active to parent wrappers for Finsweet CMS Filter.
- * Also manages the "All" clear button active state.
+ * Also manages the "All" clear button active state. Works with checkbox
+ * (multi-select) and radio (single-select) filter inputs.
  *
  * Additionally, this module is the single ScrollTrigger refresh point for
  * Finsweet CMS rehydration. When the filter swaps in new collection items,
@@ -20,6 +21,7 @@
  */
 
 const ACTIVE_CLASS = 'fs-cmsfilter_active'
+const FILTER_INPUTS = 'input[type="checkbox"], input[type="radio"]'
 
 interface FsListInstance {
   on: (event: string, callback: () => void) => void
@@ -49,17 +51,17 @@ const refreshAfterCmsHydration = () => {
 }
 
 function syncActiveStates(filterForm: HTMLElement, clearWrapper: Element | null | undefined) {
-  const hasChecked =
-    filterForm.querySelector<HTMLInputElement>('input[type="checkbox"]:checked') !== null
+  const filterInputs = filterForm.querySelectorAll<HTMLInputElement>(FILTER_INPUTS)
+  const hasChecked = Array.from(filterInputs).some((input) => input.checked)
 
   if (clearWrapper) {
     clearWrapper.classList.toggle(ACTIVE_CLASS, !hasChecked)
   }
 
-  filterForm.querySelectorAll<HTMLInputElement>('input[type="checkbox"]').forEach((checkbox) => {
-    const checkboxWrapper = checkbox.closest('.news-filter_link')
-    if (checkboxWrapper) {
-      checkboxWrapper.classList.toggle(ACTIVE_CLASS, checkbox.checked)
+  filterInputs.forEach((input) => {
+    const inputWrapper = input.closest('.news-filter_link')
+    if (inputWrapper) {
+      inputWrapper.classList.toggle(ACTIVE_CLASS, input.checked)
     }
   })
 }
@@ -81,8 +83,10 @@ export const filterActiveState = () => {
     })
 
     if (clearButton) {
+      // Finsweet resets the inputs in its own click handler; sync on the next
+      // frame so a still-checked radio isn't read as active.
       clearButton.addEventListener('click', () => {
-        syncActiveStates(filterForm, clearWrapper)
+        requestAnimationFrame(() => syncActiveStates(filterForm, clearWrapper))
       })
     }
   })

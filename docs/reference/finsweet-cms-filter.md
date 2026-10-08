@@ -31,6 +31,19 @@ No companion scripts needed. Add CMS Load separately if >100 items:
 4. Can hide nested list with `display: none` — filter still reads DOM text
 5. **Limit:** Webflow caps nested lists at 5 items
 
+## NGA setup: single-select category filters (since 2026-10-08)
+
+Works and News filters are single-select radios, not checkboxes. Inside the category Collection List item:
+
+```
+Radio Button (FormRadioWrapper, class news-filter_link)  <- Finsweet puts fs-cmsfilter_active here
+  ├── button-square
+  ├── Radio input (class hide, Group Name "category", same on every item)
+  └── Radio label (text bound to Category Name, fs-cmsfilter-field="Category")
+```
+
+"All" stays a `fs-cmsfilter-element="clear"` link. `src/utils/filterActiveState.ts` syncs the highlight for checkbox and radio inputs. Query params (`?category=Press`) use the real-case category name, not the lowercase display text. The Webflow MCP can build this: `data_element_builder` type `FormRadioInput`, then `set_settings` for `groupName` and the label's `text` CMS binding.
+
 ## Single-Select / Dropdown Field Setup
 
 1. Inside CMS item, add Text Block bound to the option field
