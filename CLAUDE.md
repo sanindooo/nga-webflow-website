@@ -213,7 +213,8 @@ Update the Webflow footer tag to the new version to ship. See the
 After any Webflow API or MCP call that returns resource IDs (pages, collections, fields, component IDs), **save them to `docs/reference/webflow-ids.md`** if not already cached. This prevents redundant `list_pages`, `get_collection_list`, and similar lookups in future conversations. Always verify cached IDs still exist before using them on destructive operations (e.g., `upsert_page_script`, `delete_collection_items`).
 
 ## Webflow MCP Notes
-- Element Builder limited to 3 nesting levels per operation — use multiple sequential operations for deeper structures
+- Element Builder (MCP 2.1+) nests to any depth in one call. Use `Paragraph`/`Heading` for text: `set_text` on a `TextBlock` is silently ignored (see `docs/solutions/integration-issues/webflow-mcp-element-builder-textblock-text-ignored.md`)
+- **CMS bindings via MCP:** `data_element_settings_tool` > `set_settings` can bind custom attributes (`key: "attributes"`, `value_binding`) and element text (`key: "text"`, `binding`) to CMS fields. The `attributes` write replaces the full list, so read first and re-include static attributes. Webflow refuses to delete a CMS field that is still bound (409), so unbind first (see `docs/solutions/workflow-issues/webflow-cms-option-field-merge-at-field-limit.md`)
 - Designer API requires Webflow Designer open + companion app running
 - **Site ID verification (mandatory on failure):** Always use the site ID from `docs/reference/webflow-ids.md`. If MCP calls fail twice, do a fresh `sites_list` API call to verify the cached ID is still correct — a wrong site ID produces a generic "Unable to connect" error that mimics connection issues.
 - Images uploaded via `/export-assets` skill or `pnpm run upload-assets` (MCP can't upload directly)
@@ -221,7 +222,7 @@ After any Webflow API or MCP call that returns resource IDs (pages, collections,
 
 ### MCP Limitations (what it CANNOT do)
 - **Rich text child styling** — Can apply a class to the rich text container, but cannot style nested element types (All H2s, All Paragraphs, etc.) within it. Must be done manually in Designer or pre-set in the Relume template.
-- **Form elements** — Cannot create actual FormInput, FormTextarea, FormSelect elements. Creates DivBlocks that look like inputs. Real form elements must come from the template.
+- **Form elements** — Since MCP 2.1 the element builder creates real form elements (e.g. `FormRadioInput` builds a radio wrapper, input and label; radio `groupName` is a setting). Verify the output in the Designer; older templates may still be the safer source for full forms.
 - **Inline styles on specific elements** — Limited ability to set per-element overrides; prefer combo classes instead.
 - **Rich text block content** — Cannot programmatically add/edit content inside a RichText element.
 
