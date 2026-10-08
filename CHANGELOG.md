@@ -1,5 +1,11 @@
 # figma-to-webflow-pipeline
 
+## 1.1.14
+
+### Patch Changes
+
+- Works gallery: support the combined "Image N - Settings" field. The project info button now reads the space-separated tokens in `data-layout` (`w-full`, `right`) to decide whether an image covers the right side, so it keeps the correct colour now that the separate Alignment field is gone. Still understands the old `data-alignment` attribute.
+
 ## 1.1.13
 
 ### Patch Changes
