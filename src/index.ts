@@ -15,6 +15,8 @@ import { currentYear } from '$utils/currentYear'
 import { debugOverlay } from '$utils/debugOverlay'
 import { eagerImages } from '$utils/eagerImages'
 import { filterActiveState } from '$utils/filterActiveState'
+import { filterPanels } from '$utils/filterPanels'
+import { filterScrollHint } from '$utils/filterScrollHint'
 import { footerTextSticky } from '$utils/footerTextSticky'
 import { generalImageHover } from '$utils/generalImageHover'
 import { generalScrollTextReveal } from '$utils/generalScrollTextReveal'
@@ -75,6 +77,8 @@ window.Webflow.push(() => {
   videoPlayPauseToggle()
   viewSwitcher()
   cmsFilterLinks()
+  filterPanels()
+  filterScrollHint()
   filterActiveState()
   worksFilter()
 

@@ -124,6 +124,7 @@ Quick-lookup for site, page, collection, and field IDs to avoid redundant API/MC
 | Image N - Settings | `image-N---settings` | Option (16 values, see `gallery-layouts.md`) |
 | Image N - Order | `image-N---order` | Number (integer, 1 = first) |
 | Status | `status` | Option: Under Construction / Completed / Competition (field `048a9f68ae1e20135a82668e63d55e6c`, created 2026-10-12, client fills before launch) |
+| Thumbnail | `thumbnail` | Image, 1600px WebP of the hero for the Works grid tile (field `0fb4e4aecb70b558bc2690925ac5f64b`, created 2026-10-12 by `create-works-thumbnails.mjs`) |
 | Max Area (m2) | `max-area-m2` | Number, filter/sort only, not displayed (field `93ebd5c6614e2872a6008198151b40ac`, created 2026-10-12) |
 
 ### Gallery field IDs (created 2026-10-08)

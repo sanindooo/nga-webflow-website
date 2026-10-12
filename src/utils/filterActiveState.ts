@@ -86,8 +86,10 @@ const panelHasValue = (panel: HTMLElement) =>
   )
 
 function syncPanels(filterForm: HTMLElement) {
-  filterForm.querySelectorAll<HTMLElement>('.w-dropdown').forEach((panel) => {
-    panel.querySelector('.w-dropdown-toggle')?.classList.toggle(ACTIVE_CLASS, panelHasValue(panel))
+  filterForm.querySelectorAll<HTMLElement>('[data-filter-panel]').forEach((panel) => {
+    panel
+      .querySelector('[data-filter-panel-toggle]')
+      ?.classList.toggle(ACTIVE_CLASS, panelHasValue(panel))
 
     const label = panel.querySelector<HTMLElement>('[data-filter-label]')
     if (!label) return
@@ -104,16 +106,23 @@ function syncPanels(filterForm: HTMLElement) {
 function syncActiveStates(filterForm: HTMLElement) {
   if (filterForm.hasAttribute('data-filter-panels')) syncPanels(filterForm)
 
-  filterForm.querySelectorAll<HTMLElement>('[fs-cmsfilter-element="clear"]').forEach((clearButton) => {
-    const group = clearButton.closest<HTMLElement>('.w-dropdown') ?? filterForm
-    const hasChecked = Array.from(group.querySelectorAll<HTMLInputElement>(FILTER_INPUTS)).some(
-      (input) => input.checked,
-    )
-    const hasRange = Array.from(
-      group.querySelectorAll<HTMLInputElement>('input[fs-cmsfilter-range]'),
-    ).some((input) => input.value !== '')
-    clearButton.parentElement?.classList.toggle(ACTIVE_CLASS, !hasChecked && !hasRange)
+  // Clear All is hidden until any filter in the form is set.
+  filterForm.querySelectorAll<HTMLElement>('[data-filter-clear-all]').forEach((clearAll) => {
+    clearAll.classList.toggle('hide', !panelHasValue(filterForm))
   })
+
+  filterForm
+    .querySelectorAll<HTMLElement>('[fs-cmsfilter-element="clear"]:not([data-filter-clear-all])')
+    .forEach((clearButton) => {
+      const group = clearButton.closest<HTMLElement>('[data-filter-panel]') ?? filterForm
+      const hasChecked = Array.from(group.querySelectorAll<HTMLInputElement>(FILTER_INPUTS)).some(
+        (input) => input.checked,
+      )
+      const hasRange = Array.from(
+        group.querySelectorAll<HTMLInputElement>('input[fs-cmsfilter-range]'),
+      ).some((input) => input.value !== '')
+      clearButton.parentElement?.classList.toggle(ACTIVE_CLASS, !hasChecked && !hasRange)
+    })
 
   filterForm.querySelectorAll<HTMLInputElement>(FILTER_INPUTS).forEach((input) => {
     const inputWrapper = input.closest('.news-filter_link')
@@ -134,11 +143,13 @@ export const filterActiveState = () => {
 
     // Finsweet resets the inputs in its own click handler; sync on the next
     // frame so a still-checked radio isn't read as active.
-    filterForm.querySelectorAll<HTMLElement>('[fs-cmsfilter-element="clear"]').forEach((clearButton) => {
-      clearButton.addEventListener('click', () => {
-        requestAnimationFrame(() => syncActiveStates(filterForm))
+    filterForm
+      .querySelectorAll<HTMLElement>('[fs-cmsfilter-element="clear"]')
+      .forEach((clearButton) => {
+        clearButton.addEventListener('click', () => {
+          requestAnimationFrame(() => syncActiveStates(filterForm))
+        })
       })
-    })
   })
 
   const fsAttributes: FinsweetQueue = (window.fsAttributes ??= [])
@@ -160,21 +171,17 @@ export const filterActiveState = () => {
     },
   ])
 
-  document
-    .querySelectorAll<HTMLElement>('[fs-cmsfilter-element="list"]')
-    .forEach((listEl) => {
-      let pending = false
-      const observer = new MutationObserver(() => {
-        if (pending) return
-        pending = true
-        requestAnimationFrame(() => {
-          listEl
-            .querySelectorAll<HTMLImageElement>('img')
-            .forEach(attachImageRefreshListener)
-          refreshAfterCmsHydration()
-          pending = false
-        })
+  document.querySelectorAll<HTMLElement>('[fs-cmsfilter-element="list"]').forEach((listEl) => {
+    let pending = false
+    const observer = new MutationObserver(() => {
+      if (pending) return
+      pending = true
+      requestAnimationFrame(() => {
+        listEl.querySelectorAll<HTMLImageElement>('img').forEach(attachImageRefreshListener)
+        refreshAfterCmsHydration()
+        pending = false
       })
-      observer.observe(listEl, { childList: true, subtree: false })
     })
+    observer.observe(listEl, { childList: true, subtree: false })
+  })
 }

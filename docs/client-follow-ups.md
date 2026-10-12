@@ -28,6 +28,7 @@ blockers are also listed in `docs/content-todo.md` §11.
   not shown on the page. It was filled from each project's Area text (largest building
   figure, site and plot figures ignored). New projects need it filled by hand, or they
   are left out of area filtering.
+- **Thumbnail** is the image shown on the Works listing tiles: a 1600px version of the hero image, about 20 times smaller. New projects need one too (upload a 1600px wide copy of the hero, or rerun `scripts/api/webflow/create-works-thumbnails.mjs run --apply`), or their tile shows no image.
 - **Date and area sliders set their own ends** from the projects on the page, so a new
   2027 project or a larger building widens the range with no edits.
 - **The area slider uses a logarithmic scale.** Areas run from 65 m² to 1 000 000 m²,
