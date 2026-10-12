@@ -1,5 +1,11 @@
 # figma-to-webflow-pipeline
 
+## 1.1.19
+
+### Patch Changes
+
+- Works list fades in once after filtering back to "all" on mobile, instead of showing blank tiles that pop in.
+
 ## 1.1.18
 
 ### Patch Changes
