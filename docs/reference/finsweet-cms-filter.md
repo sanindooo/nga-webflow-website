@@ -70,7 +70,7 @@ Radio Button (FormRadioWrapper, class news-filter_link)  <- Finsweet puts fs-cms
 | `fs-cmsfilter-active` | CSS class name | Active state class (default: `fs-cmsfilter_active`) |
 | `fs-cmsfilter-match` | `all` / `any` | AND vs OR logic (default: `any`) |
 | `fs-cmsfilter-showquery` | `true` | Persist filter in URL params |
-| `fs-cmsfilter-duration` | ms (e.g. `200`) | Animation speed |
+| `fs-cmsfilter-duration` | ms (e.g. `200`) | Animation speed. NGA Works uses `0` plus its own single fade-in; Finsweet's default fade-out/fade-in reads as a double flash under overlay filter panels (see `docs/solutions/integration-issues/finsweet-cmsfilter-double-flash-back-to-all.md`) |
 | `fs-cmsfilter-easing` | `ease`, `linear`, etc. | Animation easing |
 | `fs-cmsfilter-hideempty` | `true` | Hide filter options with zero results |
 | `fs-cmsfilter-debounce` | ms (e.g. `200`) | Delay before filter triggers on text input |
