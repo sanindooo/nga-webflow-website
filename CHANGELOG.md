@@ -1,5 +1,11 @@
 # figma-to-webflow-pipeline
 
+## 1.1.17
+
+### Patch Changes
+
+- Works filter panels no longer open when the mobile filter row is swiped; a panel closes once an option is picked. Adds Clear All (shown only while a filter is set), search across name, year, category, city and country, and a scroll hint that hides at the end of the mobile filter row.
+
 ## 1.1.16
 
 ### Patch Changes
