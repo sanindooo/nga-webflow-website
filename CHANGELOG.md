@@ -1,5 +1,11 @@
 # figma-to-webflow-pipeline
 
+## 1.1.18
+
+### Patch Changes
+
+- Works filter panels no longer open when a horizontal swipe on the mobile filter row ends on a toggle.
+
 ## 1.1.17
 
 ### Patch Changes
