@@ -1,5 +1,11 @@
 # figma-to-webflow-pipeline
 
+## 1.1.16
+
+### Patch Changes
+
+- Works filter: status, date and area range sliders, location, search and sort. Sliders take their ends from the CMS (area on a log scale), each panel's "all" clears only that panel, filtered panels show as active and the typology toggle shows the selected typology. Fewer ScrollTrigger refreshes after filtering.
+
 ## 1.1.15
 
 ### Patch Changes
