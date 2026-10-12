@@ -1,5 +1,11 @@
 # figma-to-webflow-pipeline
 
+## 1.1.20
+
+### Patch Changes
+
+- The "sort by" toggle on the Works filter now turns blue once a sort is chosen, like the filter toggles.
+
 ## 1.1.19
 
 ### Patch Changes
