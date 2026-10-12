@@ -123,6 +123,8 @@ Quick-lookup for site, page, collection, and field IDs to avoid redundant API/MC
 | Sort Order | `sort-order` | Number (homepage featured order) |
 | Image N - Settings | `image-N---settings` | Option (16 values, see `gallery-layouts.md`) |
 | Image N - Order | `image-N---order` | Number (integer, 1 = first) |
+| Status | `status` | Option: Under Construction / Completed / Competition (field `048a9f68ae1e20135a82668e63d55e6c`, created 2026-10-12, client fills before launch) |
+| Max Area (m2) | `max-area-m2` | Number, filter/sort only, not displayed (field `93ebd5c6614e2872a6008198151b40ac`, created 2026-10-12) |
 
 ### Gallery field IDs (created 2026-10-08)
 
@@ -209,3 +211,18 @@ The old `image-N---layout-*` and `image-N---alignment` fields were deleted on 20
 | News Categories | `69f8a84868fb1946b7156828` |
 | Hero Slides | `69f8a84868fb1946b7156841` |
 | Countries | `69f8a84868fb1946b715685a` |
+
+## Works filter (Works page `69cbd0b99ea71e2c7d058007`, built 2026-10-12)
+
+| Element | ID |
+|---|---|
+| Filter form (`fs-cmsfilter-element="filters"`) | `d4609ff6-0d87-a84f-0919-c6a37905bef6` |
+| Typology dropdown | `53553fcb-76f4-77de-18ee-313a4c9b4e24` |
+| Status dropdown | `df0bc95f-cd58-8cff-37b1-5ab778b8aa06` |
+| Date dropdown / range input | `cba8556a-7dbe-5384-317b-41397dd14497` / `4aabf595-94c5-e45a-a866-c90bd7418b41` |
+| Location dropdown (radio group `country`) | `a14e756a-71df-3176-f0a5-f59994880829` |
+| Area dropdown / range input | `7a1b9c52-1386-8f31-894c-ca47500211b6` / `7a1b9c52-1386-8f31-894c-ca47500211c2` |
+| Search dropdown / input | `2a66274b-8e12-ae26-68b9-403c5fe51b99` / `6456c0fe-768b-e514-7f21-4c8de6a255c3` |
+| Row-view list / grid-view list | `9e791b21-0b30-aed1-6fe3-3f03194b1d94` / `0728aee4-6e1f-db9b-f71d-37a7f36029c3` |
+
+Filter field identifiers: `Category`, `Status`, `Year`, `Country`, `Area`, plus `Name` and `City` for search.

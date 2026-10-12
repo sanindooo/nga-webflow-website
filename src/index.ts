@@ -40,6 +40,7 @@ import { teamLeaders } from '$utils/teamLeaders'
 import { videoPlayPauseToggle } from '$utils/videoPlayPauseToggle'
 import { viewSwitcher } from '$utils/viewSwitcher'
 import { worksCardHover } from '$utils/worksCardHover'
+import { worksFilter } from '$utils/worksFilter'
 
 window.Webflow ||= [] as unknown as WebflowQueue
 window.Webflow.push(() => {
@@ -75,6 +76,7 @@ window.Webflow.push(() => {
   viewSwitcher()
   cmsFilterLinks()
   filterActiveState()
+  worksFilter()
 
   gsapBasicAnimations()
   generalScrollTextReveal()

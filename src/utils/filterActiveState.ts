@@ -2,8 +2,9 @@
  * Filter Active State
  *
  * Promotes fs-cmsfilter_active to parent wrappers for Finsweet CMS Filter.
- * Also manages the "All" clear button active state. Works with checkbox
- * (multi-select) and radio (single-select) filter inputs.
+ * Also manages the "All" clear button active state, per filter panel when a
+ * form has several clears. Works with checkbox (multi-select) and radio
+ * (single-select) filter inputs.
  *
  * Additionally, this module is the single ScrollTrigger refresh point for
  * Finsweet CMS rehydration. When the filter swaps in new collection items,
@@ -40,25 +41,81 @@ declare global {
   }
 }
 
-const attachImageRefreshListener = (image: HTMLImageElement) => {
-  if (image.complete && image.naturalWidth > 0) return
-  image.addEventListener('load', () => ScrollTrigger.refresh(true), { once: true })
-}
+// One filter change fires renderitems once per list instance (Works has a row
+// and a grid list) plus the backup MutationObserver. They land in the same
+// frame as ScrollTrigger's own resize refresh, so they collapse into one
+// refresh on the next frame. Image loads trickle in afterwards and share a
+// trailing debounce instead of refreshing once per image.
+const IMAGE_SETTLE_MS = 100
+let refreshFrame: number | undefined
+let imageTimer: number | undefined
 
 const refreshAfterCmsHydration = () => {
-  ScrollTrigger.sort()
-  ScrollTrigger.refresh(true)
+  if (refreshFrame !== undefined) return
+  refreshFrame = requestAnimationFrame(() => {
+    refreshFrame = undefined
+    ScrollTrigger.sort()
+    ScrollTrigger.refresh(true)
+  })
 }
 
-function syncActiveStates(filterForm: HTMLElement, clearWrapper: Element | null | undefined) {
-  const filterInputs = filterForm.querySelectorAll<HTMLInputElement>(FILTER_INPUTS)
-  const hasChecked = Array.from(filterInputs).some((input) => input.checked)
+const refreshAfterImageLoads = () => {
+  window.clearTimeout(imageTimer)
+  imageTimer = window.setTimeout(refreshAfterCmsHydration, IMAGE_SETTLE_MS)
+}
 
-  if (clearWrapper) {
-    clearWrapper.classList.toggle(ACTIVE_CLASS, !hasChecked)
-  }
+// Newly shown items' images load after the render; each load shifts layout,
+// so they join the same trailing refresh instead of refreshing one by one.
+const attachImageRefreshListener = (image: HTMLImageElement) => {
+  if (image.complete && image.naturalWidth > 0) return
+  image.addEventListener('load', refreshAfterImageLoads, { once: true })
+}
 
-  filterInputs.forEach((input) => {
+// Each "all" clear button is active while nothing in its own group is set.
+// A group is the clear's Webflow dropdown (Works: one per filter panel) or the
+// whole form (News: a single clear). Range panels count as set when either
+// hidden from/to input holds a value.
+// Forms opted in with [data-filter-panels] (Works) also mark each dropdown
+// toggle active while its panel has a filter set, and a toggle label carrying
+// [data-filter-label] shows the selected option instead of its default text.
+const panelHasValue = (panel: HTMLElement) =>
+  Array.from(panel.querySelectorAll<HTMLInputElement>('input')).some((input) =>
+    input.type === 'checkbox' || input.type === 'radio'
+      ? input.checked
+      : input.type !== 'range' && input.value.trim() !== '',
+  )
+
+function syncPanels(filterForm: HTMLElement) {
+  filterForm.querySelectorAll<HTMLElement>('.w-dropdown').forEach((panel) => {
+    panel.querySelector('.w-dropdown-toggle')?.classList.toggle(ACTIVE_CLASS, panelHasValue(panel))
+
+    const label = panel.querySelector<HTMLElement>('[data-filter-label]')
+    if (!label) return
+    label.dataset.filterLabelDefault ??= label.textContent ?? ''
+    const checkedInput = panel.querySelector<HTMLInputElement>('input:checked')
+    const selectedText = checkedInput
+      ?.closest('.w-radio, .w-checkbox')
+      ?.querySelector('.w-form-label')
+      ?.textContent?.trim()
+    label.textContent = selectedText || label.dataset.filterLabelDefault
+  })
+}
+
+function syncActiveStates(filterForm: HTMLElement) {
+  if (filterForm.hasAttribute('data-filter-panels')) syncPanels(filterForm)
+
+  filterForm.querySelectorAll<HTMLElement>('[fs-cmsfilter-element="clear"]').forEach((clearButton) => {
+    const group = clearButton.closest<HTMLElement>('.w-dropdown') ?? filterForm
+    const hasChecked = Array.from(group.querySelectorAll<HTMLInputElement>(FILTER_INPUTS)).some(
+      (input) => input.checked,
+    )
+    const hasRange = Array.from(
+      group.querySelectorAll<HTMLInputElement>('input[fs-cmsfilter-range]'),
+    ).some((input) => input.value !== '')
+    clearButton.parentElement?.classList.toggle(ACTIVE_CLASS, !hasChecked && !hasRange)
+  })
+
+  filterForm.querySelectorAll<HTMLInputElement>(FILTER_INPUTS).forEach((input) => {
     const inputWrapper = input.closest('.news-filter_link')
     if (inputWrapper) {
       inputWrapper.classList.toggle(ACTIVE_CLASS, input.checked)
@@ -71,36 +128,24 @@ export const filterActiveState = () => {
   if (!filterForms.length) return
 
   filterForms.forEach((filterForm) => {
-    const clearButton = filterForm.querySelector<HTMLElement>('[fs-cmsfilter-element="clear"]')
-    const clearWrapper = clearButton?.parentElement
+    syncActiveStates(filterForm)
+    filterForm.addEventListener('change', () => syncActiveStates(filterForm))
+    filterForm.addEventListener('input', () => syncActiveStates(filterForm))
 
-    if (clearWrapper) {
-      clearWrapper.classList.add(ACTIVE_CLASS)
-    }
-
-    filterForm.addEventListener('change', () => {
-      syncActiveStates(filterForm, clearWrapper)
-    })
-
-    if (clearButton) {
-      // Finsweet resets the inputs in its own click handler; sync on the next
-      // frame so a still-checked radio isn't read as active.
+    // Finsweet resets the inputs in its own click handler; sync on the next
+    // frame so a still-checked radio isn't read as active.
+    filterForm.querySelectorAll<HTMLElement>('[fs-cmsfilter-element="clear"]').forEach((clearButton) => {
       clearButton.addEventListener('click', () => {
-        requestAnimationFrame(() => syncActiveStates(filterForm, clearWrapper))
+        requestAnimationFrame(() => syncActiveStates(filterForm))
       })
-    }
+    })
   })
 
   const fsAttributes: FinsweetQueue = (window.fsAttributes ??= [])
   fsAttributes.push([
     'cmsfilter',
     (filterInstances: FsFilterInstance[]) => {
-      filterForms.forEach((filterForm) => {
-        const clearWrapper = filterForm.querySelector<HTMLElement>(
-          '[fs-cmsfilter-element="clear"]',
-        )?.parentElement
-        syncActiveStates(filterForm, clearWrapper)
-      })
+      filterForms.forEach((filterForm) => syncActiveStates(filterForm))
 
       filterInstances?.forEach((instance) => {
         instance.listInstance?.on('renderitems', () => {

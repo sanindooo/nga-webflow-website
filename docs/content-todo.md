@@ -238,6 +238,18 @@ Ran into these while working — not blockers for the current task but worth cle
 
 ## 11. Publish
 
+> **Before going live (added 2026-10-12): Works `Status` field is empty.**
+> The new Works filter has a status tab (Under Construction / Completed /
+> Competition) driven by the `Status` option field on Projects. Every project
+> is blank until the client fills it in. Publishing with it blank leaves the
+> status filter returning no results. Client to complete before launch.
+>
+> **Works `Max Area (m2)`** was filled from the Area text on 2026-10-12
+> (`scripts/api/webflow/extract-max-area.mjs`, largest building figure, site/plot/land
+> figures ignored). Client to check: Regenerative Dome and Tec eco-retreat have no
+> area and are excluded by any area filter; The House with Two Lives is set to
+> 2 000 m² (main house only, no total given).
+
 All CMS items created this pass are saved as **drafts**. Nothing is published
 yet. When the review above is done and the Designer work (§3, §8) complete:
 
