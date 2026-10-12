@@ -277,6 +277,12 @@ export const worksFilter = () => {
           sortInputs.forEach((input) => {
             input.closest('.news-filter_link')?.classList.toggle(ACTIVE_CLASS, input.checked)
           })
+          // Sort sits in its own form, outside filterActiveState's filter
+          // panels, so its toggle is marked active here.
+          sortInput
+            .closest('[data-filter-panel]')
+            ?.querySelector('[data-filter-panel-toggle]')
+            ?.classList.add(ACTIVE_CLASS)
           sortItems(filterInstances, sortInput.getAttribute('data-sort') ?? '')
         })
       })
