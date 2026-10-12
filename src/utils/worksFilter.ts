@@ -26,7 +26,7 @@ interface FsItem {
 }
 
 interface FsFilterInstance {
-  listInstance: { items: FsItem[] }
+  listInstance: { items: FsItem[]; on: (event: string, callback: () => void) => void }
 }
 
 interface RangeSlider {
@@ -191,6 +191,33 @@ const sortItems = (instances: FsFilterInstance[], sortKey: string) => {
   ScrollTrigger.refresh(true)
 }
 
+// Finsweet removes filtered-out items from the DOM and the browser drops their
+// decoded images. When they come back ("all" after a narrow filter), phones
+// take longer than Finsweet's 100ms fade-in to decode even the 1600px
+// thumbnails, so tiles paint blank and pop in: a second flash. Hold the visible
+// list at opacity 0 until the leading images are decoded, then fade in once.
+// Finsweet still has the list at display:none when renderitems fires, so
+// nothing can be measured; the first tiles are the ones at the top.
+const IMAGES_TO_DECODE = 6
+const DECODE_TIMEOUT_MS = 700
+const REVEAL_TRANSITION = 'opacity 200ms ease'
+
+const revealAfterDecode = async (listWrapper: HTMLElement) => {
+  const leadingImages = Array.from(listWrapper.querySelectorAll<HTMLImageElement>('img')).slice(
+    0,
+    IMAGES_TO_DECODE,
+  )
+  if (!leadingImages.length) return
+
+  listWrapper.style.transition = 'none'
+  listWrapper.style.opacity = '0'
+  const decoded = Promise.all(leadingImages.map((image) => image.decode().catch(() => undefined)))
+  const timeout = new Promise((resolve) => window.setTimeout(resolve, DECODE_TIMEOUT_MS))
+  await Promise.race([decoded, timeout])
+  listWrapper.style.transition = REVEAL_TRANSITION
+  listWrapper.style.opacity = ''
+}
+
 // Webflow publishes every radio with name="radio" and puts the Designer group
 // name in data-name, so all panels would share one radio group (picking a
 // location unchecks the typology). Restore the real group name.
@@ -232,6 +259,17 @@ export const worksFilter = () => {
     'cmsfilter',
     (filterInstances: FsFilterInstance[]) => {
       sliders.forEach((slider) => slider.syncFromInputs())
+
+      filterInstances.forEach(({ listInstance }) => {
+        listInstance.on('renderitems', () => {
+          const listWrapper = listInstance.items
+            .find(({ element }) => element.isConnected)
+            ?.element.closest<HTMLElement>(LIST_SELECTOR)
+          // Only the visible view (grid or row) needs holding. offsetParent is
+          // null inside ScrollSmoother's fixed wrapper, so check rects.
+          if (listWrapper && listWrapper.getClientRects().length) revealAfterDecode(listWrapper)
+        })
+      })
 
       sortInputs.forEach((sortInput) => {
         sortInput.addEventListener('change', () => {
