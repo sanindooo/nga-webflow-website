@@ -1,5 +1,11 @@
 # figma-to-webflow-pipeline
 
+## 1.1.22
+
+### Patch Changes
+
+- Works filter on mobile: search is now its own copy in the sort row instead of the in-form search pulled up with absolute positioning, which left dead space at the end of the filter row. New `filterSearchMirror` module writes the copy's text into the Finsweet search input (still in the form, hidden on mobile) and copies Clear All and URL values back. Filter spacing on mobile moved from a row gap to margins, so hidden items no longer add space. The back arrow is drawn pointing left instead of flipped.
+
 ## 1.1.21
 
 ### Patch Changes

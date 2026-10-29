@@ -19,8 +19,8 @@
  *       [data-filter-panel] / [data-filter-clear-all]   steps
  *     [data-filter-slider-next]
  *
- * The search panel is not a step: on mobile `u-search` pulls its toggle up
- * into the sort row. Arrows get `is-disabled` at either end; the Designer
+ * Hidden items (the in-form search on mobile, Clear All until a filter is
+ * set) are skipped. Arrows get `is-disabled` at either end; the Designer
  * styles that combo.
  */
 
@@ -43,7 +43,7 @@ export const filterSlider = () => {
     const rowLeft = row.getBoundingClientRect().left - row.scrollLeft
     return Array.from(row.children)
       .filter((child): child is HTMLElement => child instanceof HTMLElement)
-      .filter((child) => !child.matches('[data-filter-panel="search"]') && child.offsetWidth > 0)
+      .filter((child) => child.offsetWidth > 0)
       .map((child) => child.getBoundingClientRect().left - rowLeft)
   }
 

@@ -235,4 +235,5 @@ Filter field identifiers: `Category`, `Status`, `Year`, `Country`, `Area`, plus 
 | Slider root `[data-filter-slider]` (`news-filter_links u-main is-slider`) | `bca8fd70-d4ed-e167-01a3-d93c71e16a2c` |
 | Prev arrow `[data-filter-slider-prev]` | `f6e4cedc-b288-bb7b-0592-fac866ec9e1d` |
 | Next arrow `[data-filter-slider-next]` | `2ed076e1-fb55-fc5b-b398-063f2c349291` |
-| Search toggle (`u-search`, pulled into the sort row on mobile) | `bd8a2c26-f687-a1d8-d3c5-8154fb2e7170` |
+| In-form search panel (`u-search-desktop`, hidden on mobile) / input `[data-filter-search-source]` | `df588442-efaf-4183-e380-ff7263929bc6` / `6456c0fe-768b-e514-7f21-4c8de6a255c3` |
+| Mobile search copy in the sort row (`u-search-mobile`, input `[data-filter-search-mirror]`) | `34c38f1e-150d-3353-ee55-947610bd05bf` |

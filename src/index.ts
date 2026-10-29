@@ -17,6 +17,7 @@ import { eagerImages } from '$utils/eagerImages'
 import { filterActiveState } from '$utils/filterActiveState'
 import { filterPanels } from '$utils/filterPanels'
 import { filterScrollHint } from '$utils/filterScrollHint'
+import { filterSearchMirror } from '$utils/filterSearchMirror'
 import { filterSlider } from '$utils/filterSlider'
 import { footerTextSticky } from '$utils/footerTextSticky'
 import { generalImageHover } from '$utils/generalImageHover'
@@ -81,6 +82,7 @@ window.Webflow.push(() => {
   filterPanels()
   filterScrollHint()
   filterSlider()
+  filterSearchMirror()
   filterActiveState()
   worksFilter()
 
