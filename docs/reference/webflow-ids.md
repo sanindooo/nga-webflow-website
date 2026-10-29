@@ -227,3 +227,12 @@ The old `image-N---layout-*` and `image-N---alignment` fields were deleted on 20
 | Row-view list / grid-view list | `9e791b21-0b30-aed1-6fe3-3f03194b1d94` / `0728aee4-6e1f-db9b-f71d-37a7f36029c3` |
 
 Filter field identifiers: `Category`, `Status`, `Year`, `Country`, `Area`, plus `Name` and `City` for search.
+
+### Mobile filter slider (2026-10-29)
+
+| Element | ID |
+|---|---|
+| Slider root `[data-filter-slider]` (`news-filter_links u-main is-slider`) | `bca8fd70-d4ed-e167-01a3-d93c71e16a2c` |
+| Prev arrow `[data-filter-slider-prev]` | `f6e4cedc-b288-bb7b-0592-fac866ec9e1d` |
+| Next arrow `[data-filter-slider-next]` | `2ed076e1-fb55-fc5b-b398-063f2c349291` |
+| Search toggle (`u-search`, pulled into the sort row on mobile) | `bd8a2c26-f687-a1d8-d3c5-8154fb2e7170` |

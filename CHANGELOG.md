@@ -1,5 +1,11 @@
 # figma-to-webflow-pipeline
 
+## 1.1.21
+
+### Patch Changes
+
+- Works filter on mobile (767px and below): the filter row now has back and forward arrows that step one filter at a time and fade at either end, replacing the "scroll" hint. Search moves up next to sort, grid and list. New `filterSlider` module drives the arrows on the row's native scroll, so filter panels and the swipe guard behave as before. Desktop and tablet are unchanged.
+
 ## 1.1.20
 
 ### Patch Changes
