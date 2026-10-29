@@ -9,6 +9,7 @@ symptoms:
   - "Swiping the horizontally scrolling mobile filter row opens whichever dropdown the finger lifts on"
   - "Intermittent, more likely right after a filter has been applied"
   - "Never reproduces on desktop"
+  - "Scrolling an open option list (country, typology) picks the option the finger lifts on"
 root_cause: wrong_api
 resolution_type: code_fix
 severity: medium
@@ -64,13 +65,31 @@ toggle.addEventListener('click', () => {
 
 The same guard sits on the outside-click close handler, so a swipe does not close an open panel either. Mouse and keyboard clicks never follow a `touchmove`, so `travelled` stays 0 for them.
 
+### It came back inside the panels (v1.1.23)
+
+On 2026-10-29 the client reported "the same bug again": scrolling an open option list and lifting on an option selected it. It was not a regression. The v1.1.18 guard only sat on the toggles and the outside-click handler; the options inside a panel (radio labels, the panel's "all" clear link) were never guarded. Long lists scroll vertically on mobile, and normalizeScroll's failed hand-off turns that scroll into a tap exactly as it did for the row.
+
+Fix: one capture-phase listener on each panel's content, which stops the click before the label activates its radio and before Finsweet's clear handler runs:
+
+```ts
+panel.content.addEventListener('click', (event) => {
+  if (!isSwipe()) return
+  event.preventDefault()
+  event.stopPropagation()
+}, { capture: true })
+```
+
+`preventDefault` on a label's click stops the browser checking its radio, so no `change` fires and Finsweet never filters. Verified with synthetic touches on a local copy of staging: a swipe ending on "Greece" selected nothing and the panel stayed open; a clean tap on "Iraq" applied `?country=Iraq` and closed the panel.
+
 ## Why This Works
 
 The site creates ScrollSmoother with `normalizeScroll: { allowNestedScroll: true }` (`src/utils/gsapSmoothScroll.ts`). On touch devices normalizeScroll takes over `touchmove` and is meant to hand gestures on nested scroll areas back to the browser. When it does not (seen intermittently, likely while layout is settling after a filter render), it prevents the native horizontal scroll. To the browser the gesture then never scrolled, so it is a tap, and `click` fires on the element under the finger. Measuring the finger's travel ourselves does not depend on how the browser or GSAP classified the gesture.
 
 ## Prevention
 
-- Any tap target inside a nested horizontal scroller on a page with normalizeScroll needs a travel guard; do not rely on "click never fires after a scroll".
+- Any tap target inside any nested scroller (horizontal rows and vertical lists alike) on a page with normalizeScroll needs a travel guard; do not rely on "click never fires after a scroll".
+- Guard at the container with a capture-phase listener, not per control. Per-control guards miss whatever gets added later (new options, CMS items, clear links), which is how the panel options slipped through for two weeks.
+- When adding a new scrollable area (dropdown list, modal body, slider), ask whether its taps go through `isSwipe()`. If not, it has this bug.
 - Track touches on `document` with `capture: true, passive: true` so the listener sees every gesture and cannot be blocked or slow scrolling.
 - Test on a real phone after applying a filter; simulated clicks in a desktop browser cannot reproduce this.
 
