@@ -19,6 +19,9 @@
  *     button[data-filter-panel-toggle]
  *     [data-filter-panel-content]
  *
+ * The same guard covers clicks inside a panel, so scrolling a long option
+ * list never picks the option the finger lifts on.
+ *
  * Behaviour: one panel open at a time; a second click on its toggle closes
  * it. Picking a radio or clicking a panel's "all" closes it. Range sliders
  * and search stay open while in use. Outside click and Escape close the open
@@ -106,6 +109,20 @@ export const filterPanels = () => {
       close(openPanel)
       if (!wasOpen) setOpen(panel, true)
     })
+
+    // Panel lists scroll vertically on mobile, and the same normalizeScroll
+    // hand-off failure turns a scroll that ends on an option into a tap.
+    // Capture runs before the label activates its radio and before
+    // Finsweet's clear handlers, so a swipe never picks or clears anything.
+    panel.content.addEventListener(
+      'click',
+      (event) => {
+        if (!isSwipe()) return
+        event.preventDefault()
+        event.stopPropagation()
+      },
+      { capture: true },
+    )
 
     // Choosing an option closes the panel; sliders and search keep it open.
     panel.content.addEventListener('change', (event) => {

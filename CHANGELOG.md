@@ -1,5 +1,11 @@
 # figma-to-webflow-pipeline
 
+## 1.1.23
+
+### Patch Changes
+
+- Scrolling an open filter list on mobile no longer picks the option the finger lifts on. The swipe guard in filterPanels now also covers clicks inside each panel, not only the toggles and outside clicks.
+
 ## 1.1.22
 
 ### Patch Changes
