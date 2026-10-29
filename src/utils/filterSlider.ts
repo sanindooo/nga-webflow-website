@@ -7,10 +7,11 @@
  *
  * Swiper was tried first. Its transform mode clips the filter panels (they
  * are absolutely positioned against the sticky filter section, and a
- * transformed wrapper re-anchors them), and its cssMode skipped every other
- * arrow tap and stopped short of the last filter because it ignores the CSS
- * gap. Native scrolling also keeps filterPanels' swipe guard working, which
- * relies on scroll gestures never firing `click`.
+ * transformed wrapper re-anchors them), and its cssMode works out stop
+ * positions from slide widths plus `spaceBetween`, ignoring the CSS gap, so
+ * it stopped short of the last filter. Native scrolling also keeps
+ * filterPanels' swipe guard working, which relies on scroll gestures never
+ * firing `click`.
  *
  * DOM contract:
  *   [data-filter-slider]
