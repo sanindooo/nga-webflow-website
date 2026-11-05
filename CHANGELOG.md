@@ -1,5 +1,11 @@
 # figma-to-webflow-pipeline
 
+## 1.1.26
+
+### Patch Changes
+
+- Changing page in the Works pagination now scrolls back to the top of the page.
+
 ## 1.1.25
 
 ### Patch Changes
