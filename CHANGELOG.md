@@ -1,5 +1,11 @@
 # figma-to-webflow-pipeline
 
+## 1.1.27
+
+### Patch Changes
+
+- Changing page in the Works pagination now jumps to the filter bar, just under the nav, on every click. The previous smooth scroll to the top only worked on every other click.
+
 ## 1.1.26
 
 ### Patch Changes
