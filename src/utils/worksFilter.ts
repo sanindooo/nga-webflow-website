@@ -25,14 +25,21 @@ interface FsItem {
   element: HTMLElement
 }
 
+interface FsListInstance {
+  items: FsItem[]
+  on: (event: string, callback: () => void) => void
+  renderItems: () => Promise<unknown>
+}
+
 interface FsFilterInstance {
-  listInstance: { items: FsItem[]; on: (event: string, callback: () => void) => void }
+  listInstance: FsListInstance
 }
 
 interface RangeSlider {
   field: string
   reset: () => void
   syncFromInputs: () => void
+  setBounds: (values: number[]) => void
 }
 
 const readNumber = (text: string | null | undefined) => {
@@ -40,14 +47,19 @@ const readNumber = (text: string | null | undefined) => {
   return digits ? Number(digits) : null
 }
 
-const fieldValues = (field: string) => {
+// Defaults to the items on the page; CMS Load pagination keeps the rest off
+// the page, so the cmsfilter callback passes every item instead.
+const fieldValues = (
+  field: string,
+  itemElements: HTMLElement[] = Array.from(document.querySelectorAll(LIST_SELECTOR)),
+) => {
   const values: number[] = []
-  document
-    .querySelectorAll<HTMLElement>(`${LIST_SELECTOR} [fs-cmsfilter-field="${field}"]`)
-    .forEach((element) => {
+  itemElements.forEach((itemElement) => {
+    itemElement.querySelectorAll(`[fs-cmsfilter-field="${field}"]`).forEach((element) => {
       const value = readNumber(element.textContent)
       if (value !== null) values.push(value)
     })
+  })
   return values
 }
 
@@ -72,8 +84,8 @@ const createRangeSlider = (wrapper: HTMLElement): RangeSlider | null => {
   if (!values.length) return null
 
   const isLog = wrapper.getAttribute('data-range-scale') === 'log'
-  const lowest = Math.min(...values)
-  const highest = Math.max(...values)
+  let lowest = Math.min(...values)
+  let highest = Math.max(...values)
   const labels = Array.from(wrapper.querySelectorAll<HTMLElement>('.news-filter_range-value'))
   // Thousands separators for areas (65 to 1,000,000), not for years.
   const formatValue = (value: number) =>
@@ -156,8 +168,15 @@ const createRangeSlider = (wrapper: HTMLElement): RangeSlider | null => {
     render()
   }
 
+  const setBounds = (allValues: number[]) => {
+    if (!allValues.length) return
+    lowest = Math.min(...allValues)
+    highest = Math.max(...allValues)
+    syncFromInputs()
+  }
+
   reset()
-  return { field, reset, syncFromInputs }
+  return { field, reset, syncFromInputs, setBounds }
 }
 
 const sortValue = (item: FsItem, key: string) => {
@@ -167,6 +186,7 @@ const sortValue = (item: FsItem, key: string) => {
 }
 
 const sortItems = (instances: FsFilterInstance[], sortKey: string) => {
+  if (!sortKey) return
   const [key, direction] = sortKey.split('-')
   const multiplier = direction === 'desc' ? -1 : 1
 
@@ -183,12 +203,10 @@ const sortItems = (instances: FsFilterInstance[], sortKey: string) => {
       return ((firstValue as number) - (secondValue as number)) * multiplier
     })
 
-    listInstance.items.forEach(({ element }) => {
-      if (element.isConnected) element.parentElement?.appendChild(element)
-    })
+    // Finsweet re-renders in item order and keeps CMS Load's page size.
+    // filterActiveState refreshes ScrollTrigger on the renderitems this fires.
+    listInstance.renderItems()
   })
-
-  ScrollTrigger.refresh(true)
 }
 
 // Finsweet removes filtered-out items from the DOM and the browser drops their
@@ -258,7 +276,19 @@ export const worksFilter = () => {
   fsAttributes.push([
     'cmsfilter',
     (filterInstances: FsFilterInstance[]) => {
-      sliders.forEach((slider) => slider.syncFromInputs())
+      let activeSortKey = ''
+
+      // CMS Load adds the later pages after this callback; widen the slider
+      // ends and keep the chosen sort as each batch arrives.
+      const syncWithAllItems = () => {
+        const itemElements = filterInstances.flatMap(({ listInstance }) =>
+          listInstance.items.map(({ element }) => element),
+        )
+        sliders.forEach((slider) => slider.setBounds(fieldValues(slider.field, itemElements)))
+        sortItems(filterInstances, activeSortKey)
+      }
+      syncWithAllItems()
+      filterInstances.forEach(({ listInstance }) => listInstance.on('additems', syncWithAllItems))
 
       filterInstances.forEach(({ listInstance }) => {
         listInstance.on('renderitems', () => {
@@ -283,7 +313,8 @@ export const worksFilter = () => {
             .closest('[data-filter-panel]')
             ?.querySelector('[data-filter-panel-toggle]')
             ?.classList.add(ACTIVE_CLASS)
-          sortItems(filterInstances, sortInput.getAttribute('data-sort') ?? '')
+          activeSortKey = sortInput.getAttribute('data-sort') ?? ''
+          sortItems(filterInstances, activeSortKey)
         })
       })
     },

@@ -44,6 +44,25 @@ Radio Button (FormRadioWrapper, class news-filter_link)  <- Finsweet puts fs-cms
 
 "All" stays a `fs-cmsfilter-element="clear"` link. `src/utils/filterActiveState.ts` syncs the highlight for checkbox and radio inputs. Query params (`?category=Press`) use the real-case category name, not the lowercase display text. The Webflow MCP can build this: `data_element_builder` type `FormRadioInput`, then `set_settings` for `groupName` and the label's `text` CMS binding.
 
+## NGA setup: pagination over 100 items with CMS Load (since 2026-11-05)
+
+Webflow lists show at most 100 items, and native pagination alone breaks the filter: it only sees the page in the DOM. CMS Load v1 in `pagination` mode fetches every page in the background, so the filter, sort and range sliders cover all items while the list still shows one page at a time.
+
+Designer, on **each** Works Collection List (row view and grid view):
+
+1. Collection List settings: Paginate items on, 50 per page. Keep the Previous and Next buttons Webflow adds.
+2. On the Collection List Wrapper (the one already carrying `fs-cmsfilter-element="list"`), add:
+   - `fs-cmsload-element` = `list`
+   - `fs-cmsload-mode` = `pagination`
+   - optional `fs-cmsload-showquery` = `true` (page number in the URL)
+3. Page settings > Before `</body>`, add after the cmsfilter script:
+   ```html
+   <script async src="https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmsload@1/cmsload.js"></script>
+   ```
+4. Optional numbered buttons: inside the pagination wrapper, a link with `fs-cmsload-element="page-button"` (Finsweet clones it per page) and an element with `fs-cmsload-element="page-dots"`.
+
+Code side (`src/utils/worksFilter.ts`): the range-slider ends are recomputed from every loaded item on each CMS Load `additems` event, and sort calls `listInstance.renderItems()` instead of moving DOM nodes, so the page size is kept. News will need the same attributes once it passes 100 articles.
+
 ## Single-Select / Dropdown Field Setup
 
 1. Inside CMS item, add Text Block bound to the option field
