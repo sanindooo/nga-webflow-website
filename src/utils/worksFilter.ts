@@ -27,7 +27,7 @@ interface FsItem {
 
 interface FsListInstance {
   items: FsItem[]
-  on: (event: string, callback: () => void) => void
+  on: (event: string, callback: (renderedItems?: FsItem[]) => void) => void
   renderItems: () => Promise<unknown>
 }
 
@@ -291,7 +291,17 @@ export const worksFilter = () => {
       filterInstances.forEach(({ listInstance }) => listInstance.on('additems', syncWithAllItems))
 
       filterInstances.forEach(({ listInstance }) => {
-        listInstance.on('renderitems', () => {
+        let shownElements: HTMLElement[] = []
+        listInstance.on('renderitems', (renderedItems = []) => {
+          // CMS Load re-renders as each background page arrives with page one
+          // unchanged; fading then would flash the list for nothing.
+          const elements = renderedItems.map(({ element }) => element)
+          const unchanged =
+            elements.length === shownElements.length &&
+            elements.every((element, index) => element === shownElements[index])
+          shownElements = elements
+          if (unchanged) return
+
           const listWrapper = listInstance.items
             .find(({ element }) => element.isConnected)
             ?.element.closest<HTMLElement>(LIST_SELECTOR)
