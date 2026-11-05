@@ -1,5 +1,11 @@
 # figma-to-webflow-pipeline
 
+## 1.1.24
+
+### Patch Changes
+
+- Works filter now works with Finsweet CMS Load pagination (50 per page). Range sliders read their ends from every project, not just the first page, and sort keeps the page size instead of showing every project at once.
+
 ## 1.1.23
 
 ### Patch Changes
