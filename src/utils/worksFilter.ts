@@ -17,6 +17,8 @@
  * array is sorted too, so later filter renders keep the sort order.
  */
 
+import { getSmoother } from '$utils/gsapSmoothScroll'
+
 const POSITION_STEPS = 1000
 const ACTIVE_CLASS = 'fs-cmsfilter_active'
 const LIST_SELECTOR = '[fs-cmsfilter-element="list"]'
@@ -288,7 +290,15 @@ export const worksFilter = () => {
         sortItems(filterInstances, activeSortKey)
       }
       syncWithAllItems()
-      filterInstances.forEach(({ listInstance }) => listInstance.on('additems', syncWithAllItems))
+      filterInstances.forEach(({ listInstance }) => {
+        listInstance.on('additems', syncWithAllItems)
+        // Next/Previous sit under the list; start the new page at the top.
+        listInstance.on('switchpage', () => {
+          const smoother = getSmoother()
+          if (smoother) smoother.scrollTo(0, true)
+          else window.scrollTo({ top: 0, behavior: 'smooth' })
+        })
+      })
 
       filterInstances.forEach(({ listInstance }) => {
         let shownElements: HTMLElement[] = []
