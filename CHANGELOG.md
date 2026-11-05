@@ -1,5 +1,11 @@
 # figma-to-webflow-pipeline
 
+## 1.1.25
+
+### Patch Changes
+
+- Works hover now works on projects from pages 2 and beyond, which Finsweet CMS Load fetches after page load. The Works list no longer fades in a second time when those background pages arrive.
+
 ## 1.1.24
 
 ### Patch Changes
