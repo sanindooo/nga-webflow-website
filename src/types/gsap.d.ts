@@ -143,7 +143,7 @@ interface ScrollSmootherInstance {
   refresh: (safe?: boolean) => void;
   kill: () => void;
   getVelocity: () => number;
-  offset: (target?: HTMLElement | string) => number;
+  offset: (target?: HTMLElement | string, position?: string) => number;
   progress: number;
   smooth: (value?: number) => number;
 }

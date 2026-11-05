@@ -181,6 +181,22 @@ const createRangeSlider = (wrapper: HTMLElement): RangeSlider | null => {
   return { field, reset, syncFromInputs, setBounds }
 }
 
+// The bar is sticky, so its own position moves; it naturally starts where the
+// section before it ends. Its sticky top is the nav height.
+const scrollToFilterBar = () => {
+  const filterBar = document.querySelector<HTMLElement>('.section_news-filter')
+  const sectionAbove = filterBar?.previousElementSibling
+  if (!filterBar || !sectionAbove) return
+  const navHeight = parseFloat(getComputedStyle(filterBar).top) || 0
+  const smoother = getSmoother()
+  if (smoother) {
+    smoother.scrollTo(smoother.offset(sectionAbove as HTMLElement, 'bottom top') - navHeight, false)
+    return
+  }
+  const sectionAboveEnd = sectionAbove.getBoundingClientRect().bottom + window.scrollY
+  window.scrollTo({ top: sectionAboveEnd - navHeight })
+}
+
 const sortValue = (item: FsItem, key: string) => {
   const fieldName = { name: 'Name', year: 'Year', area: 'Area' }[key]
   const text = item.element.querySelector(`[fs-cmsfilter-field="${fieldName}"]`)?.textContent
@@ -292,11 +308,17 @@ export const worksFilter = () => {
       syncWithAllItems()
       filterInstances.forEach(({ listInstance }) => {
         listInstance.on('additems', syncWithAllItems)
-        // Next/Previous sit under the list; start the new page at the top.
+        // Next/Previous sit under the list. Once the new page is drawn, jump
+        // so the filter bar sits just under the nav. A smooth scroll here was
+        // cut short on every other click by the post-render refreshes.
+        let pageChanged = false
         listInstance.on('switchpage', () => {
-          const smoother = getSmoother()
-          if (smoother) smoother.scrollTo(0, true)
-          else window.scrollTo({ top: 0, behavior: 'smooth' })
+          pageChanged = true
+        })
+        listInstance.on('renderitems', () => {
+          if (!pageChanged) return
+          pageChanged = false
+          window.setTimeout(scrollToFilterBar)
         })
       })
 
