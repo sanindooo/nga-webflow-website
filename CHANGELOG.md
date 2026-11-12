@@ -1,5 +1,11 @@
 # figma-to-webflow-pipeline
 
+## 1.1.28
+
+### Patch Changes
+
+- 50d3b31: Works search moves to the left of the filter bar on desktop. The search script now keeps every visible search box in sync with the Finsweet search input, so the new desktop box and the mobile box both filter the list.
+
 ## 1.1.27
 
 ### Patch Changes
