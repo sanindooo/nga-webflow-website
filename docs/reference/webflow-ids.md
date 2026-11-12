@@ -151,6 +151,7 @@ The old `image-N---layout-*` and `image-N---alignment` fields were deleted on 20
 - Works Template `dynamic-image_item` figures (slot 1-12, page component `69bfbc30efadacd9ad9e3d80`): `ab221405-6f64-0c59-1d0b-70840ecd9eb7`, `86c86cc1-14d0-16d8-dea0-a7a71c05fd24`, `035867de-573c-d3ff-a958-0c5d5e00bdb3`, `0dad5b9f-430c-dd89-117f-fce65fc90fde`, `c5230987-cf31-49df-0844-8c664fbadc20`, `f35502de-ac65-2686-4aa0-8217b206a8ad`, `e1041174-70d5-e107-af6b-c823c3d4e527`, `23676b0e-b95f-bf3c-f8dc-0a976bd3a926`, `305f793b-eab9-17ef-7a9e-60359f67b211`, `5a2da629-a87a-cd39-fceb-f3862590ee15`, `c6f72a2b-a2e6-e471-6dc9-ea10430e185e`, `49af1eff-81e1-012c-37e2-342ca9a48ab5`
 - Custom Layout component (gallery CSS embed): `daaf7843-1da1-9a73-442f-95d6172b4428`
 - Works Settings guide page: `6a037ddf3dadcc6de2878b15` (`/works-settings`, draft)
+- Works filter bar (page `69cbd0b99ea71e2c7d058007`): section `d6e063de-5df1-7f78-98ff-0e1ec3137b97`, filter row `u-main` `bca8fd70-d4ed-e167-01a3-d93c71e16a2c`, desktop search panel `u-search-left` `67058ed0-7656-2acb-9097-7229f004b7a8`, mobile search panel `u-search-mobile` `34c38f1e-150d-3353-ee55-947610bd05bf`
 
 ## Country Items (seeded)
 
