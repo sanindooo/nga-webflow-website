@@ -20,6 +20,7 @@ import { filterScrollHint } from '$utils/filterScrollHint'
 import { filterSearchMirror } from '$utils/filterSearchMirror'
 import { filterSlider } from '$utils/filterSlider'
 import { footerTextSticky } from '$utils/footerTextSticky'
+import { galleryOrder } from '$utils/galleryOrder'
 import { generalImageHover } from '$utils/generalImageHover'
 import { generalScrollTextReveal } from '$utils/generalScrollTextReveal'
 import { gsapBasicAnimations } from '$utils/gsapBasicAnimations'
@@ -53,6 +54,7 @@ window.Webflow.push(() => {
   // module runs, so window.load waits for them and trigger positions are
   // measured against the settled layout. See src/utils/eagerImages.ts.
   eagerImages()
+  galleryOrder()
 
   debugOverlay()
   gsapSmoothScroll()

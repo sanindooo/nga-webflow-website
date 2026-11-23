@@ -4,6 +4,7 @@
  */
 interface WebflowQueue extends Array<() => void> {
   push: (callback: () => void) => number;
+  require: (module: 'lightbox') => { ready: () => void };
 }
 
 interface Window {

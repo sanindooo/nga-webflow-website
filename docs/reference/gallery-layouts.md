@@ -36,7 +36,7 @@ Full-width values have no right version: `margin-left: auto` on a 100% item has 
 
 - `data-order="1"` to `"12"` maps to CSS `order: 1` to `12`, at all breakpoints (the container is flex on mobile too).
 - Images with no order get `order: 13`, so they go last, in slot order. Equal orders also keep slot order.
-- `order` is visual only: screen readers and the Webflow lightbox's next/previous follow slot (DOM) order.
+- `src/utils/galleryOrder.ts` sorts the figures in the DOM to match on load and rebuilds the Webflow lightbox groups, so the lightbox, tab order and screen readers follow the display order too. The CSS `order` rules stay: they give the right order before the bundle runs.
 
 ## Row Pairing Rules
 
