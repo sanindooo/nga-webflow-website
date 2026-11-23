@@ -28,6 +28,7 @@ export const navTheme = () => {
   if (!headerElement || !logoWrapper || !hamburgerToggle) return
   if (darkThemeSections.length === 0) return
 
+  // z-index comes from the copied .header class, so the clone stays below lightboxes and modals
   const darkOverlay = document.createElement('div')
   darkOverlay.setAttribute('aria-hidden', 'true')
   headerElement.classList.forEach((cls) => darkOverlay.classList.add(cls))
@@ -38,7 +39,6 @@ export const navTheme = () => {
     right: '0',
     height: `${headerElement.offsetHeight}px`,
     pointerEvents: 'none',
-    zIndex: '9999',
   })
 
   const logoClone = logoWrapper.cloneNode(true) as HTMLElement

@@ -27,6 +27,7 @@ import { gsapSmoothScroll } from '$utils/gsapSmoothScroll'
 import { heroBackgroundVideo } from '$utils/heroBackgroundVideo'
 import { heroTextReveal } from '$utils/heroTextReveal'
 import { homeTextSticky } from '$utils/homeTextSticky'
+import { lightboxScrollLock } from '$utils/lightboxScrollLock'
 import { logoAnimation } from '$utils/logoAnimation'
 import { modals } from '$utils/modals'
 import { navTheme } from '$utils/navTheme'
@@ -74,6 +75,7 @@ window.Webflow.push(() => {
   officeCardTabs()
   accordion()
   modals()
+  lightboxScrollLock()
 
   currentYear()
   videoPlayPauseToggle()
