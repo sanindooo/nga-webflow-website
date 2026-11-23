@@ -1,5 +1,11 @@
 # figma-to-webflow-pipeline
 
+## 1.1.29
+
+### Patch Changes
+
+- Lightbox sits above the menu, locks page scroll and follows the gallery sort order. Works search box shows its focus outline for keyboard users only.
+
 ## 1.1.28
 
 ### Patch Changes
