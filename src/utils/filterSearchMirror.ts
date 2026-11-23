@@ -9,6 +9,9 @@
  * usual. Values that land in the source another way (another mirror, Clear
  * All, a ?query in the URL on load) are copied back to every mirror.
  *
+ * Mirrors show their focus outline for keyboard focus only. Text inputs match
+ * `:focus-visible` on click too, so CSS cannot tell the two apart.
+ *
  * DOM contract:
  *   [data-filter-panel]               a search panel (one per breakpoint)
  *     [data-filter-panel-toggle]      gets fs-cmsfilter_active while searching
@@ -41,6 +44,27 @@ export const filterSearchMirror = () => {
       // Updates the other mirrors and the active state via the source listener.
       source.dispatchEvent(new Event('input', { bubbles: true }))
     })
+  })
+
+  let lastInputWasPointer = false
+  document.addEventListener('pointerdown', () => (lastInputWasPointer = true), { capture: true })
+  document.addEventListener(
+    'keydown',
+    (event) => {
+      // Ctrl/Cmd+Tab switches tabs or windows. Alt stays: Safari moves focus with Option+Tab.
+      if (event.key === 'Tab' && !event.ctrlKey && !event.metaKey) lastInputWasPointer = false
+    },
+    { capture: true },
+  )
+
+  mirrors.forEach((mirror) => {
+    const updateOutline = () => {
+      mirror.style.outline = lastInputWasPointer ? 'none' : ''
+    }
+    // focus also fires on return to the window, with the input method unchanged.
+    mirror.addEventListener('focus', updateOutline)
+    // A click into a box that already has keyboard focus fires no focus event.
+    mirror.addEventListener('pointerdown', updateOutline)
   })
 
   source.addEventListener('input', pullFromSource)
